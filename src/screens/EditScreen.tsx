@@ -12,6 +12,7 @@ import Slider from '@react-native-community/slider';
 import * as Haptics from 'expo-haptics';
 import { theme } from '../config/theme';
 import { BeautyParams, DEFAULT_BEAUTY_PARAMS } from '../types/beauty';
+import BeautyRenderer from '../components/BeautyRenderer';
 
 const { width, height } = Dimensions.get('window');
 
@@ -79,11 +80,19 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
 
       {/* 照片预览区域 */}
       <View style={styles.previewContainer}>
-        <Image
-          source={{ uri: photoUri }}
-          style={styles.previewImage}
-          resizeMode="contain"
-        />
+        {showComparison ? (
+          <Image
+            source={{ uri: photoUri }}
+            style={styles.previewImage}
+            resizeMode="contain"
+          />
+        ) : (
+          <BeautyRenderer
+            imageUri={photoUri}
+            beautyParams={beautyParams}
+            style={styles.previewImage}
+          />
+        )}
         
         {/* 前后对比按钮 */}
         <TouchableOpacity
