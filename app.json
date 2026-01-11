@@ -21,7 +21,17 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#000000"
       },
-      "package": "com.jasontsao.yanbaoai"
+      "package": "com.jasontsao.yanbaoai",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VIDEO",
+        "android.permission.READ_MEDIA_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -48,9 +58,13 @@
       "typedRoutes": true
     },
     "extra": {
+      "supabaseUrl": "https://kbsezvxaydmalzfirhdn.supabase.co",
+      "supabaseAnonKey": "sb_publishable_frmsrgifeKQAPLq7SPAJAw_5QMc7dnA",
       "eas": {
-        "projectId": "your-project-id"
-      }
-    }
+        "projectId": "0c7f7489-7377-4a3a-b434-3e9d5808f50d"
+      },
+      "router": {}
+    },
+    "owner": "tsaojason"
   }
 }
