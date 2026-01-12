@@ -9,6 +9,7 @@ export interface ProModeParams {
   iso: number;
   shutterSpeed: number; // 以分数表示，如1/1000
   whiteBalance: number; // 色温，单位K
+  peakingFocus: boolean; // 峰值对焦开关
 }
 
 interface ProModePanelProps {
@@ -172,6 +173,38 @@ export function ProModePanel({
             </View>
           </View>
 
+          {/* 峰值对焦开关 */}
+          <View style={styles.peakingSection}>
+            <View style={styles.peakingHeader}>
+              <View>
+                <Text style={styles.peakingTitle}>峰值对焦</Text>
+                <Text style={styles.peakingSubtitle}>Focus Peaking</Text>
+              </View>
+              <Pressable
+                style={[
+                  styles.peakingSwitch,
+                  params.peakingFocus && styles.peakingSwitchActive,
+                ]}
+                onPress={() => {
+                  if (Platform.OS !== "web") {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  }
+                  onParamsChange({ ...params, peakingFocus: !params.peakingFocus });
+                }}
+              >
+                <View
+                  style={[
+                    styles.peakingThumb,
+                    params.peakingFocus && styles.peakingThumbActive,
+                  ]}
+                />
+              </Pressable>
+            </View>
+            <Text style={styles.peakingDescription}>
+              高亮显示对焦清晰区域，帮助精确手动对焦
+            </Text>
+          </View>
+
           {/* 快捷预设 */}
           <View style={styles.presetsSection}>
             <Text style={styles.presetsTitle}>快捷预设</Text>
@@ -179,25 +212,25 @@ export function ProModePanel({
               <PresetButton
                 label="自动"
                 onPress={() =>
-                  onParamsChange({ iso: 400, shutterSpeed: 1 / 125, whiteBalance: 5500 })
+                  onParamsChange({ iso: 400, shutterSpeed: 1 / 125, whiteBalance: 5500, peakingFocus: params.peakingFocus })
                 }
               />
               <PresetButton
                 label="日光"
                 onPress={() =>
-                  onParamsChange({ iso: 200, shutterSpeed: 1 / 500, whiteBalance: 5500 })
+                  onParamsChange({ iso: 200, shutterSpeed: 1 / 500, whiteBalance: 5500, peakingFocus: params.peakingFocus })
                 }
               />
               <PresetButton
                 label="室内"
                 onPress={() =>
-                  onParamsChange({ iso: 800, shutterSpeed: 1 / 60, whiteBalance: 3200 })
+                  onParamsChange({ iso: 800, shutterSpeed: 1 / 60, whiteBalance: 3200, peakingFocus: params.peakingFocus })
                 }
               />
               <PresetButton
                 label="夜景"
                 onPress={() =>
-                  onParamsChange({ iso: 1600, shutterSpeed: 1 / 30, whiteBalance: 4000 })
+                  onParamsChange({ iso: 1600, shutterSpeed: 1 / 30, whiteBalance: 4000, peakingFocus: params.peakingFocus })
                 }
               />
             </View>
@@ -329,6 +362,61 @@ const styles = StyleSheet.create({
   wbLabel: {
     fontSize: 11,
     color: "rgba(255, 255, 255, 0.6)",
+  },
+  peakingSection: {
+    marginBottom: 24,
+    backgroundColor: "rgba(167, 139, 250, 0.1)",
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(167, 139, 250, 0.3)",
+  },
+  peakingHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  peakingTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+  peakingSubtitle: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: "rgba(167, 139, 250, 0.7)",
+    letterSpacing: 1,
+    marginTop: 2,
+  },
+  peakingSwitch: {
+    width: 56,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    padding: 2,
+    justifyContent: "center",
+  },
+  peakingSwitchActive: {
+    backgroundColor: "#A78BFA",
+  },
+  peakingThumb: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  peakingThumbActive: {
+    transform: [{ translateX: 24 }],
+  },
+  peakingDescription: {
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.6)",
+    lineHeight: 18,
   },
   presetsSection: {
     marginTop: 8,

@@ -29,6 +29,7 @@ export default function CameraScreen() {
     iso: 400,
     shutterSpeed: 1 / 125,
     whiteBalance: 5500,
+    peakingFocus: false,
   });
   const [permission, requestPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
