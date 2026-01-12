@@ -100,15 +100,15 @@
 - [x] 实现触觉反馈（selectionAsync + impactAsync）
 
 ### 核心功能实现
-- [ ] 集成expo-camera实现实时相机取景
-- [ ] 实现7维美颜参数调节（丝滑无卡顿）
-  - [ ] 磨皮（Skin Smoothing）
-  - [ ] 瘦脸（Face Slimming）
-  - [ ] 大眼（Eye Enlargement）
-  - [ ] 美白（Skin Whitening）
-  - [ ] 红润（Rosy Cheeks）
-  - [ ] 锐化（Sharpness）
-  - [ ] 亮度（Brightness）
+- [x] 集成expo-camera实现实时相机取景
+- [x] 实现7维美颜参数调节（丝滑无卡顿）
+  - [x] 肤质（Skin）
+  - [x] 光影（Light）
+  - [x] 骨相（Bone）
+  - [x] 色彩（Color）
+  - [x] 美白（Whitening）
+  - [x] 大眼（Eye）
+  - [x] 瘦脸（Face）
 - [ ] 实现Before/After对比功能（可拖动分割线）
 - [ ] 实现滤镜系统（7种滤镜）
 - [ ] 实现相册管理（网格视图、记忆预设）
