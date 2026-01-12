@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import Animated, {
   useSharedValue,
@@ -12,6 +12,8 @@ import { useEffect } from "react";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors } from "@/hooks/use-colors";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import type { ViewStyle } from "react-native";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -20,15 +22,15 @@ export default function HomeScreen() {
   const scale = useSharedValue(1);
 
   useEffect(() => {
-    // 轮盘旋转动画
+    // 轮盘旋转动画 - 20秒一圈
     rotation.value = withRepeat(
       withTiming(360, { duration: 20000, easing: Easing.linear }),
       -1
     );
-    // 脉冲动画
+    // 中心脉冲动画
     scale.value = withRepeat(
       withSequence(
-        withTiming(1.05, { duration: 1500 }),
+        withTiming(1.1, { duration: 1500 }),
         withTiming(1, { duration: 1500 })
       ),
       -1
@@ -43,236 +45,299 @@ export default function HomeScreen() {
     transform: [{ scale: scale.value }],
   }));
 
+  // 轮盘按钮配置 - 5个按钮环绕中心
+  const wheelButtons = [
+    { icon: "camera", label: "相机", route: "/camera", angle: -90 },
+    { icon: "create", label: "编辑", route: "/edit", angle: -18 },
+    { icon: "images", label: "相册", route: "/(tabs)/gallery", angle: 54 },
+    { icon: "settings", label: "设置", route: "/(tabs)/settings", angle: 126 },
+    { icon: "home", label: "主页", route: "/(tabs)/", angle: 198 },
+  ];
+
+  const getButtonPosition = (angle: number, radius: number) => {
+    const radian = (angle * Math.PI) / 180;
+    return {
+      left: radius + radius * Math.cos(radian) - 35,
+      top: radius + radius * Math.sin(radian) - 35,
+    };
+  };
+
   return (
-    <ScreenContainer>
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View className="flex-1 items-center px-6 pt-8">
+    <LinearGradient
+      colors={["#E9D5FF", "#FCA5A5"]}
+      style={{ flex: 1 } as ViewStyle}
+      start={{ x: 0.5, y: 0 }}
+      end={{ x: 0.5, y: 1 }}
+    >
+      <ScreenContainer containerClassName="bg-transparent">
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
+        >
           {/* 顶部标题 */}
-          <Text className="text-4xl font-bold text-foreground mb-8">
-            YanBao AI
-          </Text>
+          <View style={styles.header}>
+            <Text style={styles.title}>YanBao AI</Text>
+          </View>
 
           {/* 统计卡片 */}
-          <View className="w-full bg-surface/80 rounded-3xl p-6 mb-12 shadow-lg">
-            <View className="flex-row justify-around">
-              <View className="items-center">
-                <Ionicons name="camera" size={32} color={colors.primary} />
-                <Text className="text-muted text-sm mt-2">已拍摄</Text>
-                <Text className="text-foreground text-2xl font-bold">
-                  12<Text className="text-base"> 张</Text>
-                </Text>
-              </View>
-              <View className="items-center">
-                <MaterialCommunityIcons
-                  name="image-edit"
-                  size={32}
-                  color="#60A5FA"
-                />
-                <Text className="text-muted text-sm mt-2">已编辑</Text>
-                <Text className="text-foreground text-2xl font-bold">
-                  8<Text className="text-base"> 张</Text>
-                </Text>
-              </View>
-              <View className="items-center">
-                <MaterialCommunityIcons
-                  name="brain"
-                  size={32}
-                  color="#F472B6"
-                />
-                <Text className="text-muted text-sm mt-2">记忆预设</Text>
-                <Text className="text-foreground text-2xl font-bold">
-                  3<Text className="text-base"> 个</Text>
-                </Text>
-              </View>
+          <View style={styles.statsCard}>
+            <View style={styles.statItem}>
+              <Ionicons name="camera" size={32} color="#9CA3AF" />
+              <Text style={styles.statLabel}>已拍摄</Text>
+              <Text style={styles.statValue}>12 <Text style={styles.statUnit}>张</Text></Text>
+            </View>
+            <View style={styles.statItem}>
+              <Ionicons name="create" size={32} color="#9CA3AF" />
+              <Text style={styles.statLabel}>已编辑</Text>
+              <Text style={styles.statValue}>8 <Text style={styles.statUnit}>张</Text></Text>
+            </View>
+            <View style={styles.statItem}>
+              <MaterialCommunityIcons name="brain" size={32} color="#9CA3AF" />
+              <Text style={styles.statLabel}>记忆预设</Text>
+              <Text style={styles.statValue}>3 <Text style={styles.statUnit}>个</Text></Text>
             </View>
           </View>
 
-          {/* 库洛米星光轮盘导航 */}
-          <View className="items-center justify-center" style={{ height: 420 }}>
-            {/* 轮盘背景圆环 */}
-            <Animated.View
-              style={[
-                {
-                  position: "absolute",
-                  width: 320,
-                  height: 320,
-                  borderRadius: 160,
-                  borderWidth: 2,
-                  borderColor: colors.primary + "30",
-                },
-                wheelAnimatedStyle,
-              ]}
-            />
-
-            {/* 导航按钮 - 顶部：相机 */}
-            <Pressable
-              onPress={() => router.push("/camera")}
-              style={({ pressed }) => [
-                {
-                  position: "absolute",
-                  top: 0,
-                  width: 80,
-                  height: 80,
-                  borderRadius: 40,
-                  backgroundColor: "#E879F9",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  shadowColor: "#E879F9",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.4,
-                  shadowRadius: 8,
-                  elevation: 8,
-                  opacity: pressed ? 0.7 : 1,
-                },
-              ]}
-            >
-              <Ionicons name="camera" size={32} color="white" />
-              <Text className="text-white text-xs mt-1 font-medium">拍照</Text>
-            </Pressable>
-
-            {/* 导航按钮 - 右上：编辑 */}
-            <Pressable
-              onPress={() => router.push("/edit")}
-              style={({ pressed }) => [
-                {
-                  position: "absolute",
-                  top: 80,
-                  right: 40,
-                  width: 80,
-                  height: 80,
-                  borderRadius: 40,
-                  backgroundColor: "#60A5FA",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  shadowColor: "#60A5FA",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.4,
-                  shadowRadius: 8,
-                  elevation: 8,
-                  opacity: pressed ? 0.7 : 1,
-                },
-              ]}
-            >
-              <MaterialCommunityIcons
-                name="image-edit"
-                size={32}
-                color="white"
-              />
-              <Text className="text-white text-xs mt-1 font-medium">编辑</Text>
-            </Pressable>
-
-            {/* 导航按钮 - 右下：相册 */}
-            <Pressable
-              onPress={() => router.push("/(tabs)/gallery")}
-              style={({ pressed }) => [
-                {
-                  position: "absolute",
-                  bottom: 80,
-                  right: 40,
-                  width: 80,
-                  height: 80,
-                  borderRadius: 40,
-                  backgroundColor: "#34D399",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  shadowColor: "#34D399",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.4,
-                  shadowRadius: 8,
-                  elevation: 8,
-                  opacity: pressed ? 0.7 : 1,
-                },
-              ]}
-            >
-              <Ionicons name="images" size={32} color="white" />
-              <Text className="text-white text-xs mt-1 font-medium">相册</Text>
-            </Pressable>
-
-            {/* 导航按钮 - 左下：设置 */}
-            <Pressable
-              onPress={() => router.push("/(tabs)/settings")}
-              style={({ pressed }) => [
-                {
-                  position: "absolute",
-                  bottom: 80,
-                  left: 40,
-                  width: 80,
-                  height: 80,
-                  borderRadius: 40,
-                  backgroundColor: "#FBBF24",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  shadowColor: "#FBBF24",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.4,
-                  shadowRadius: 8,
-                  elevation: 8,
-                  opacity: pressed ? 0.7 : 1,
-                },
-              ]}
-            >
-              <Ionicons name="settings" size={32} color="white" />
-              <Text className="text-white text-xs mt-1 font-medium">设置</Text>
-            </Pressable>
-
-            {/* 中心按钮 - 雁宝 AI 影像 */}
-            <Animated.View style={[pulseAnimatedStyle]}>
-              <Pressable
-                onPress={() => {}}
-                style={({ pressed }) => [
-                  {
-                    width: 120,
-                    height: 120,
-                    borderRadius: 60,
-                    backgroundColor: colors.primary,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    shadowColor: colors.primary,
-                    shadowOffset: { width: 0, height: 8 },
-                    shadowOpacity: 0.5,
-                    shadowRadius: 16,
-                    elevation: 12,
-                    opacity: pressed ? 0.8 : 1,
-                  },
-                ]}
-              >
-                <Text className="text-white text-base font-bold">雁宝</Text>
-                <Text className="text-white text-xs mt-1">AI 影像</Text>
-              </Pressable>
+          {/* 库洛米轮盘导航 */}
+          <View style={styles.wheelContainer}>
+            {/* 轮盘背景 */}
+            <Animated.View style={[styles.wheel, wheelAnimatedStyle]}>
+              <View style={styles.wheelRing} />
             </Animated.View>
 
-            {/* 导航按钮 - 左上：主页 */}
-            <Pressable
-              onPress={() => {}}
-              style={({ pressed }) => [
-                {
-                  position: "absolute",
-                  top: 80,
-                  left: 40,
-                  width: 80,
-                  height: 80,
-                  borderRadius: 40,
-                  backgroundColor: "#A78BFA",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  shadowColor: "#A78BFA",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.4,
-                  shadowRadius: 8,
-                  elevation: 8,
-                  opacity: pressed ? 0.7 : 1,
-                },
-              ]}
-            >
-              <Ionicons name="home" size={32} color="white" />
-              <Text className="text-white text-xs mt-1 font-medium">主页</Text>
-            </Pressable>
+            {/* 5个环绕按钮 */}
+            {wheelButtons.map((button, index) => {
+              const position = getButtonPosition(button.angle, 120);
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={[styles.wheelButton, position]}
+                  onPress={() => router.push(button.route as any)}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.wheelButtonInner}>
+                    <Ionicons name={button.icon as any} size={28} color="#A78BFA" />
+                  </View>
+                  <Text style={styles.wheelButtonLabel}>{button.label}</Text>
+                </TouchableOpacity>
+              );
+            })}
+
+            {/* 中心库洛米角色 */}
+            <Animated.View style={[styles.centerCharacter, pulseAnimatedStyle]}>
+              <View style={styles.kuromiContainer}>
+                {/* 库洛米头部 */}
+                <View style={styles.kuromiHead}>
+                  {/* 耳朵 */}
+                  <View style={[styles.kuromiEar, { left: -10 }]} />
+                  <View style={[styles.kuromiEar, { right: -10 }]} />
+                  
+                  {/* 脸部 */}
+                  <View style={styles.kuromiFace}>
+                    {/* 眼睛 */}
+                    <View style={styles.kuromiEyes}>
+                      <View style={styles.kuromiEye} />
+                      <View style={styles.kuromiEye} />
+                    </View>
+                    {/* 鼻子 */}
+                    <View style={styles.kuromiNose} />
+                    {/* 嘴巴 */}
+                    <View style={styles.kuromiMouth} />
+                  </View>
+                  
+                  {/* 粉色蝴蝶结 */}
+                  <View style={styles.kuromiBow}>
+                    <View style={styles.bowLeft} />
+                    <View style={styles.bowRight} />
+                    <View style={styles.bowCenter} />
+                  </View>
+                </View>
+              </View>
+            </Animated.View>
           </View>
-        </View>
-      </ScrollView>
-    </ScreenContainer>
+        </ScrollView>
+      </ScreenContainer>
+    </LinearGradient>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 16,
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: "bold",
+    color: "#1F2937",
+  },
+  statsCard: {
+    marginHorizontal: 24,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 24,
+    padding: 20,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
+  },
+  statItem: {
+    alignItems: "center",
+    gap: 4,
+  },
+  statLabel: {
+    fontSize: 13,
+    color: "#6B7280",
+    marginTop: 4,
+  },
+  statValue: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#1F2937",
+  },
+  statUnit: {
+    fontSize: 16,
+    fontWeight: "normal",
+  },
+  wheelContainer: {
+    marginTop: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    height: 400,
+    position: "relative",
+  },
+  wheel: {
+    width: 300,
+    height: 300,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  wheelRing: {
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: "rgba(255, 255, 255, 0.4)",
+    borderWidth: 2,
+    borderColor: "rgba(167, 139, 250, 0.3)",
+  },
+  wheelButton: {
+    position: "absolute",
+    width: 70,
+    height: 70,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  wheelButtonInner: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#A78BFA",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  wheelButtonLabel: {
+    marginTop: 4,
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#1F2937",
+  },
+  centerCharacter: {
+    position: "absolute",
+    width: 120,
+    height: 120,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  kuromiContainer: {
+    width: 100,
+    height: 100,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  kuromiHead: {
+    width: 80,
+    height: 80,
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  kuromiEar: {
+    position: "absolute",
+    top: 0,
+    width: 20,
+    height: 30,
+    backgroundColor: "#1F2937",
+    borderRadius: 10,
+  },
+  kuromiFace: {
+    width: 60,
+    height: 60,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 3,
+    borderColor: "#1F2937",
+  },
+  kuromiEyes: {
+    flexDirection: "row",
+    gap: 16,
+    marginTop: 8,
+  },
+  kuromiEye: {
+    width: 12,
+    height: 12,
+    backgroundColor: "#1F2937",
+    borderRadius: 6,
+  },
+  kuromiNose: {
+    width: 6,
+    height: 6,
+    backgroundColor: "#F472B6",
+    borderRadius: 3,
+    marginTop: 4,
+  },
+  kuromiMouth: {
+    width: 16,
+    height: 8,
+    borderBottomWidth: 2,
+    borderBottomColor: "#1F2937",
+    borderRadius: 8,
+    marginTop: 2,
+  },
+  kuromiBow: {
+    position: "absolute",
+    top: -5,
+    right: 5,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  bowLeft: {
+    width: 12,
+    height: 12,
+    backgroundColor: "#F472B6",
+    borderRadius: 6,
+  },
+  bowCenter: {
+    width: 6,
+    height: 6,
+    backgroundColor: "#F472B6",
+    borderRadius: 3,
+    marginHorizontal: -2,
+  },
+  bowRight: {
+    width: 12,
+    height: 12,
+    backgroundColor: "#F472B6",
+    borderRadius: 6,
+  },
+});
