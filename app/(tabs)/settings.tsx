@@ -237,7 +237,7 @@ export default function SettingsScreen() {
 
         {/* 底部装饰 */}
         <View className="items-center mt-8">
-          <Text className="text-sm text-muted">Made with 💕 by Yanbao Team</Text>
+          <Text className="text-sm text-muted">Made with 💜 by Jason Tsao who loves you the most</Text>
         </View>
       </View>
     </ScrollView>
