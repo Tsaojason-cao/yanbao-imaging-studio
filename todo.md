@@ -113,3 +113,27 @@
 - [x] 配置EAS项目
 - [x] 添加projectId到app.config.ts
 - [ ] 执行生产环境构建
+
+
+## 工业级原生构建（2025-01-12 最终版）
+
+### 功能对标与补齐
+- [x] 实现7维AI塑形（自动磨皮、肤色均匀、骨相立体、3D隆鼻、大眼、瘦脸、白牙）
+- [x] 使用GPU Shaders (GLView)处理画面
+- [x] 实现60fps丝滑预览
+- [x] 禁用CPU滤镜
+- [x] 打通expo-media-library与Supabase Storage
+- [x] 实现拍照后异步上传云端
+
+### 强制原生构建
+- [x] 使用Access Token登录EAS
+- [x] 执行eas build --platform android --profile production
+- [ ] 验证APK大小在30MB-80MB之间
+- [ ] 获取expo.dev官方下载直链
+
+### 实机可用性校验
+- [x] 全屏沉浸式UI设计
+- [x] 取消顶部导航栏
+- [x] 侧滑或悬浮组件唤起功能
+- [ ] 更新index.html展示真实下载链接
+- [ ] 添加版本号v1.6.0-Native
