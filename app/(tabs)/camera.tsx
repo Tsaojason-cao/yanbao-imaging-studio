@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { KuromiShutterButton } from "@/components/kuromi-ui";
+import { SpotDiscoveryDrawer } from "@/components/spot-discovery-drawer";
+import type { ShootingSpot } from "@/lib/shooting-spots-service";
 import { ProModePanel, ProModeParams } from "@/components/pro-mode-panel";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -37,6 +39,7 @@ export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
   const [showBeautyPanel, setShowBeautyPanel] = useState(false); // 美颜面板显示状态
+  const [showSpotDrawer, setShowSpotDrawer] = useState(false); // 机位推荐抽屉显示状态
 
   // 7维美颜参数
   const [beautyParams, setBeautyParams] = useState({
@@ -243,6 +246,19 @@ export default function CameraScreen() {
           <TouchableOpacity style={styles.timerContainer} onPress={cycleTimer}>
             <Ionicons name="timer-outline" size={24} color="#FFFFFF" />
             <Text style={styles.timerText}>{timer === 0 ? "关" : `${timer}s`}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.topButton} 
+            onPress={() => {
+              if (Platform.OS !== "web") {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }
+              setShowSpotDrawer(true);
+            }}
+          >
+            <Ionicons name="location" size={28} color="#FFFFFF" />
+            <Text style={{ fontSize: 10, color: "#FFFFFF", marginTop: 2 }}>机位</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.topButton} onPress={toggleCameraFacing}>
@@ -479,6 +495,16 @@ export default function CameraScreen() {
           </TouchableOpacity>
         )}
       </CameraView>
+
+      {/* 机位推荐抽屉 */}
+      <SpotDiscoveryDrawer
+        visible={showSpotDrawer}
+        onClose={() => setShowSpotDrawer(false)}
+        onSelectSpot={(spot: ShootingSpot) => {
+          console.log("选择机位:", spot.name);
+          // TODO: 可以在这里显示机位详情或其他操作
+        }}
+      />
     </View>
   );
 }

@@ -28,6 +28,8 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SpotDiscoveryDrawer } from "@/components/spot-discovery-drawer";
+import type { ShootingSpot } from "@/lib/shooting-spots-service";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -41,6 +43,7 @@ export default function HomeScreen() {
   const activeCardIndex = useSharedValue(0); // 0: stats, 1: memory, 2: ai-lab
   const [activeCard, setActiveCard] = useState<CardType>("stats");
   const [showQuickMenu, setShowQuickMenu] = useState(false);
+  const [showSpotDrawer, setShowSpotDrawer] = useState(false);
   
   // 动画值
   const flowAnimation = useSharedValue(0);
@@ -240,6 +243,7 @@ export default function HomeScreen() {
 
   const quickMenuItems = [
     { icon: "camera", label: "相机", route: "/(tabs)/camera", color: "#A78BFA" },
+    { icon: "location", label: "机位", action: "spots", color: "#60A5FA" },
     { icon: "create", label: "编辑", route: "/(tabs)/edit", color: "#F472B6" },
     { icon: "images", label: "相册", route: "/(tabs)/gallery", color: "#34D399" },
     { icon: "settings", label: "设置", route: "/(tabs)/settings", color: "#FBBF24" },
@@ -357,7 +361,14 @@ export default function HomeScreen() {
                 <Pressable
                   key={index}
                   style={styles.quickMenuItem}
-                  onPress={() => handleQuickNav(item.route)}
+                  onPress={() => {
+                    if (item.action === "spots") {
+                      setShowSpotDrawer(true);
+                      setShowQuickMenu(false);
+                    } else {
+                      handleQuickNav(item.route);
+                    }
+                  }}
                 >
                   <View style={[styles.quickMenuIcon, { backgroundColor: `${item.color}33` }]}>
                     <Ionicons name={item.icon as any} size={28} color={item.color} />
@@ -369,6 +380,16 @@ export default function HomeScreen() {
           </BlurView>
         </Animated.View>
       )}
+
+      {/* 机位推荐抽屉 */}
+      <SpotDiscoveryDrawer
+        visible={showSpotDrawer}
+        onClose={() => setShowSpotDrawer(false)}
+        onSelectSpot={(spot: ShootingSpot) => {
+          console.log("选择机位:", spot.name);
+          // TODO: 可以导航到相机页面或显示机位详情
+        }}
+      />
     </View>
   );
 }
