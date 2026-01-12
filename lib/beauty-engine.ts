@@ -46,6 +46,26 @@ export interface SceneAnalysis {
   contrast: number;        // 对比度 (0-100)
   colorTemperature: number; // 色温 (K)
   confidence: number;      // 识别置信度 (0-1)
+  location?: {
+    city: string;          // 城市（北京/杭州）
+    latitude: number;
+    longitude: number;
+  };
+  time?: {
+    hour: number;          // 小时 (0-23)
+    isGoldenHour: boolean; // 是否黄金时刻
+  };
+}
+
+/**
+ * 开发者模式配置
+ */
+export interface DeveloperModeConfig {
+  enabled: boolean;
+  showDebugInfo: boolean;     // 显示调试信息
+  allowManualTuning: boolean; // 允许手动调节算法参数
+  logPerformance: boolean;    // 记录性能数据
+  saveOriginalImage: boolean; // 保存原图用于对比
 }
 
 /**
@@ -309,4 +329,218 @@ export function calculateFocusPeakingParams(brightness: number): {
     highlightColor: '#00FF00', // 绿色高亮（专业相机标准）
     opacity,
   };
+}
+
+
+/**
+ * 场景自适应学习系统
+ * 
+ * 根据GPS位置和时间自动识别场景并推荐参数
+ */
+export class SceneAdaptiveLearning {
+  /**
+   * 根据位置识别城市
+   */
+  static identifyCity(latitude: number, longitude: number): string | null {
+    // 北京范围: 39.4-41.6°N, 115.7-117.4°E
+    if (latitude >= 39.4 && latitude <= 41.6 && longitude >= 115.7 && longitude <= 117.4) {
+      return '北京';
+    }
+    
+    // 杭州范围: 29.2-30.6°N, 118.2-120.9°E
+    if (latitude >= 29.2 && latitude <= 30.6 && longitude >= 118.2 && longitude <= 120.9) {
+      return '杭州';
+    }
+    
+    // 上海范围: 30.7-31.5°N, 120.9-122.0°E
+    if (latitude >= 30.7 && latitude <= 31.5 && longitude >= 120.9 && longitude <= 122.0) {
+      return '上海';
+    }
+    
+    return null;
+  }
+  
+  /**
+   * 判断是否为黄金时刻
+   */
+  static isGoldenHour(hour: number, latitude: number): boolean {
+    // 简化版：日出后1小时和日落前1小时
+    // 夏季：6-7点 和 18-19点
+    // 冬季：7-8点 和 16-17点
+    const month = new Date().getMonth() + 1;
+    const isSummer = month >= 5 && month <= 9;
+    
+    if (isSummer) {
+      return (hour >= 6 && hour <= 7) || (hour >= 18 && hour <= 19);
+    } else {
+      return (hour >= 7 && hour <= 8) || (hour >= 16 && hour <= 17);
+    }
+  }
+  
+  /**
+   * 增强的场景分析（包含位置和时间）
+   */
+  static analyzeSceneWithContext(
+    brightness: number,
+    colorTemp: number,
+    latitude: number,
+    longitude: number
+  ): SceneAnalysis {
+    const baseAnalysis = analyzeScene(brightness, colorTemp);
+    const city = this.identifyCity(latitude, longitude);
+    const now = new Date();
+    const hour = now.getHours();
+    const isGoldenHour = this.isGoldenHour(hour, latitude);
+    
+    // 如果是黄金时刻，覆盖场景类型
+    if (isGoldenHour && brightness > 1000) {
+      baseAnalysis.type = SceneType.GOLDEN_HOUR;
+    }
+    
+    // 北京/杭州户外强光特殊处理
+    if (city && brightness > 10000) {
+      baseAnalysis.type = SceneType.OUTDOOR_BRIGHT;
+      baseAnalysis.confidence = 0.95;
+    }
+    
+    return {
+      ...baseAnalysis,
+      location: city ? { city, latitude, longitude } : undefined,
+      time: { hour, isGoldenHour },
+    };
+  }
+  
+  /**
+   * 城市专属参数推荐
+   */
+  static getCitySpecificParams(city: string): Partial<AdvancedBeautyParams> {
+    switch (city) {
+      case '北京':
+        // 北京：干燥气候，需要更多保湿感
+        return {
+          skin: 55,
+          texturePreservation: 75,
+          hdrIntensity: 70, // 强光环境
+          highlightSuppression: 80,
+        };
+      
+      case '杭州':
+        // 杭州：湿润气候，自然清新
+        return {
+          skin: 50,
+          texturePreservation: 80,
+          hdrIntensity: 65,
+          highlightSuppression: 70,
+        };
+      
+      case '上海':
+        // 上海：都市感，略微提高对比
+        return {
+          skin: 52,
+          texturePreservation: 70,
+          hdrIntensity: 60,
+          highlightSuppression: 75,
+        };
+      
+      default:
+        return {};
+    }
+  }
+}
+
+/**
+ * 开发者模式管理器
+ */
+export class DeveloperMode {
+  private static config: DeveloperModeConfig = {
+    enabled: false,
+    showDebugInfo: false,
+    allowManualTuning: false,
+    logPerformance: false,
+    saveOriginalImage: false,
+  };
+  
+  /**
+   * 启用开发者模式
+   */
+  static enable(config?: Partial<DeveloperModeConfig>) {
+    this.config = {
+      ...this.config,
+      enabled: true,
+      ...config,
+    };
+  }
+  
+  /**
+   * 禁用开发者模式
+   */
+  static disable() {
+    this.config.enabled = false;
+  }
+  
+  /**
+   * 获取当前配置
+   */
+  static getConfig(): DeveloperModeConfig {
+    return { ...this.config };
+  }
+  
+  /**
+   * 记录性能数据
+   */
+  static logPerformance(operation: string, duration: number, metadata?: any) {
+    if (!this.config.enabled || !this.config.logPerformance) {
+      return;
+    }
+    
+    console.log(`[Performance] ${operation}: ${duration}ms`, metadata);
+  }
+  
+  /**
+   * 显示调试信息
+   */
+  static debugInfo(label: string, data: any) {
+    if (!this.config.enabled || !this.config.showDebugInfo) {
+      return;
+    }
+    
+    console.log(`[Debug] ${label}:`, data);
+  }
+}
+
+/**
+ * A/B测试管理器
+ */
+export class ABTestManager {
+  private static variants: Map<string, any> = new Map();
+  
+  /**
+   * 注册A/B测试变体
+   */
+  static registerVariant(testName: string, variantName: string, params: any) {
+    const key = `${testName}:${variantName}`;
+    this.variants.set(key, params);
+  }
+  
+  /**
+   * 获取用户分配的变体
+   */
+  static getVariant(testName: string, userId: string): any {
+    // 简单的哈希分配算法
+    const hash = this.simpleHash(userId + testName);
+    const variantIndex = hash % 2; // 假设只有A/B两个变体
+    const variantName = variantIndex === 0 ? 'A' : 'B';
+    const key = `${testName}:${variantName}`;
+    
+    return this.variants.get(key);
+  }
+  
+  private static simpleHash(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash);
+  }
 }
