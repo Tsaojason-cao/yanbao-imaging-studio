@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Platform, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Platform, ScrollView, Dimensions } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
@@ -11,43 +11,49 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+
+const { width } = Dimensions.get("window");
 
 export default function EditScreen() {
   const router = useRouter();
-  const [showComparison, setShowComparison] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState("原图");
+  const [activeFunction, setActiveFunction] = useState<"adjust" | "filter" | "crop" | "rotate">("adjust");
   const comparePosition = useSharedValue(0.5);
 
-  // 7维美颜参数
-  const [editParams, setEditParams] = useState({
-    skin: 45,      // 肤质
-    light: 38,     // 光影
-    bone: 25,      // 骨相
-    color: 50,     // 色彩
-    whitening: 42, // 美白
-    eye: 30,       // 大眼
-    face: 28,      // 瘦脸
+  // 调整参数
+  const [adjustParams, setAdjustParams] = useState({
+    brightness: 50,
+    contrast: 50,
+    saturation: 50,
+    temperature: 50,
   });
 
   // 滤镜列表
   const filters = [
-    { name: "原图", icon: "image-outline" },
-    { name: "清新", icon: "leaf-outline" },
-    { name: "复古", icon: "time-outline" },
-    { name: "冷色", icon: "snow-outline" },
-    { name: "暖色", icon: "sunny-outline" },
-    { name: "黑白", icon: "contrast-outline" },
-    { name: "鲜艳", icon: "color-palette-outline" },
-    { name: "柔和", icon: "heart-outline" },
+    { name: "原图", color: "#FFFFFF" },
+    { name: "清新", color: "#A7F3D0" },
+    { name: "复古", color: "#FDE68A" },
+    { name: "冷色", color: "#BFDBFE" },
+    { name: "暖色", color: "#FED7AA" },
+    { name: "黑白", color: "#E5E7EB" },
+    { name: "鲜艳", color: "#FCA5A5" },
+    { name: "柔和", color: "#DDD6FE" },
   ];
 
-  // Comparison slider logic (simplified for now)
-  const handleCompareSlide = (x: number) => {
-    comparePosition.value = Math.max(0, Math.min(1, x / 300));
-  };
+  const [selectedFilter, setSelectedFilter] = useState("原图");
+
+  // Before/After对比滑动手势
+  const panGesture = Gesture.Pan()
+    .onUpdate((event) => {
+      comparePosition.value = Math.max(0, Math.min(1, event.x / width));
+    });
 
   const sliderStyle = useAnimatedStyle(() => ({
-    left: `${comparePosition.value * 100}%`,
+    left: comparePosition.value * width,
+  }));
+
+  const beforeStyle = useAnimatedStyle(() => ({
+    width: comparePosition.value * width,
   }));
 
   const handleSave = () => {
@@ -57,9 +63,89 @@ export default function EditScreen() {
     alert("照片已保存");
   };
 
+  const renderFunctionContent = () => {
+    switch (activeFunction) {
+      case "adjust":
+        return (
+          <View style={styles.adjustPanel}>
+            <Text style={styles.panelTitle}>调整</Text>
+            {[
+              { key: "brightness", label: "亮度", value: adjustParams.brightness },
+              { key: "contrast", label: "对比度", value: adjustParams.contrast },
+              { key: "saturation", label: "饱和度", value: adjustParams.saturation },
+              { key: "temperature", label: "色温", value: adjustParams.temperature },
+            ].map((param) => (
+              <View key={param.key} style={styles.sliderRow}>
+                <View style={styles.skullLeft}>
+                  <View style={styles.skull} />
+                </View>
+                <View style={styles.sliderContainer}>
+                  <Text style={styles.sliderLabel}>{param.label}</Text>
+                  <View style={styles.sliderTrack}>
+                    <View
+                      style={[
+                        styles.sliderFill,
+                        { width: `${param.value}%` },
+                      ]}
+                    />
+                  </View>
+                </View>
+                <View style={styles.skullRight}>
+                  <View style={styles.skull} />
+                </View>
+                <Text style={styles.sliderValue}>{param.value}</Text>
+              </View>
+            ))}
+          </View>
+        );
+      case "filter":
+        return (
+          <View style={styles.filterPanel}>
+            <Text style={styles.panelTitle}>滤镜</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.filterGrid}>
+                {filters.map((filter, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.filterItem,
+                      selectedFilter === filter.name && styles.filterItemActive,
+                    ]}
+                    onPress={() => {
+                      if (Platform.OS !== "web") {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      }
+                      setSelectedFilter(filter.name);
+                    }}
+                  >
+                    <View style={[styles.filterPreview, { backgroundColor: filter.color }]} />
+                    <Text style={styles.filterName}>{filter.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+        );
+      case "crop":
+        return (
+          <View style={styles.adjustPanel}>
+            <Text style={styles.panelTitle}>裁剪</Text>
+            <Text style={styles.placeholderText}>裁剪功能开发中...</Text>
+          </View>
+        );
+      case "rotate":
+        return (
+          <View style={styles.adjustPanel}>
+            <Text style={styles.panelTitle}>旋转</Text>
+            <Text style={styles.placeholderText}>旋转功能开发中...</Text>
+          </View>
+        );
+    }
+  };
+
   return (
     <LinearGradient
-      colors={["#E9D5FF" as const, "#FBE7F3" as const, "#FCE7F3" as const]}
+      colors={["#1a0a2e" as const, "#2d1b4e" as const]}
       style={{ flex: 1 }}
     >
       <ScreenContainer containerClassName="bg-transparent">
@@ -73,7 +159,7 @@ export default function EditScreen() {
               style={styles.backButton}
               onPress={() => router.back()}
             >
-              <Ionicons name="arrow-back" size={24} color="#1F2937" />
+              <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>照片编辑</Text>
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
@@ -81,138 +167,97 @@ export default function EditScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* 图片预览区 */}
-          <View style={styles.previewSection}>
-            <View style={styles.previewContainer}>
-              <BlurView intensity={20} style={styles.previewBlur}>
-                <View style={styles.previewImage}>
-                  <Ionicons name="image" size={80} color="#9CA3AF" />
-                  <Text style={styles.previewText}>选择照片开始编辑</Text>
-                </View>
-              </BlurView>
-
-              {/* Before/After对比按钮 */}
-              <TouchableOpacity
-                style={styles.compareButton}
-                onPress={() => {
-                  if (Platform.OS !== "web") {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  }
-                  setShowComparison(!showComparison);
-                }}
-              >
-                <MaterialCommunityIcons
-                  name="compare"
-                  size={24}
-                  color="#FFFFFF"
-                />
-                <Text style={styles.compareText}>对比</Text>
-              </TouchableOpacity>
-
-              {/* 库洛米装饰 */}
-              <View style={styles.previewKuromi}>
-                <View style={styles.kuromiHead}>
-                  <View style={[styles.kuromiEar, styles.kuromiEarLeft]} />
-                  <View style={[styles.kuromiEar, styles.kuromiEarRight]} />
-                  <View style={styles.kuromiFace}>
-                    <View style={styles.kuromiEyes}>
-                      <View style={styles.kuromiEye} />
-                      <View style={styles.kuromiEye} />
+          {/* Before/After对比区域 */}
+          <View style={styles.comparisonSection}>
+            <GestureDetector gesture={panGesture}>
+              <Animated.View style={styles.comparisonContainer}>
+                {/* After图片 */}
+                <View style={styles.afterImage}>
+                  <BlurView intensity={20} style={styles.imageBlur}>
+                    <View style={styles.imagePlaceholder}>
+                      <Ionicons name="image" size={80} color="rgba(255, 255, 255, 0.3)" />
+                      <Text style={styles.imageText}>After</Text>
                     </View>
+                  </BlurView>
+                </View>
+
+                {/* Before图片（遮罩） */}
+                <Animated.View style={[styles.beforeImage, beforeStyle]}>
+                  <BlurView intensity={20} style={styles.imageBlur}>
+                    <View style={styles.imagePlaceholder}>
+                      <Ionicons name="image-outline" size={80} color="rgba(255, 255, 255, 0.3)" />
+                      <Text style={styles.imageText}>Before</Text>
+                    </View>
+                  </BlurView>
+                </Animated.View>
+
+                {/* 分割线 */}
+                <Animated.View style={[styles.divider, sliderStyle]}>
+                  <View style={styles.dividerHandle}>
+                    <Ionicons name="swap-horizontal" size={24} color="#FFFFFF" />
                   </View>
-                  <View style={styles.kuromiBow} />
-                </View>
-              </View>
-            </View>
+                </Animated.View>
+              </Animated.View>
+            </GestureDetector>
           </View>
 
-          {/* 7维美颜滑块 */}
-          <View style={styles.adjustSection}>
-            <Text style={styles.sectionTitle}>美颜调节</Text>
-            <View style={styles.adjustCard}>
-              <BlurView intensity={30} style={styles.adjustBlur}>
-                <LinearGradient
-                  colors={["rgba(168, 85, 247, 0.15)" as const, "rgba(236, 72, 153, 0.15)" as const]}
-                  style={styles.adjustGradient}
-                >
+          {/* 功能按钮一排 */}
+          <View style={styles.functionBar}>
+            <BlurView intensity={40} style={styles.functionBlur}>
+              <LinearGradient
+                colors={["rgba(168, 85, 247, 0.3)" as const, "rgba(236, 72, 153, 0.3)" as const]}
+                style={styles.functionGradient}
+              >
+                <View style={styles.functionButtons}>
                   {[
-                    { key: "skin", label: "肤质", value: editParams.skin },
-                    { key: "light", label: "光影", value: editParams.light },
-                    { key: "bone", label: "骨相", value: editParams.bone },
-                    { key: "color", label: "色彩", value: editParams.color },
-                    { key: "whitening", label: "美白", value: editParams.whitening },
-                    { key: "eye", label: "大眼", value: editParams.eye },
-                    { key: "face", label: "瘦脸", value: editParams.face },
-                  ].map((param) => (
-                    <View key={param.key} style={styles.sliderRow}>
-                      <Text style={styles.sliderLabel}>{param.label}</Text>
-                      <View style={styles.sliderTrack}>
-                        <View
-                          style={[
-                            styles.sliderFill,
-                            { width: `${param.value}%` },
-                          ]}
-                        />
-                        <View
-                          style={[
-                            styles.sliderThumb,
-                            { left: `${param.value}%` },
-                          ]}
-                        />
-                      </View>
-                      <Text style={styles.sliderValue}>{param.value}</Text>
-                    </View>
-                  ))}
-                </LinearGradient>
-              </BlurView>
-            </View>
-          </View>
-
-          {/* 滤镜网格 */}
-          <View style={styles.filterSection}>
-            <Text style={styles.sectionTitle}>滤镜选择</Text>
-            <View style={styles.filterGrid}>
-              {filters.map((filter, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.filterItem,
-                    selectedFilter === filter.name && styles.filterItemActive,
-                  ]}
-                  onPress={() => {
-                    if (Platform.OS !== "web") {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    }
-                    setSelectedFilter(filter.name);
-                  }}
-                >
-                  <BlurView intensity={20} style={styles.filterBlur}>
-                    <LinearGradient
-                      colors={
-                        selectedFilter === filter.name
-                          ? ["#A78BFA" as const, "#EC4899" as const]
-                          : ["rgba(255, 255, 255, 0.8)" as const, "rgba(255, 255, 255, 0.6)" as const]
-                      }
-                      style={styles.filterGradient}
+                    { key: "adjust", icon: "options-outline", label: "调整" },
+                    { key: "filter", icon: "color-filter-outline", label: "滤镜" },
+                    { key: "crop", icon: "crop-outline", label: "裁剪" },
+                    { key: "rotate", icon: "sync-outline", label: "旋转" },
+                  ].map((func) => (
+                    <TouchableOpacity
+                      key={func.key}
+                      style={[
+                        styles.functionButton,
+                        activeFunction === func.key && styles.functionButtonActive,
+                      ]}
+                      onPress={() => {
+                        if (Platform.OS !== "web") {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        }
+                        setActiveFunction(func.key as any);
+                      }}
                     >
                       <Ionicons
-                        name={filter.icon as any}
-                        size={32}
-                        color={selectedFilter === filter.name ? "#FFFFFF" : "#6B7280"}
+                        name={func.icon as any}
+                        size={28}
+                        color={activeFunction === func.key ? "#F472B6" : "#FFFFFF"}
                       />
                       <Text
                         style={[
-                          styles.filterName,
-                          selectedFilter === filter.name && styles.filterNameActive,
+                          styles.functionLabel,
+                          activeFunction === func.key && styles.functionLabelActive,
                         ]}
                       >
-                        {filter.name}
+                        {func.label}
                       </Text>
-                    </LinearGradient>
-                  </BlurView>
-                </TouchableOpacity>
-              ))}
-            </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </LinearGradient>
+            </BlurView>
+          </View>
+
+          {/* 功能内容面板 */}
+          <View style={styles.contentPanel}>
+            <BlurView intensity={40} style={styles.contentBlur}>
+              <LinearGradient
+                colors={["rgba(168, 85, 247, 0.3)" as const, "rgba(236, 72, 153, 0.3)" as const]}
+                style={styles.contentGradient}
+              >
+                {renderFunctionContent()}
+              </LinearGradient>
+            </BlurView>
           </View>
         </ScrollView>
       </ScreenContainer>
@@ -223,249 +268,231 @@ export default function EditScreen() {
 const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 16,
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
   },
   backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: "800",
-    color: "#1F2937",
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
   saveButton: {
     paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: "#8B5CF6",
-    borderRadius: 22,
-    shadowColor: "#8B5CF6",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: "#F472B6",
   },
   saveText: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "600",
     color: "#FFFFFF",
   },
-  previewSection: {
-    paddingHorizontal: 24,
-    marginBottom: 24,
-  },
-  previewContainer: {
-    aspectRatio: 3 / 4,
+  comparisonSection: {
+    marginHorizontal: 20,
+    marginTop: 20,
+    height: 400,
     borderRadius: 24,
     overflow: "hidden",
-    borderWidth: 2,
-    borderColor: "rgba(168, 85, 247, 0.3)",
+  },
+  comparisonContainer: {
+    flex: 1,
     position: "relative",
   },
-  previewBlur: {
-    flex: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
+  afterImage: {
+    ...StyleSheet.absoluteFillObject,
   },
-  previewImage: {
+  beforeImage: {
+    ...StyleSheet.absoluteFillObject,
+    overflow: "hidden",
+  },
+  imageBlur: {
+    flex: 1,
+  },
+  imagePlaceholder: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    gap: 12,
+  },
+  imageText: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "rgba(255, 255, 255, 0.6)",
+  },
+  divider: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    width: 4,
+    backgroundColor: "#F472B6",
+    shadowColor: "#F472B6",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  dividerHandle: {
+    position: "absolute",
+    top: "50%",
+    left: -20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#F472B6",
+    alignItems: "center",
+    justifyContent: "center",
+    transform: [{ translateY: -22 }],
+    shadowColor: "#F472B6",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+  functionBar: {
+    marginHorizontal: 20,
+    marginTop: 24,
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  functionBlur: {
+    overflow: "hidden",
+  },
+  functionGradient: {
+    padding: 16,
+  },
+  functionButtons: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  functionButton: {
+    alignItems: "center",
+    gap: 8,
+    padding: 12,
+    borderRadius: 16,
+  },
+  functionButtonActive: {
+    backgroundColor: "rgba(244, 114, 182, 0.2)",
+  },
+  functionLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "rgba(255, 255, 255, 0.7)",
+  },
+  functionLabelActive: {
+    color: "#F472B6",
+  },
+  contentPanel: {
+    marginHorizontal: 20,
+    marginTop: 16,
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  contentBlur: {
+    overflow: "hidden",
+  },
+  contentGradient: {
+    padding: 20,
+  },
+  adjustPanel: {
     gap: 16,
   },
-  previewText: {
-    fontSize: 16,
-    color: "#6B7280",
-    fontWeight: "600",
-  },
-  compareButton: {
-    position: "absolute",
-    top: 16,
-    right: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "rgba(139, 92, 246, 0.9)",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-  },
-  compareText: {
-    fontSize: 14,
+  panelTitle: {
+    fontSize: 18,
     fontWeight: "700",
     color: "#FFFFFF",
-  },
-  previewKuromi: {
-    position: "absolute",
-    bottom: 16,
-    right: 16,
-    width: 60,
-    height: 60,
-  },
-  adjustSection: {
-    paddingHorizontal: 24,
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "800",
-    color: "#1F2937",
-    marginBottom: 12,
-  },
-  adjustCard: {
-    borderRadius: 24,
-    overflow: "hidden",
-    borderWidth: 2,
-    borderColor: "rgba(168, 85, 247, 0.3)",
-  },
-  adjustBlur: {
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
-  },
-  adjustGradient: {
-    padding: 20,
+    marginBottom: 8,
   },
   sliderRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    marginBottom: 16,
+  },
+  skullLeft: {
+    width: 24,
+    height: 24,
+  },
+  skullRight: {
+    width: 24,
+    height: 24,
+  },
+  skull: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#A78BFA",
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
+  },
+  sliderContainer: {
+    flex: 1,
+    gap: 4,
   },
   sliderLabel: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "600",
-    color: "#1F2937",
-    width: 50,
+    color: "#FFFFFF",
   },
   sliderTrack: {
-    flex: 1,
-    height: 8,
-    backgroundColor: "rgba(209, 213, 219, 0.8)",
-    borderRadius: 4,
-    position: "relative",
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    overflow: "hidden",
   },
   sliderFill: {
     height: "100%",
-    backgroundColor: "#EC4899",
-    borderRadius: 4,
-  },
-  sliderThumb: {
-    position: "absolute",
-    top: -4,
-    width: 16,
-    height: 16,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    borderWidth: 3,
-    borderColor: "#EC4899",
-    marginLeft: -8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    backgroundColor: "#F472B6",
+    borderRadius: 3,
   },
   sliderValue: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#1F2937",
-    width: 36,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    width: 40,
     textAlign: "right",
   },
-  filterSection: {
-    paddingHorizontal: 24,
-    marginBottom: 24,
+  filterPanel: {
+    gap: 16,
   },
   filterGrid: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
+    gap: 16,
   },
   filterItem: {
-    width: "23%",
-    aspectRatio: 1,
-    borderRadius: 16,
-    overflow: "hidden",
+    alignItems: "center",
+    gap: 8,
+    padding: 8,
+    borderRadius: 12,
   },
   filterItemActive: {
-    borderWidth: 3,
-    borderColor: "#8B5CF6",
+    backgroundColor: "rgba(244, 114, 182, 0.2)",
   },
-  filterBlur: {
-    flex: 1,
-  },
-  filterGradient: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
+  filterPreview: {
+    width: 80,
+    height: 80,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.3)",
   },
   filterName: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#6B7280",
-  },
-  filterNameActive: {
     color: "#FFFFFF",
   },
-  kuromiHead: {
-    width: 50,
-    height: 50,
-    position: "relative",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  kuromiEar: {
-    position: "absolute",
-    top: -2,
-    width: 12,
-    height: 18,
-    backgroundColor: "#2D3748",
-    borderRadius: 6,
-  },
-  kuromiEarLeft: {
-    left: 8,
-  },
-  kuromiEarRight: {
-    right: 8,
-  },
-  kuromiFace: {
-    width: 38,
-    height: 38,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 19,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  kuromiEyes: {
-    flexDirection: "row",
-    gap: 10,
-    marginTop: 5,
-  },
-  kuromiEye: {
-    width: 7,
-    height: 10,
-    backgroundColor: "#1F2937",
-    borderRadius: 3.5,
-  },
-  kuromiBow: {
-    position: "absolute",
-    top: -5,
-    right: -3,
-    width: 20,
-    height: 10,
-    backgroundColor: "#F472B6",
-    borderRadius: 5,
+  placeholderText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "rgba(255, 255, 255, 0.5)",
+    textAlign: "center",
+    marginTop: 20,
   },
 });
