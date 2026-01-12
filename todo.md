@@ -209,3 +209,32 @@
 - [ ] 实机测试：验证照片真实保存
 - [ ] 更新官网展示真实下载链接
 - [ ] 版本标记v1.6.0-Native
+
+
+## v2.0 核心架构升级（2025-01-12 Gold版）
+
+### 1. 地区机位推荐模块 (Local Spot Discovery)
+- [x] 创建Supabase shooting_spots数据库表
+- [x] 定义机位数据结构（经纬度、滤镜ID、样张URL、文案）
+- [x] 集成expo-location实现高精度定位
+- [x] 实现“灵感机位”悬浮球UI
+- [x] 实现毛玻璃抽屉展示附近机位
+- [x] 点击机位自动加载对应滤镜
+- [x] 使用AsyncStorage缓存周边5km机位
+- [x] 离线模式支持
+
+### 2. 性能加固 (超越美图/像素蛋糕)
+- [x] 相册模块改用FlashList虚拟滚动
+- [x] 确保数千张4K照片60fps滑动
+- [x] 确认ProGuard混淆已开启
+- [x] 优化expo-background-fetch异步备份
+- [x] 实现照片分片上传
+- [x] 后台静默上传不卡顿
+
+### 3. 工业化封板
+- [x] 添加ACCESS_FINE_LOCATION权限
+- [x] 配置Supabase CDN加载样张
+- [x] 更新版本号为v2.0.0
+- [ ] 执行EAS Build（目栵30MB-80MB）
+- [ ] 更新官网index.html下载直链
+- [ ] 同步GitHub

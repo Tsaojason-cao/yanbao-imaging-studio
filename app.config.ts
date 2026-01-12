@@ -25,7 +25,7 @@ const env = {
 const config: ExpoConfig = {
   name: env.appName,
   slug: env.appSlug,
-  version: "1.0.0",
+  version: "2.0.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: env.scheme,
@@ -61,7 +61,9 @@ const config: ExpoConfig = {
       "VIBRATE",
       "INTERNET",
       "ACCESS_NETWORK_STATE",
-      "POST_NOTIFICATIONS"
+      "POST_NOTIFICATIONS",
+      "ACCESS_FINE_LOCATION",
+      "ACCESS_COARSE_LOCATION"
     ],
     intentFilters: [
       {
@@ -98,6 +100,14 @@ const config: ExpoConfig = {
         photosPermission: "允许 $(PRODUCT_NAME) 访问相册以保存和读取照片。",
         savePhotosPermission: "允许 $(PRODUCT_NAME) 保存照片到相册。",
         isAccessMediaLocationEnabled: true
+      }
+    ],
+    [
+      "expo-location",
+      {
+        locationAlwaysAndWhenInUsePermission: "允许 $(PRODUCT_NAME) 访问位置以推荐附近的拍摄机位。",
+        locationAlwaysPermission: "允许 $(PRODUCT_NAME) 访问位置以推荐附近的拍摄机位。",
+        locationWhenInUsePermission: "允许 $(PRODUCT_NAME) 访问位置以推荐附近的拍摄机位。"
       }
     ],
     [

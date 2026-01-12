@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Pressable, ScrollView, Platform, Image, FlatList, Dimensions, RefreshControl, ActivityIndicator } from "react-native";
+import { View, Text, Pressable, ScrollView, Platform, Image, Dimensions, RefreshControl, ActivityIndicator } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { ScreenContainer } from "@/components/screen-container";
