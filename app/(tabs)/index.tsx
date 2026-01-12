@@ -1,7 +1,15 @@
 import { View, Text, Pressable, StyleSheet, Dimensions, Platform, ScrollView } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
-import { Canvas, LinearGradient as SkiaLinearGradient, Rect, vec, Blur, Paint } from "@shopify/react-native-skia";
+// Skia仅在原生平台可用
+let Canvas: any, SkiaLinearGradient: any, Rect: any, vec: any;
+if (Platform.OS !== "web") {
+  const Skia = require("@shopify/react-native-skia");
+  Canvas = Skia.Canvas;
+  SkiaLinearGradient = Skia.LinearGradient;
+  Rect = Skia.Rect;
+  vec = Skia.vec;
+}
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import Animated, {
@@ -30,6 +38,7 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   
   // 卡片状态
+  const activeCardIndex = useSharedValue(0); // 0: stats, 1: memory, 2: ai-lab
   const [activeCard, setActiveCard] = useState<CardType>("stats");
   const [showQuickMenu, setShowQuickMenu] = useState(false);
   
@@ -77,30 +86,25 @@ export default function HomeScreen() {
     .onEnd((event) => {
       if (event.translationY < -100) {
         // 向上滑动
-        runOnJS(switchCard)("next");
+        const cards: CardType[] = ["stats", "memory", "ai-lab"];
+        const nextIndex = (activeCardIndex.value + 1) % cards.length;
+        activeCardIndex.value = nextIndex;
+        runOnJS(setActiveCard)(cards[nextIndex]);
+        if (Platform.OS !== "web") {
+          runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
+        }
       } else if (event.translationY > 100) {
         // 向下滑动
-        runOnJS(switchCard)("prev");
+        const cards: CardType[] = ["stats", "memory", "ai-lab"];
+        const prevIndex = (activeCardIndex.value - 1 + cards.length) % cards.length;
+        activeCardIndex.value = prevIndex;
+        runOnJS(setActiveCard)(cards[prevIndex]);
+        if (Platform.OS !== "web") {
+          runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
+        }
       }
       cardTranslateY.value = withSpring(0);
     });
-
-  const switchCard = (direction: "next" | "prev") => {
-    const cards: CardType[] = ["stats", "memory", "ai-lab"];
-    const currentIndex = cards.indexOf(activeCard);
-    
-    if (direction === "next") {
-      const nextIndex = (currentIndex + 1) % cards.length;
-      setActiveCard(cards[nextIndex]);
-    } else {
-      const prevIndex = (currentIndex - 1 + cards.length) % cards.length;
-      setActiveCard(cards[prevIndex]);
-    }
-
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-  };
 
   // 库洛米助手点击
   const handleKuromiPress = () => {
@@ -270,15 +274,24 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       {/* 深色金属感流光背景 */}
-      <Canvas style={StyleSheet.absoluteFill}>
-        <Rect x={0} y={0} width={SCREEN_WIDTH} height={SCREEN_HEIGHT}>
-          <SkiaLinearGradient
-            start={vec(0, 0)}
-            end={vec(SCREEN_WIDTH, SCREEN_HEIGHT)}
-            colors={["#1a0a2e", "#2d1b4e", "#1a0a2e"]}
-          />
-        </Rect>
-      </Canvas>
+      {Platform.OS !== "web" && Canvas ? (
+        <Canvas style={StyleSheet.absoluteFill}>
+          <Rect x={0} y={0} width={SCREEN_WIDTH} height={SCREEN_HEIGHT}>
+            <SkiaLinearGradient
+              start={vec(0, 0)}
+              end={vec(SCREEN_WIDTH, SCREEN_HEIGHT)}
+              colors={["#1a0a2e", "#2d1b4e", "#1a0a2e"]}
+            />
+          </Rect>
+        </Canvas>
+      ) : (
+        <LinearGradient
+          colors={["#1a0a2e", "#2d1b4e", "#1a0a2e"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
+      )}
 
       {/* 流光效果层 */}
       <Animated.View style={[StyleSheet.absoluteFill, { opacity: 0.3 }]}>
