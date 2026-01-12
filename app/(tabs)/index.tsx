@@ -365,7 +365,7 @@ export default function HomeScreen() {
                     if (item.action === "spots") {
                       setShowSpotDrawer(true);
                       setShowQuickMenu(false);
-                    } else {
+                    } else if (item.route) {
                       handleQuickNav(item.route);
                     }
                   }}

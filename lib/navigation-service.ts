@@ -106,7 +106,7 @@ async function tryOpenNavigation(schemes: MapScheme[]): Promise<void> {
           });
         }
       },
-    })).concat([{ text: "取消", style: "cancel" }])
+    })).concat([{ text: "取消", onPress: () => {} }])
   );
 }
 
