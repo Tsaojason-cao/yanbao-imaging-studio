@@ -130,9 +130,11 @@ const config: ExpoConfig = {
       {
         android: {
           buildArchs: ["armeabi-v7a", "arm64-v8a"],
+          enableProguardInReleaseBuilds: true,
+          enableShrinkResourcesInReleaseBuilds: true,
         },
       },
-    ],
+    ]
   ],
   experiments: {
     typedRoutes: true,
