@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet, Platform, Pressable } from "react-native";
+import { View, Text, StyleSheet, Platform, Pressable, Switch } from "react-native";
+import Slider from "@react-native-community/slider";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
@@ -86,14 +87,17 @@ export function ProModePanel({
             </View>
             <View style={styles.sliderRow}>
               <KuromiSkullDecor size={20} />
-              <View style={styles.sliderTrack}>
-                <View
-                  style={[
-                    styles.sliderFill,
-                    { width: `${((params.iso - 100) / (3200 - 100)) * 100}%` },
-                  ]}
-                />
-              </View>
+              <Slider
+                style={styles.slider}
+                minimumValue={100}
+                maximumValue={3200}
+                step={100}
+                value={params.iso}
+                onValueChange={handleISOChange}
+                minimumTrackTintColor="#A78BFA"
+                maximumTrackTintColor="rgba(255, 255, 255, 0.2)"
+                thumbTintColor="#FFFFFF"
+              />
               <KuromiSkullDecor size={20} />
             </View>
             <View style={styles.rangeLabels}>
@@ -114,14 +118,16 @@ export function ProModePanel({
             </View>
             <View style={styles.sliderRow}>
               <KuromiSkullDecor size={20} />
-              <View style={styles.sliderTrack}>
-                <View
-                  style={[
-                    styles.sliderFill,
-                    { width: `${((params.shutterSpeed - 1/8000) / (30 - 1/8000)) * 100}%` },
-                  ]}
-                />
-              </View>
+              <Slider
+                style={styles.slider}
+                minimumValue={1/8000}
+                maximumValue={30}
+                value={params.shutterSpeed}
+                onValueChange={handleShutterSpeedChange}
+                minimumTrackTintColor="#A78BFA"
+                maximumTrackTintColor="rgba(255, 255, 255, 0.2)"
+                thumbTintColor="#FFFFFF"
+              />
               <KuromiSkullDecor size={20} />
             </View>
             <View style={styles.rangeLabels}>
@@ -142,14 +148,17 @@ export function ProModePanel({
             </View>
             <View style={styles.sliderRow}>
               <KuromiSkullDecor size={20} />
-              <View style={styles.sliderTrack}>
-                <View
-                  style={[
-                    styles.sliderFill,
-                    { width: `${((params.whiteBalance - 2000) / (10000 - 2000)) * 100}%` },
-                  ]}
-                />
-              </View>
+              <Slider
+                style={styles.slider}
+                minimumValue={2000}
+                maximumValue={10000}
+                step={100}
+                value={params.whiteBalance}
+                onValueChange={handleWhiteBalanceChange}
+                minimumTrackTintColor="#A78BFA"
+                maximumTrackTintColor="rgba(255, 255, 255, 0.2)"
+                thumbTintColor="#FFFFFF"
+              />
               <KuromiSkullDecor size={20} />
             </View>
             <View style={styles.rangeLabels}>
@@ -454,6 +463,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
     paddingHorizontal: 4,
+  },
+  slider: {
+    flex: 1,
+    height: 40,
   },
   sliderTrack: {
     flex: 1,

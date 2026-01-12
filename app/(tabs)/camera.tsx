@@ -1,6 +1,6 @@
-import { View, Text, TouchableOpacity, StyleSheet, Platform, Alert, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Platform, Alert, ScrollView, Image } from "react-native";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { KuromiShutterButton } from "@/components/kuromi-ui";
@@ -23,6 +23,8 @@ export default function CameraScreen() {
   const [flash, setFlash] = useState<"off" | "on" | "auto">("off");
   const [timer, setTimer] = useState<0 | 3 | 10>(0);
   const [countdown, setCountdown] = useState<number | null>(null);
+  const [flashAnimation, setFlashAnimation] = useState(false);
+  const [lastPhoto, setLastPhoto] = useState<string | null>(null);
   const [showLUT, setShowLUT] = useState(false);
   const [selectedLUT, setSelectedLUT] = useState("原图");
   const [showProMode, setShowProMode] = useState(false);
@@ -47,6 +49,23 @@ export default function CameraScreen() {
   });
 
   const buttonScale = useSharedValue(1);
+
+  // 定时拍照倒计时逻辑
+  useEffect(() => {
+    if (countdown !== null && countdown > 0) {
+      const timerId = setTimeout(() => {
+        setCountdown(countdown - 1);
+        if (Platform.OS !== "web") {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
+      }, 1000);
+      return () => clearTimeout(timerId);
+    } else if (countdown === 0) {
+      // 倒计时结束，自动拍照
+      takePicture();
+      setCountdown(null);
+    }
+  }, [countdown]);
 
   const buttonAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: buttonScale.value }],
@@ -107,10 +126,23 @@ export default function CameraScreen() {
   const takePicture = async () => {
     if (!cameraRef.current) return;
     
+    // 显示闪白动画
+    setFlashAnimation(true);
+    setTimeout(() => setFlashAnimation(false), 200);
+    
     try {
-      const photo = await cameraRef.current.takePictureAsync();
+      const photo = await cameraRef.current.takePictureAsync({
+        quality: 1,
+        base64: false,
+        exif: true,
+      });
+      
       if (photo && mediaPermission?.granted) {
         await MediaLibrary.saveToLibraryAsync(photo.uri);
+        
+        // 保存缩略图
+        setLastPhoto(photo.uri);
+        
         if (Platform.OS !== "web") {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
@@ -118,8 +150,38 @@ export default function CameraScreen() {
       }
     } catch (error) {
       console.error("Failed to take picture:", error);
-      alert("拍照失败，请重试");
+      if (Platform.OS !== "web") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
+      Alert.alert("拍照失败", "请稍后重试");
     }
+  };
+
+  const handleShutterPress = () => {
+    if (countdown !== null) {
+      // 取消倒计时
+      setCountdown(null);
+      return;
+    }
+
+    if (timer > 0) {
+      // 开始倒计时
+      setCountdown(timer);
+    } else {
+      // 立即拍照
+      takePicture();
+    }
+  };
+
+  const cycleTimer = () => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    setTimer((current) => {
+      if (current === 0) return 3;
+      if (current === 3) return 10;
+      return 0;
+    });
   };
 
   const takePictureOld = async () => {
@@ -173,10 +235,10 @@ export default function CameraScreen() {
             )}
           </TouchableOpacity>
 
-          <View style={styles.timerContainer}>
+          <TouchableOpacity style={styles.timerContainer} onPress={cycleTimer}>
             <Ionicons name="timer-outline" size={24} color="#FFFFFF" />
-            <Text style={styles.timerText}>{timer}s</Text>
-          </View>
+            <Text style={styles.timerText}>{timer === 0 ? "关" : `${timer}s`}</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity style={styles.topButton} onPress={toggleCameraFacing}>
             <Ionicons name="camera-reverse" size={28} color="#FFFFFF" />
@@ -328,7 +390,7 @@ export default function CameraScreen() {
             </TouchableOpacity>
 
             {/* 拍照按钮 - 库洛米快门 */}
-            <KuromiShutterButton onPress={takePicture} size={80} />
+            <KuromiShutterButton onPress={handleShutterPress} size={80} />
 
             {/* 专业模式按钮 */}
             <TouchableOpacity
@@ -356,6 +418,34 @@ export default function CameraScreen() {
             onParamsChange={setProModeParams}
           />
         </View>
+
+        {/* 倒计时显示 */}
+        {countdown !== null && countdown > 0 && (
+          <View style={styles.countdownOverlay}>
+            <Text style={styles.countdownText}>{countdown}</Text>
+          </View>
+        )}
+
+        {/* 闪白动画 */}
+        {flashAnimation && (
+          <View style={styles.flashOverlay} />
+        )}
+
+        {/* 缩略图预览 */}
+        {lastPhoto && (
+          <TouchableOpacity
+            style={styles.thumbnailContainer}
+            onPress={() => {
+              // TODO: 打开相册详情
+              console.log("打开照片:", lastPhoto);
+            }}
+          >
+            <Image
+              source={{ uri: lastPhoto }}
+              style={styles.thumbnail}
+            />
+          </TouchableOpacity>
+        )}
       </CameraView>
     </View>
   );
@@ -697,5 +787,46 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(167, 139, 250, 0.8)",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
+  },
+  countdownOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  countdownText: {
+    fontSize: 120,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    textShadowColor: "rgba(236, 72, 153, 0.8)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 20,
+  },
+  flashOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "#FFFFFF",
+  },
+  thumbnailContainer: {
+    position: "absolute",
+    bottom: 120,
+    left: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 12,
+    overflow: "hidden",
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
+  },
+  thumbnail: {
+    width: "100%",
+    height: "100%",
   },
 });
