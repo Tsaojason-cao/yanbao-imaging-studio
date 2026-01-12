@@ -12,7 +12,7 @@ const schemeFromBundleId = `manus${timestamp}`;
 
 const env = {
   // App branding - update these values directly (do not use env vars)
-  appName: "Yanbao EAS Build with Supabase",
+  appName: "雁宝 AI 私人影像工作室",
   appSlug: "yanbao-eas-build",
   // S3 URL of the app logo - set this to the URL returned by generate_image when creating custom logo
   // Leave empty to use the default icon from assets/images/icon.png

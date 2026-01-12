@@ -8,6 +8,9 @@ export const themeColors: {
   success: { light: string; dark: string };
   warning: { light: string; dark: string };
   error: { light: string; dark: string };
+  accent: { light: string; dark: string };
+  gradient1: { light: string; dark: string };
+  gradient2: { light: string; dark: string };
 };
 
 declare const themeConfig: {

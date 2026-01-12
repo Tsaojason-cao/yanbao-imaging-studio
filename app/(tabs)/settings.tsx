@@ -7,13 +7,13 @@ import { useColors } from "@/hooks/use-colors";
 import Constants from "expo-constants";
 
 /**
- * Settings Screen - Configuration and Environment Info
+ * Settings Screen - 设置和配置信息
  * 
- * Displays:
- * - Supabase configuration
- * - Expo project configuration
- * - GitHub repository information
- * - Environment status
+ * 采用圆润卡片设计风格，展示：
+ * - Supabase 配置状态
+ * - Expo 项目配置
+ * - GitHub 仓库信息
+ * - 环境状态和快速链接
  */
 export default function SettingsScreen() {
   const colors = useColors();
@@ -39,23 +39,23 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScreenContainer className="p-6">
+    <ScreenContainer className="bg-background">
       <ScrollView 
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="flex-1 gap-6">
+        <View className="flex-1 px-6 pt-8 pb-6">
           {/* Header */}
-          <View className="gap-2">
-            <Text className="text-3xl font-bold text-foreground">设置</Text>
+          <View className="gap-3 mb-6">
+            <Text className="text-4xl font-bold text-foreground">设置</Text>
             <Text className="text-base text-muted leading-relaxed">
               应用配置和环境信息
             </Text>
           </View>
 
           {/* Environment Status */}
-          <View className="gap-3">
-            <Text className="text-lg font-semibold text-foreground">环境状态</Text>
+          <View className="gap-4 mb-6">
+            <Text className="text-xl font-bold text-foreground">环境状态</Text>
             
             <StatusCard
               title={isSupabaseConfigured ? "Supabase 已连接" : "Supabase 未配置"}
@@ -72,6 +72,7 @@ export default function SettingsScreen() {
                   color={isSupabaseConfigured ? colors.success : colors.warning} 
                 />
               }
+              className="shadow-md"
             />
 
             <StatusCard
@@ -79,40 +80,41 @@ export default function SettingsScreen() {
               status="success"
               description="云端构建服务已就绪"
               icon={<IconSymbol name="chevron.right" size={24} color={colors.success} />}
+              className="shadow-md"
             />
           </View>
 
           {/* Application Info */}
-          <View className="gap-3">
-            <Text className="text-lg font-semibold text-foreground">应用信息</Text>
+          <View className="gap-4 mb-6">
+            <Text className="text-xl font-bold text-foreground">应用信息</Text>
             
-            <View className="bg-surface rounded-xl border border-border overflow-hidden">
+            <View className="bg-surface rounded-2xl border-2 border-border overflow-hidden shadow-sm">
               <InfoRow label="应用名称" value={appName} />
               <InfoRow label="版本号" value={appVersion} />
               <InfoRow label="应用标识" value={appSlug} />
               <InfoRow label="Expo SDK" value="54" />
-              <InfoRow label="React Native" value="0.81" />
+              <InfoRow label="React Native" value="0.81" className="border-b-0" />
             </View>
           </View>
 
           {/* Supabase Configuration */}
           {isSupabaseConfigured && (
-            <View className="gap-3">
-              <Text className="text-lg font-semibold text-foreground">Supabase 配置</Text>
+            <View className="gap-4 mb-6">
+              <Text className="text-xl font-bold text-foreground">Supabase 配置</Text>
               
-              <View className="bg-surface rounded-xl border border-border overflow-hidden">
+              <View className="bg-surface rounded-2xl border-2 border-border overflow-hidden shadow-sm">
                 <InfoRow 
                   label="项目 URL" 
                   value={supabaseUrl.replace("https://", "").substring(0, 30) + "..."} 
                 />
-                <InfoRow label="状态" value="已连接" />
+                <InfoRow label="状态" value="已连接" className="border-b-0" />
               </View>
 
               <TouchableOpacity
                 onPress={handleOpenSupabase}
-                className="bg-primary px-4 py-3 rounded-xl active:opacity-80"
+                className="bg-primary px-5 py-4 rounded-2xl active:opacity-80 shadow-md"
               >
-                <Text className="text-background font-semibold text-center">
+                <Text className="text-white font-bold text-center text-base">
                   打开 Supabase 控制台
                 </Text>
               </TouchableOpacity>
@@ -120,55 +122,59 @@ export default function SettingsScreen() {
           )}
 
           {/* Quick Links */}
-          <View className="gap-3">
-            <Text className="text-lg font-semibold text-foreground">快速链接</Text>
+          <View className="gap-4 mb-6">
+            <Text className="text-xl font-bold text-foreground">快速链接</Text>
             
             <TouchableOpacity
               onPress={handleOpenGitHub}
-              className="bg-surface rounded-xl p-4 border border-border active:opacity-70"
+              className="bg-surface rounded-2xl p-5 border-2 border-border active:opacity-70 shadow-sm"
             >
               <View className="flex-row items-center justify-between">
                 <View className="flex-1">
-                  <Text className="text-base font-semibold text-foreground">
+                  <Text className="text-lg font-bold text-foreground">
                     GitHub 仓库
                   </Text>
                   <Text className="text-sm text-muted mt-1">
                     查看源代码和 Actions
                   </Text>
                 </View>
-                <IconSymbol 
-                  name="chevron.right" 
-                  size={20} 
-                  color={colors.muted} 
-                />
+                <View className="w-10 h-10 bg-primary/10 rounded-full items-center justify-center">
+                  <IconSymbol 
+                    name="chevron.right" 
+                    size={20} 
+                    color={colors.primary} 
+                  />
+                </View>
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={handleOpenEAS}
-              className="bg-surface rounded-xl p-4 border border-border active:opacity-70"
+              className="bg-surface rounded-2xl p-5 border-2 border-border active:opacity-70 shadow-sm"
             >
               <View className="flex-row items-center justify-between">
                 <View className="flex-1">
-                  <Text className="text-base font-semibold text-foreground">
+                  <Text className="text-lg font-bold text-foreground">
                     EAS 控制台
                   </Text>
                   <Text className="text-sm text-muted mt-1">
                     查看构建历史和配置
                   </Text>
                 </View>
-                <IconSymbol 
-                  name="chevron.right" 
-                  size={20} 
-                  color={colors.muted} 
-                />
+                <View className="w-10 h-10 bg-primary/10 rounded-full items-center justify-center">
+                  <IconSymbol 
+                    name="chevron.right" 
+                    size={20} 
+                    color={colors.primary} 
+                  />
+                </View>
               </View>
             </TouchableOpacity>
           </View>
 
-          {/* About */}
-          <View className="bg-surface rounded-xl p-4 border border-border">
-            <Text className="text-sm font-semibold text-foreground mb-2">
+          {/* About Card */}
+          <View className="bg-gradient-to-br from-gradient1/10 to-gradient2/10 rounded-2xl p-5 border-2 border-primary/20 shadow-sm">
+            <Text className="text-lg font-bold text-foreground mb-3">
               关于
             </Text>
             <Text className="text-sm text-muted leading-relaxed">
