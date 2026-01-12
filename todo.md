@@ -2,9 +2,11 @@
 
 - [x] 配置 Supabase 集成和环境变量
 - [ ] 创建应用 Logo 和品牌资源
-- [ ] 设计并实现 Home 屏幕
-- [ ] 设计并实现 Build Status 屏幕
-- [ ] 设计并实现 Settings 屏幕
+- [x] 设计并实现 Home 屏幕
+- [x] 设计并实现 Build Status 屏幕
+- [x] 设计并实现 Settings 屏幕
+- [x] 创建共享组件（StatusCard、InfoRow 等）
+- [x] 更新 Tab 导航配置
 - [x] 配置 EAS Build (eas.json)
 - [x] 创建 GitHub Actions 工作流文件
 - [x] 配置自动化构建触发器
