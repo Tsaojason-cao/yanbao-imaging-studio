@@ -1,0 +1,68 @@
+name: Sync Code to GitHub
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'feature/**'
+  schedule:
+    # Run daily at 00:00 UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    name: Sync Repository
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if git diff --quiet HEAD~1 HEAD; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create sync report
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          echo "# Sync Report - $(date)" > SYNC_REPORT.md
+          echo "" >> SYNC_REPORT.md
+          echo "## Latest Changes" >> SYNC_REPORT.md
+          echo "" >> SYNC_REPORT.md
+          git log -5 --pretty=format:"- %h %s (%an, %ar)" >> SYNC_REPORT.md
+          echo "" >> SYNC_REPORT.md
+          echo "" >> SYNC_REPORT.md
+          echo "## File Changes" >> SYNC_REPORT.md
+          echo "" >> SYNC_REPORT.md
+          git diff --stat HEAD~1 HEAD >> SYNC_REPORT.md
+
+      - name: Commit sync report
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git add SYNC_REPORT.md
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update sync report [skip ci]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify sync status
+        if: always()
+        run: |
+          echo "Sync completed at $(date)"
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"

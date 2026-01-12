@@ -1,0 +1,139 @@
+name: EAS Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to build'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - android
+          - ios
+      profile:
+        description: 'Build profile'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+
+jobs:
+  build:
+    name: EAS Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: ${{ github.event.inputs.platform == 'all' && fromJSON('["android", "ios"]') || fromJSON(format('["{0}"]', github.event.inputs.platform || 'android')) }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Expo and EAS
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create .env file
+        run: |
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
+          echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
+
+      - name: Build Android APK
+        if: matrix.platform == 'android'
+        run: |
+          eas build --platform android --profile ${{ github.event.inputs.profile || 'preview' }} --non-interactive --no-wait
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Build iOS
+        if: matrix.platform == 'ios'
+        run: |
+          eas build --platform ios --profile ${{ github.event.inputs.profile || 'preview' }} --non-interactive --no-wait
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Get build URL
+        id: build-url
+        run: |
+          BUILD_URL=$(eas build:list --platform=${{ matrix.platform }} --limit=1 --json | jq -r '.[0].artifacts.buildUrl // empty')
+          echo "BUILD_URL=$BUILD_URL" >> $GITHUB_OUTPUT
+          echo "Build URL: $BUILD_URL"
+
+      - name: Create Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.build-url.outputs.BUILD_URL != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}-${{ matrix.platform }}
+          name: Release ${{ github.run_number }} - ${{ matrix.platform }}
+          body: |
+            Automated build for ${{ matrix.platform }}
+            
+            **Build Details:**
+            - Platform: ${{ matrix.platform }}
+            - Profile: ${{ github.event.inputs.profile || 'preview' }}
+            - Commit: ${{ github.sha }}
+            - Branch: ${{ github.ref_name }}
+            
+            **Download:**
+            Build URL: ${{ steps.build-url.outputs.BUILD_URL }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  sync-status:
+    name: Sync Build Status
+    runs-on: ubuntu-latest
+    needs: build
+    if: always()
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update build status
+        run: |
+          echo "Build completed at $(date)" >> BUILD_STATUS.md
+          echo "Status: ${{ needs.build.result }}" >> BUILD_STATUS.md
+          echo "Commit: ${{ github.sha }}" >> BUILD_STATUS.md
+          echo "---" >> BUILD_STATUS.md
+
+      - name: Commit build status
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add BUILD_STATUS.md
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update build status [skip ci]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
