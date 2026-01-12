@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet, Dimensions, Platform, ScrollView } from "react-native";
+import { View, Text, Pressable, StyleSheet, Dimensions, Platform, Image } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 // Skia仅在原生平台可用
@@ -78,33 +78,7 @@ export default function HomeScreen() {
     );
   }, []);
 
-  // 卡片滑动手势
-  const cardGesture = Gesture.Pan()
-    .onUpdate((event) => {
-      cardTranslateY.value = event.translationY;
-    })
-    .onEnd((event) => {
-      if (event.translationY < -100) {
-        // 向上滑动
-        const cards: CardType[] = ["stats", "memory", "ai-lab"];
-        const nextIndex = (activeCardIndex.value + 1) % cards.length;
-        activeCardIndex.value = nextIndex;
-        runOnJS(setActiveCard)(cards[nextIndex]);
-        if (Platform.OS !== "web") {
-          runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
-        }
-      } else if (event.translationY > 100) {
-        // 向下滑动
-        const cards: CardType[] = ["stats", "memory", "ai-lab"];
-        const prevIndex = (activeCardIndex.value - 1 + cards.length) % cards.length;
-        activeCardIndex.value = prevIndex;
-        runOnJS(setActiveCard)(cards[prevIndex]);
-        if (Platform.OS !== "web") {
-          runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
-        }
-      }
-      cardTranslateY.value = withSpring(0);
-    });
+  // 移除滑动功能 - 固定显示统计卡片
 
   // 库洛米助手点击
   const handleKuromiPress = () => {
@@ -309,10 +283,9 @@ export default function HomeScreen() {
         <Text style={styles.appSubtitle}>流体美学 · 私人影像工作室</Text>
       </View>
 
-      {/* 层叠式悬浮卡片 */}
+      {/* 固定显示统计卡片 */}
       <View style={styles.cardsContainer}>
-        <GestureDetector gesture={cardGesture}>
-          <Animated.View style={[styles.cardWrapper, cardAnimatedStyle]}>
+          <View style={styles.cardWrapper}>
             {/* 背景卡片（层叠效果） */}
             <View style={[styles.card, styles.cardBackground, { transform: [{ scale: 0.95 }, { translateY: -20 }] }]} />
             <View style={[styles.card, styles.cardBackground, { transform: [{ scale: 0.97 }, { translateY: -10 }] }]} />
@@ -329,13 +302,7 @@ export default function HomeScreen() {
               </BlurView>
             </View>
 
-            {/* 滑动提示 */}
-            <View style={styles.swipeHint}>
-              <View style={styles.swipeIndicator} />
-              <Text style={styles.swipeText}>上下滑动切换</Text>
-            </View>
-          </Animated.View>
-        </GestureDetector>
+          </View>
       </View>
 
       {/* 库洛米浮动助手 */}
@@ -345,7 +312,12 @@ export default function HomeScreen() {
             {/* 发光光晕 */}
             <View style={styles.kuromiGlow} />
 
-            {/* 库洛米头像 */}
+            {/* 库洛米图片 */}
+            <Image
+              source={require("@/assets/images/kuromi.jpg")}
+              style={styles.kuromiImage}
+              resizeMode="contain"
+            />
             <View style={styles.kuromiHead}>
               <View style={[styles.kuromiEar, styles.kuromiEarLeft]} />
               <View style={[styles.kuromiEar, styles.kuromiEarRight]} />
@@ -616,6 +588,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 30,
     elevation: 20,
+  },
+  kuromiImage: {
+    width: 80,
+    height: 80,
+    position: "absolute",
+    zIndex: 10,
   },
   kuromiHead: {
     width: 70,
