@@ -36,6 +36,7 @@ export default function CameraScreen() {
   });
   const [permission, requestPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
+  const [showBeautyPanel, setShowBeautyPanel] = useState(false); // 美颜面板显示状态
 
   // 7维美颜参数
   const [beautyParams, setBeautyParams] = useState({
@@ -325,6 +326,7 @@ export default function CameraScreen() {
         )}
 
         {/* 底部美颜参数面板 */}
+        {showBeautyPanel && (
         <View style={styles.bottomPanel}>
           <BlurView intensity={40} style={styles.beautyPanel}>
             <LinearGradient
@@ -396,6 +398,31 @@ export default function CameraScreen() {
             {/* 拍照按钮 - 库洛米快门 */}
             <KuromiShutterButton onPress={handleShutterPress} size={80} />
 
+            {/* 美颜按钮 - 库洛米图标 */}
+            <TouchableOpacity
+              style={styles.beautyButton}
+              onPress={() => {
+                if (Platform.OS !== "web") {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }
+                setShowBeautyPanel(!showBeautyPanel);
+              }}
+            >
+              <View style={styles.beautyButtonKuromi}>
+                <View style={styles.kuromiMiniHead}>
+                  <View style={[styles.kuromiMiniEar, { left: 2 }]} />
+                  <View style={[styles.kuromiMiniEar, { right: 2 }]} />
+                  <View style={styles.kuromiMiniFace}>
+                    <View style={styles.kuromiMiniEyes}>
+                      <View style={styles.kuromiMiniEye} />
+                      <View style={styles.kuromiMiniEye} />
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <Text style={styles.beautyButtonBadge}>8</Text>
+            </TouchableOpacity>
+
             {/* 专业模式按钮 */}
             <TouchableOpacity
               style={styles.proModeButton}
@@ -422,6 +449,7 @@ export default function CameraScreen() {
             onParamsChange={setProModeParams}
           />
         </View>
+        )}
 
         {/* 倒计时显示 */}
         {countdown !== null && countdown > 0 && (
@@ -791,6 +819,71 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(167, 139, 250, 0.8)",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
+  },
+  beautyButton: {
+    width: 50,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+  beautyButtonKuromi: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(236, 72, 153, 0.3)",
+    borderWidth: 2,
+    borderColor: "#EC4899",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  kuromiMiniHead: {
+    width: 28,
+    height: 28,
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  kuromiMiniEar: {
+    position: "absolute",
+    top: -1,
+    width: 6,
+    height: 10,
+    backgroundColor: "#2D3748",
+    borderRadius: 3,
+  },
+  kuromiMiniFace: {
+    width: 20,
+    height: 20,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  kuromiMiniEyes: {
+    flexDirection: "row",
+    gap: 4,
+    marginTop: 2,
+  },
+  kuromiMiniEye: {
+    width: 3,
+    height: 5,
+    backgroundColor: "#1F2937",
+    borderRadius: 1.5,
+  },
+  beautyButtonBadge: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: "#EC4899",
+    color: "#FFFFFF",
+    fontSize: 10,
+    fontWeight: "700",
+    textAlign: "center",
+    lineHeight: 18,
   },
   countdownOverlay: {
     position: "absolute",
