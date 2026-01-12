@@ -65,6 +65,7 @@ export default function CameraScreen() {
       takePicture();
       setCountdown(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countdown]);
 
   const buttonAnimatedStyle = useAnimatedStyle(() => ({
@@ -184,6 +185,8 @@ export default function CameraScreen() {
     });
   };
 
+  // 旧版拍照函数（已废弃）
+  /*
   const takePictureOld = async () => {
     if (!cameraRef.current) return;
 
@@ -210,6 +213,7 @@ export default function CameraScreen() {
       Alert.alert("错误", "拍照失败，请重试");
     }
   };
+  */
 
   return (
     <View style={styles.container}>
