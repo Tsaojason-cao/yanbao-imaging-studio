@@ -80,6 +80,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="inspiration"
+        options={{
+          title: "灵感",
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="lightbulb.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="footprints"
         options={{
           title: "足迹",
