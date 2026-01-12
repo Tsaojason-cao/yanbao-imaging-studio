@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import Animated, {
   useSharedValue,
@@ -6,19 +6,23 @@ import Animated, {
   withRepeat,
   withTiming,
   withSequence,
+  withDecay,
   Easing,
 } from "react-native-reanimated";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useEffect } from "react";
 import { ScreenContainer } from "@/components/screen-container";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
+import * as Haptics from "expo-haptics";
 import type { ViewStyle } from "react-native";
 
 export default function HomeScreen() {
   const router = useRouter();
   const rotation = useSharedValue(0);
   const scale = useSharedValue(1);
+  const velocity = useSharedValue(0);
 
   useEffect(() => {
     // 轮盘旋转动画 - 20秒一圈
@@ -36,6 +40,19 @@ export default function HomeScreen() {
     );
   }, []);
 
+  // 手势拖动旋转轮盘
+  const panGesture = Gesture.Pan()
+    .onUpdate((event) => {
+      velocity.value = event.velocityX;
+      rotation.value += event.translationX * 0.2;
+    })
+    .onEnd(() => {
+      rotation.value = withDecay({
+        velocity: velocity.value * 0.001,
+        deceleration: 0.998,
+      });
+    });
+
   const wheelAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${rotation.value}deg` }],
   }));
@@ -52,6 +69,14 @@ export default function HomeScreen() {
     { icon: "settings", label: "设置", route: "/(tabs)/settings", angle: 126, color: "#8B5CF6" },
     { icon: "home", label: "主页", route: "/(tabs)/", angle: 198, color: "#F472B6" },
   ];
+
+  const handleButtonPress = (route: string) => {
+    // 触觉反馈
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    router.push(route as any);
+  };
 
   const getButtonPosition = (angle: number, radius: number) => {
     const radian = (angle * Math.PI) / 180;
@@ -115,12 +140,14 @@ export default function HomeScreen() {
               />
             </View>
 
-            {/* 轮盘背景 */}
-            <Animated.View style={[styles.wheel, wheelAnimatedStyle]}>
-              <View style={styles.wheelRing}>
-                <BlurView intensity={20} style={styles.wheelBlur} />
-              </View>
-            </Animated.View>
+            {/* 轮盘背景 - 支持手势拖动 */}
+            <GestureDetector gesture={panGesture}>
+              <Animated.View style={[styles.wheel, wheelAnimatedStyle]}>
+                <View style={styles.wheelRing}>
+                  <BlurView intensity={20} style={styles.wheelBlur} />
+                </View>
+              </Animated.View>
+            </GestureDetector>
 
             {/* 5个环绕按钮 */}
             {wheelButtons.map((button, index) => {
@@ -129,7 +156,7 @@ export default function HomeScreen() {
                 <TouchableOpacity
                   key={index}
                   style={[styles.wheelButton, position]}
-                  onPress={() => router.push(button.route as any)}
+                  onPress={() => handleButtonPress(button.route)}
                   activeOpacity={0.7}
                 >
                   <View style={[styles.wheelButtonInner, { backgroundColor: "rgba(255, 255, 255, 0.95)" }]}>
@@ -343,6 +370,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
+    elevation: 4,
   },
   kuromiEarLeft: {
     left: 8,
@@ -353,12 +381,12 @@ const styles = StyleSheet.create({
     transform: [{ rotate: "15deg" }],
   },
   kuromiEarInner: {
-    width: 12,
-    height: 18,
-    backgroundColor: "#4A5568",
-    borderRadius: 6,
-    marginTop: 8,
-    marginLeft: 6,
+    width: 16,
+    height: 24,
+    backgroundColor: "#F3E5F5",
+    borderRadius: 8,
+    alignSelf: "center",
+    marginTop: 4,
   },
   kuromiFace: {
     width: 70,
@@ -367,30 +395,28 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 4,
-    borderColor: "#2D3748",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
-    elevation: 5,
+    elevation: 6,
   },
   kuromiEyes: {
     flexDirection: "row",
-    gap: 20,
-    marginTop: 12,
+    gap: 18,
+    marginTop: 8,
   },
   kuromiEye: {
     width: 14,
-    height: 14,
+    height: 18,
     backgroundColor: "#1F2937",
     borderRadius: 7,
     position: "relative",
   },
   kuromiEyeHighlight: {
     position: "absolute",
-    top: 2,
-    left: 2,
+    top: 3,
+    left: 3,
     width: 5,
     height: 5,
     backgroundColor: "#FFFFFF",
@@ -398,7 +424,7 @@ const styles = StyleSheet.create({
   },
   kuromiNose: {
     width: 8,
-    height: 8,
+    height: 6,
     backgroundColor: "#F472B6",
     borderRadius: 4,
     marginTop: 4,
@@ -406,66 +432,75 @@ const styles = StyleSheet.create({
   kuromiMouth: {
     width: 20,
     height: 10,
-    borderBottomWidth: 3,
-    borderBottomColor: "#1F2937",
-    borderRadius: 10,
-    marginTop: 3,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    borderWidth: 2,
+    borderTopWidth: 0,
+    borderColor: "#F472B6",
+    marginTop: 2,
   },
   kuromiBow: {
     position: "absolute",
     top: -8,
-    right: 2,
+    right: -5,
+    width: 40,
+    height: 20,
     flexDirection: "row",
     alignItems: "center",
-    shadowColor: "#F472B6",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.4,
-    shadowRadius: 4,
+    justifyContent: "center",
   },
   bowLeft: {
     width: 16,
     height: 16,
     backgroundColor: "#F472B6",
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#EC4899",
+    transform: [{ scaleX: 1.2 }],
   },
   bowCenter: {
     width: 8,
-    height: 8,
+    height: 12,
     backgroundColor: "#F472B6",
     borderRadius: 4,
     marginHorizontal: -2,
-    zIndex: 1,
   },
   bowRight: {
     width: 16,
     height: 16,
     backgroundColor: "#F472B6",
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#EC4899",
+    transform: [{ scaleX: 1.2 }],
   },
   bowSkull: {
     position: "absolute",
     top: 2,
     left: 12,
+    width: 16,
+    height: 16,
+    alignItems: "center",
+    justifyContent: "center",
   },
   skullCircle: {
-    width: 6,
-    height: 6,
-    backgroundColor: "#F9A8D4",
-    borderRadius: 3,
+    width: 10,
+    height: 10,
+    backgroundColor: "#1F2937",
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#FFFFFF",
   },
   kuromiBody: {
     flexDirection: "row",
     gap: 8,
-    marginTop: -8,
+    marginTop: 4,
   },
   kuromiPaw: {
     width: 12,
-    height: 8,
+    height: 12,
     backgroundColor: "#2D3748",
     borderRadius: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
   },
 });
