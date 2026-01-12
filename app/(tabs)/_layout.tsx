@@ -36,10 +36,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="builds"
+        name="gallery"
         options={{
-          title: "构建",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="hammer.fill" color={color} />,
+          title: "相册",
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />
       <Tabs.Screen

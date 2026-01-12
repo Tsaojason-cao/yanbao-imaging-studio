@@ -166,7 +166,7 @@ export default function HomeScreen() {
 
             {/* 导航按钮 - 右下：相册 */}
             <Pressable
-              onPress={() => router.push("/(tabs)/builds")}
+              onPress={() => router.push("/(tabs)/gallery")}
               style={({ pressed }) => [
                 {
                   position: "absolute",

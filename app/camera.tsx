@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import { View, Text, Pressable, ScrollView, Platform } from "react-native";
+import { View, Text, Pressable, ScrollView, Platform, Image, Alert } from "react-native";
 import { CameraView, CameraType, FlashMode, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
+import * as MediaLibrary from "expo-media-library";
 import { useColors } from "@/hooks/use-colors";
 import * as Haptics from "expo-haptics";
 
@@ -31,11 +32,13 @@ export default function CameraScreen() {
   const router = useRouter();
   const colors = useColors();
   const cameraRef = useRef<CameraView>(null);
-  const [permission, requestPermission] = useCameraPermissions();
+  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+  const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
   const [facing, setFacing] = useState<CameraType>("back");
   const [flash, setFlash] = useState<FlashMode>("off");
   const [selectedLUT, setSelectedLUT] = useState("none");
   const [showBeautyPanel, setShowBeautyPanel] = useState(false);
+  const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
 
   // 美颜参数
   const [beautyParams, setBeautyParams] = useState<BeautyParams>({
@@ -48,12 +51,15 @@ export default function CameraScreen() {
     brightness: 0,
   });
 
-  // 请求相机权限
+  // 请求权限
   useEffect(() => {
-    if (!permission?.granted) {
-      requestPermission();
+    if (!cameraPermission?.granted) {
+      requestCameraPermission();
     }
-  }, [permission]);
+    if (!mediaPermission?.granted) {
+      requestMediaPermission();
+    }
+  }, [cameraPermission, mediaPermission]);
 
   // 切换前后摄像头
   const toggleCameraFacing = () => {
@@ -83,12 +89,60 @@ export default function CameraScreen() {
     if (cameraRef.current) {
       try {
         const photo = await cameraRef.current.takePictureAsync();
-        console.log("Photo taken:", photo?.uri);
-        // TODO: 保存照片并应用美颜参数
+        if (photo?.uri) {
+          setCapturedPhoto(photo.uri);
+        }
       } catch (error) {
         console.error("Failed to take picture:", error);
+        Alert.alert("拍照失败", "无法拍摄照片，请重试");
       }
     }
+  };
+
+  // 保存照片到相册
+  const savePhoto = async () => {
+    if (!capturedPhoto) return;
+
+    if (Platform.OS !== "web") {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+
+    try {
+      if (!mediaPermission?.granted) {
+        const { granted } = await requestMediaPermission();
+        if (!granted) {
+          Alert.alert("需要相册权限", "请授予相册权限以保存照片");
+          return;
+        }
+      }
+
+      await MediaLibrary.saveToLibraryAsync(capturedPhoto);
+      Alert.alert("保存成功", "照片已保存到相册");
+      setCapturedPhoto(null);
+    } catch (error) {
+      console.error("Failed to save photo:", error);
+      Alert.alert("保存失败", "无法保存照片到相册");
+    }
+  };
+
+  // 一键出片（应用美颜参数后保存）
+  const quickExport = async () => {
+    if (!capturedPhoto) return;
+
+    if (Platform.OS !== "web") {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+
+    // TODO: 应用美颜参数和LUT滤镜
+    await savePhoto();
+  };
+
+  // 重新拍摄
+  const retakePhoto = () => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    setCapturedPhoto(null);
   };
 
   // 更新美颜参数
@@ -96,7 +150,7 @@ export default function CameraScreen() {
     setBeautyParams((prev) => ({ ...prev, [key]: value }));
   };
 
-  if (!permission) {
+  if (!cameraPermission) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
         <Text className="text-foreground">正在请求相机权限...</Text>
@@ -104,7 +158,7 @@ export default function CameraScreen() {
     );
   }
 
-  if (!permission.granted) {
+  if (!cameraPermission.granted) {
     return (
       <View className="flex-1 bg-background items-center justify-center px-6">
         <MaterialCommunityIcons name="camera-off" size={64} color={colors.muted} />
@@ -113,7 +167,7 @@ export default function CameraScreen() {
           请授予相机权限以使用美颜拍照功能
         </Text>
         <Pressable
-          onPress={requestPermission}
+          onPress={requestCameraPermission}
           style={({ pressed }) => ({
             backgroundColor: colors.primary,
             paddingHorizontal: 24,
@@ -128,6 +182,85 @@ export default function CameraScreen() {
     );
   }
 
+  // 照片预览界面
+  if (capturedPhoto) {
+    return (
+      <View className="flex-1 bg-black">
+        <Image source={{ uri: capturedPhoto }} style={{ flex: 1 }} resizeMode="contain" />
+
+        {/* 顶部控制栏 */}
+        <View className="absolute top-0 left-0 right-0 pt-12 px-6 flex-row items-center justify-between">
+          <Pressable
+            onPress={retakePhoto}
+            style={({ pressed }) => ({
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              justifyContent: "center",
+              alignItems: "center",
+              opacity: pressed ? 0.7 : 1,
+            })}
+          >
+            <Ionicons name="close" size={24} color="white" />
+          </Pressable>
+
+          <Text className="text-white text-lg font-semibold">照片预览</Text>
+
+          <View style={{ width: 40 }} />
+        </View>
+
+        {/* 底部按钮 */}
+        <View className="absolute bottom-0 left-0 right-0 pb-12 px-6">
+          <View className="flex-row gap-4">
+            <Pressable
+              onPress={retakePhoto}
+              style={({ pressed }) => ({
+                flex: 1,
+                paddingVertical: 16,
+                borderRadius: 24,
+                backgroundColor: "rgba(255,255,255,0.2)",
+                alignItems: "center",
+                opacity: pressed ? 0.7 : 1,
+              })}
+            >
+              <Text className="text-white font-semibold">重新拍摄</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={quickExport}
+              style={({ pressed }) => ({
+                flex: 1,
+                paddingVertical: 16,
+                borderRadius: 24,
+                backgroundColor: "#E879F9",
+                alignItems: "center",
+                opacity: pressed ? 0.7 : 1,
+              })}
+            >
+              <Text className="text-white font-semibold">一键出片</Text>
+            </Pressable>
+          </View>
+
+          <Pressable
+            onPress={savePhoto}
+            style={({ pressed }) => ({
+              marginTop: 12,
+              paddingVertical: 16,
+              borderRadius: 24,
+              backgroundColor: "rgba(255,255,255,0.9)",
+              alignItems: "center",
+              opacity: pressed ? 0.7 : 1,
+            })}
+          >
+            <Text className="text-black font-semibold">保存到相册</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
+
+  // 相机取景界面
   return (
     <View className="flex-1 bg-black">
       {/* 相机取景器 */}

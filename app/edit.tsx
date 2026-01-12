@@ -1,341 +1,388 @@
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { useState, useRef } from "react";
+import { View, Text, Pressable, ScrollView, Platform, Image, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
-import { useState } from "react";
+import { useColors } from "@/hooks/use-colors";
+import * as Haptics from "expo-haptics";
+import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
-import { ScreenContainer } from "@/components/screen-container";
-import { IconSymbol } from "@/components/ui/icon-symbol";
-import { useColors } from "@/hooks/use-colors";
 
-interface BeautyParam {
-  id: string;
-  label: string;
-  icon: string;
-  value: number;
-  color: string;
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
+// 图像调整参数
+interface ImageAdjustments {
+  brightness: number; // 亮度 -100 to 100
+  contrast: number; // 对比度 -100 to 100
+  saturation: number; // 饱和度 -100 to 100
+  temperature: number; // 色温 -100 to 100
 }
 
-/**
- * Edit Screen - 7 维美颜滑块编辑器
- * 
- * 包含：
- * - 7 个美颜参数滑块
- * - 实时预览对比
- * - 滤镜选择
- * - 前后对比功能
- */
+// 滤镜预设
+const FILTERS = [
+  { id: "none", name: "原图", color: "#9CA3AF" },
+  { id: "fresh", name: "清新", color: "#10B981" },
+  { id: "romantic", name: "浪漫", color: "#EC4899" },
+  { id: "vintage", name: "复古", color: "#F59E0B" },
+  { id: "bw", name: "黑白", color: "#6B7280" },
+  { id: "japan", name: "日系", color: "#3B82F6" },
+  { id: "warm", name: "温暖", color: "#EF4444" },
+];
+
+// 工具类型
+type ToolType = "adjust" | "filter" | "crop" | "tools";
+
 export default function EditScreen() {
-  const colors = useColors();
   const router = useRouter();
-  const [showComparison, setShowComparison] = useState(false);
+  const colors = useColors();
+  const [showBeforeAfter, setShowBeforeAfter] = useState(false);
+  const [selectedTool, setSelectedTool] = useState<ToolType>("adjust");
+  const [selectedFilter, setSelectedFilter] = useState("none");
 
-  const [beautyParams, setBeautyParams] = useState<BeautyParam[]>([
-    { id: "smooth", label: "磨皮", icon: "✨", value: 50, color: "#E879F9" },
-    { id: "whiten", label: "美白", icon: "🌟", value: 40, color: "#60A5FA" },
-    { id: "ruddy", label: "红润", icon: "🌸", value: 30, color: "#FCA5A5" },
-    { id: "brighten", label: "亮眼", icon: "👁️", value: 45, color: "#86EFAC" },
-    { id: "thin", label: "瘦脸", icon: "💎", value: 35, color: "#FDE047" },
-    { id: "enlarge", label: "大眼", icon: "👀", value: 40, color: "#C084FC" },
-    { id: "nose", label: "瘦鼻", icon: "👃", value: 25, color: "#93C5FD" },
-  ]);
+  // 图像调整参数
+  const [adjustments, setAdjustments] = useState<ImageAdjustments>({
+    brightness: 0,
+    contrast: 0,
+    saturation: 0,
+    temperature: 0,
+  });
 
-  const updateParam = (id: string, value: number) => {
-    setBeautyParams((prev) =>
-      prev.map((param) => (param.id === id ? { ...param, value } : param))
-    );
+  // Before/After分割线位置
+  const dividerPosition = useSharedValue(SCREEN_WIDTH / 2);
+
+  // 拖动手势
+  const panGesture = Gesture.Pan()
+    .onUpdate((event) => {
+      const newPosition = Math.max(0, Math.min(SCREEN_WIDTH, event.absoluteX));
+      dividerPosition.value = newPosition;
+    });
+
+  const dividerAnimatedStyle = useAnimatedStyle(() => ({
+    left: dividerPosition.value,
+  }));
+
+  const afterImageAnimatedStyle = useAnimatedStyle(() => ({
+    width: dividerPosition.value,
+  }));
+
+  // 更新调整参数
+  const updateAdjustment = (key: keyof ImageAdjustments, value: number) => {
+    setAdjustments((prev) => ({ ...prev, [key]: value }));
   };
 
+  // 重置所有参数
   const resetAll = () => {
-    setBeautyParams((prev) =>
-      prev.map((param) => ({ ...param, value: 50 }))
-    );
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+    setAdjustments({
+      brightness: 0,
+      contrast: 0,
+      saturation: 0,
+      temperature: 0,
+    });
+    setSelectedFilter("none");
   };
+
+  // 保存编辑
+  const saveEdit = () => {
+    if (Platform.OS !== "web") {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+    // TODO: 应用调整参数并保存
+    router.back();
+  };
+
+  // 示例图片（实际应从路由参数获取）
+  const sampleImage = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400";
 
   return (
-    <ScreenContainer edges={["top", "left", "right", "bottom"]} className="bg-background">
-      {/* 头部 */}
-      <View style={styles.header}>
-        <TouchableOpacity
+    <View className="flex-1 bg-background">
+      {/* 顶部工具栏 */}
+      <View className="pt-12 px-6 pb-4 flex-row items-center justify-between">
+        <Pressable
           onPress={() => router.back()}
-          style={[styles.headerButton, { backgroundColor: colors.surface }]}
+          style={({ pressed }) => ({
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: colors.surface,
+            justifyContent: "center",
+            alignItems: "center",
+            opacity: pressed ? 0.7 : 1,
+          })}
         >
-          <IconSymbol name="chevron.right" size={24} color={colors.foreground} />
-        </TouchableOpacity>
+          <Ionicons name="close" size={24} color={colors.foreground} />
+        </Pressable>
 
-        <Text style={[styles.headerTitle, { color: colors.foreground }]}>
-          美颜编辑
-        </Text>
+        <Text className="text-foreground text-lg font-semibold">图像编辑</Text>
 
-        <TouchableOpacity
-          onPress={resetAll}
-          style={[styles.headerButton, { backgroundColor: colors.surface }]}
+        <Pressable
+          onPress={saveEdit}
+          style={({ pressed }) => ({
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            borderRadius: 20,
+            backgroundColor: colors.primary,
+            opacity: pressed ? 0.7 : 1,
+          })}
         >
-          <Text style={[styles.resetText, { color: colors.primary }]}>
-            重置
-          </Text>
-        </TouchableOpacity>
+          <Text className="text-white font-semibold">保存</Text>
+        </Pressable>
       </View>
 
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* 预览区域 */}
-        <View style={styles.previewContainer}>
-          <View style={[styles.preview, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.previewText, { color: colors.muted }]}>
-              🖼️ 照片预览
-            </Text>
-            <Text style={[styles.previewSubtext, { color: colors.muted }]}>
-              实时美颜效果
-            </Text>
-          </View>
-
-          {/* 前后对比按钮 */}
-          <TouchableOpacity
-            onPress={() => setShowComparison(!showComparison)}
-            style={[
-              styles.compareButton,
-              {
-                backgroundColor: showComparison ? colors.primary : colors.surface,
-              },
-            ]}
+      {/* Before/After切换按钮 */}
+      <View className="px-6 mb-4">
+        <Pressable
+          onPress={() => {
+            if (Platform.OS !== "web") {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }
+            setShowBeforeAfter(!showBeforeAfter);
+          }}
+          style={({ pressed }) => ({
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            borderRadius: 20,
+            backgroundColor: showBeforeAfter ? colors.primary : colors.surface,
+            alignSelf: "center",
+            opacity: pressed ? 0.7 : 1,
+          })}
+        >
+          <Text
+            className="font-semibold"
+            style={{ color: showBeforeAfter ? "white" : colors.foreground }}
           >
-            <Text
+            {showBeforeAfter ? "Before/After" : "编辑模式"}
+          </Text>
+        </Pressable>
+      </View>
+
+      {/* 图像预览区域 */}
+      <View className="flex-1 mx-6 mb-4 rounded-3xl overflow-hidden" style={{ backgroundColor: colors.surface }}>
+        {showBeforeAfter ? (
+          // Before/After对比模式
+          <View style={{ flex: 1, position: "relative" }}>
+            {/* Before图像（底层） */}
+            <Image
+              source={{ uri: sampleImage }}
+              style={{ width: "100%", height: "100%", position: "absolute" }}
+              resizeMode="cover"
+            />
+
+            {/* After图像（遮罩层） */}
+            <Animated.View
               style={[
-                styles.compareText,
-                { color: showComparison ? "#FFFFFF" : colors.foreground },
+                { height: "100%", overflow: "hidden", position: "absolute", left: 0 },
+                afterImageAnimatedStyle,
               ]}
             >
-              {showComparison ? "✓ 对比中" : "前后对比"}
-            </Text>
-          </TouchableOpacity>
-        </View>
+              <Image
+                source={{ uri: sampleImage }}
+                style={{ width: SCREEN_WIDTH - 48, height: "100%" }}
+                resizeMode="cover"
+              />
+            </Animated.View>
 
-        {/* 7 维美颜滑块 */}
-        <View style={styles.slidersContainer}>
-          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-            7 维美颜参数
-          </Text>
+            {/* 分割线 */}
+            <GestureDetector gesture={panGesture}>
+              <Animated.View
+                style={[
+                  {
+                    position: "absolute",
+                    top: 0,
+                    bottom: 0,
+                    width: 4,
+                    backgroundColor: "white",
+                    zIndex: 10,
+                  },
+                  dividerAnimatedStyle,
+                ]}
+              >
+                <View
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: -16,
+                    width: 36,
+                    height: 36,
+                    borderRadius: 18,
+                    backgroundColor: "white",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: -18,
+                  }}
+                >
+                  <Ionicons name="swap-horizontal" size={20} color={colors.primary} />
+                </View>
+              </Animated.View>
+            </GestureDetector>
 
-          {beautyParams.map((param, index) => (
-            <BeautySlider
-              key={param.id}
-              param={param}
-              onValueChange={(value) => updateParam(param.id, value)}
-              delay={index * 50}
-            />
+            {/* Before/After标签 */}
+            <View className="absolute top-4 left-4 px-3 py-1 rounded-full" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+              <Text className="text-white text-xs font-semibold">Before</Text>
+            </View>
+            <View className="absolute top-4 right-4 px-3 py-1 rounded-full" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+              <Text className="text-white text-xs font-semibold">After</Text>
+            </View>
+          </View>
+        ) : (
+          // 普通编辑模式
+          <Image
+            source={{ uri: sampleImage }}
+            style={{ width: "100%", height: "100%" }}
+            resizeMode="contain"
+          />
+        )}
+      </View>
+
+      {/* 底部工具栏 */}
+      <View className="px-6 pb-8">
+        {/* 工具选择 */}
+        <View className="flex-row gap-2 mb-4">
+          {[
+            { id: "adjust", label: "调整", icon: "tune" },
+            { id: "filter", label: "滤镜", icon: "color-filter" },
+            { id: "crop", label: "裁剪", icon: "crop" },
+            { id: "tools", label: "工具", icon: "construct" },
+          ].map(({ id, label, icon }) => (
+            <Pressable
+              key={id}
+              onPress={() => {
+                if (Platform.OS !== "web") {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }
+                setSelectedTool(id as ToolType);
+              }}
+              style={({ pressed }) => ({
+                flex: 1,
+                paddingVertical: 12,
+                borderRadius: 16,
+                backgroundColor: selectedTool === id ? colors.primary : colors.surface,
+                alignItems: "center",
+                opacity: pressed ? 0.7 : 1,
+              })}
+            >
+              <Ionicons
+                name={icon as any}
+                size={20}
+                color={selectedTool === id ? "white" : colors.foreground}
+              />
+              <Text
+                className="text-xs font-semibold mt-1"
+                style={{ color: selectedTool === id ? "white" : colors.foreground }}
+              >
+                {label}
+              </Text>
+            </Pressable>
           ))}
         </View>
 
-        {/* 快捷预设 */}
-        <View style={styles.presetsContainer}>
-          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-            快捷预设
-          </Text>
-          <View style={styles.presetsList}>
-            {["自然", "清新", "甜美", "冷艳"].map((preset) => (
-              <TouchableOpacity
-                key={preset}
-                style={[styles.presetButton, { backgroundColor: colors.surface }]}
+        {/* 工具内容区域 */}
+        <View className="p-4 rounded-3xl" style={{ backgroundColor: colors.surface, maxHeight: 280 }}>
+          {selectedTool === "adjust" && (
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {[
+                { key: "brightness", label: "亮度", icon: "brightness-6" },
+                { key: "contrast", label: "对比度", icon: "contrast" },
+                { key: "saturation", label: "饱和度", icon: "palette" },
+                { key: "temperature", label: "色温", icon: "thermometer" },
+              ].map(({ key, label, icon }) => (
+                <View key={key} className="mb-4">
+                  <View className="flex-row items-center justify-between mb-2">
+                    <View className="flex-row items-center gap-2">
+                      <MaterialCommunityIcons
+                        name={icon as any}
+                        size={20}
+                        color={colors.foreground}
+                      />
+                      <Text className="text-foreground text-sm">{label}</Text>
+                    </View>
+                    <Text className="text-foreground text-sm">
+                      {adjustments[key as keyof ImageAdjustments]}
+                    </Text>
+                  </View>
+                  <Slider
+                    style={{ width: "100%", height: 40 }}
+                    minimumValue={-100}
+                    maximumValue={100}
+                    value={adjustments[key as keyof ImageAdjustments]}
+                    onValueChange={(value) =>
+                      updateAdjustment(key as keyof ImageAdjustments, Math.round(value))
+                    }
+                    minimumTrackTintColor={colors.primary}
+                    maximumTrackTintColor={colors.border}
+                    thumbTintColor={colors.primary}
+                  />
+                </View>
+              ))}
+
+              <Pressable
+                onPress={resetAll}
+                style={({ pressed }) => ({
+                  marginTop: 8,
+                  paddingVertical: 12,
+                  borderRadius: 16,
+                  backgroundColor: colors.border,
+                  alignItems: "center",
+                  opacity: pressed ? 0.7 : 1,
+                })}
               >
-                <Text style={[styles.presetText, { color: colors.foreground }]}>
-                  {preset}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+                <Text className="text-foreground font-semibold">重置参数</Text>
+              </Pressable>
+            </ScrollView>
+          )}
+
+          {selectedTool === "filter" && (
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View className="flex-row flex-wrap gap-3">
+                {FILTERS.map((filter) => (
+                  <Pressable
+                    key={filter.id}
+                    onPress={() => {
+                      if (Platform.OS !== "web") {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      }
+                      setSelectedFilter(filter.id);
+                    }}
+                    style={({ pressed }) => ({
+                      width: (SCREEN_WIDTH - 96) / 3,
+                      aspectRatio: 1,
+                      borderRadius: 16,
+                      backgroundColor: filter.color,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderWidth: selectedFilter === filter.id ? 3 : 0,
+                      borderColor: colors.primary,
+                      opacity: pressed ? 0.7 : 1,
+                    })}
+                  >
+                    <Text className="text-white font-semibold">{filter.name}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            </ScrollView>
+          )}
+
+          {selectedTool === "crop" && (
+            <View className="items-center justify-center py-8">
+              <MaterialCommunityIcons name="crop" size={48} color={colors.muted} />
+              <Text className="text-muted mt-4">裁剪功能即将推出</Text>
+            </View>
+          )}
+
+          {selectedTool === "tools" && (
+            <View className="items-center justify-center py-8">
+              <MaterialCommunityIcons name="tools" size={48} color={colors.muted} />
+              <Text className="text-muted mt-4">更多工具即将推出</Text>
+            </View>
+          )}
         </View>
-
-        {/* 保存按钮 */}
-        <View style={styles.saveContainer}>
-          <TouchableOpacity
-            style={[styles.saveButton, { backgroundColor: colors.primary }]}
-          >
-            <Text style={styles.saveText}>保存照片</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </ScreenContainer>
-  );
-}
-
-function BeautySlider({
-  param,
-  onValueChange,
-  delay,
-}: {
-  param: BeautyParam;
-  onValueChange: (value: number) => void;
-  delay: number;
-}) {
-  const colors = useColors();
-  const translateY = useSharedValue(20);
-  const opacity = useSharedValue(0);
-
-  useState(() => {
-    setTimeout(() => {
-      translateY.value = withSpring(0);
-      opacity.value = withSpring(1);
-    }, delay);
-  });
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
-    opacity: opacity.value,
-  }));
-
-  return (
-    <Animated.View style={[styles.sliderContainer, animatedStyle]}>
-      <View style={styles.sliderHeader}>
-        <View style={styles.sliderLabel}>
-          <Text style={styles.sliderIcon}>{param.icon}</Text>
-          <Text style={[styles.sliderText, { color: colors.foreground }]}>
-            {param.label}
-          </Text>
-        </View>
-        <Text style={[styles.sliderValue, { color: param.color }]}>
-          {Math.round(param.value)}
-        </Text>
       </View>
-      <Slider
-        style={styles.slider}
-        minimumValue={0}
-        maximumValue={100}
-        value={param.value}
-        onValueChange={onValueChange}
-        minimumTrackTintColor={param.color}
-        maximumTrackTintColor={colors.border}
-        thumbTintColor={param.color}
-      />
-    </Animated.View>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
-  },
-  headerButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  resetText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  previewContainer: {
-    marginHorizontal: 20,
-    marginBottom: 24,
-  },
-  preview: {
-    height: 300,
-    borderRadius: 24,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 12,
-  },
-  previewText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  previewSubtext: {
-    fontSize: 14,
-  },
-  compareButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 20,
-    alignSelf: "center",
-  },
-  compareText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  slidersContainer: {
-    paddingHorizontal: 20,
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  sliderContainer: {
-    marginBottom: 20,
-  },
-  sliderHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  sliderLabel: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  sliderIcon: {
-    fontSize: 20,
-  },
-  sliderText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  sliderValue: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  slider: {
-    width: "100%",
-    height: 40,
-  },
-  presetsContainer: {
-    paddingHorizontal: 20,
-    marginBottom: 24,
-  },
-  presetsList: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  presetButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-  },
-  presetText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  saveContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 30,
-  },
-  saveButton: {
-    paddingVertical: 16,
-    borderRadius: 24,
-    alignItems: "center",
-  },
-  saveText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-  },
-});
