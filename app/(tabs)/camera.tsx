@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { KuromiShutterButton } from "@/components/kuromi-ui";
+import { ProModePanel, ProModeParams } from "@/components/pro-mode-panel";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
@@ -23,6 +24,12 @@ export default function CameraScreen() {
   const [timer, setTimer] = useState(3);
   const [showLUT, setShowLUT] = useState(false);
   const [selectedLUT, setSelectedLUT] = useState("原图");
+  const [showProMode, setShowProMode] = useState(false);
+  const [proModeParams, setProModeParams] = useState<ProModeParams>({
+    iso: 400,
+    shutterSpeed: 1 / 125,
+    whiteBalance: 5500,
+  });
   const [permission, requestPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
 
@@ -314,9 +321,31 @@ export default function CameraScreen() {
             {/* 拍照按钮 - 库洛米快门 */}
             <KuromiShutterButton onPress={takePicture} size={80} />
 
-            {/* 占位 */}
-            <View style={styles.placeholder} />
+            {/* 专业模式按钮 */}
+            <TouchableOpacity
+              style={styles.proModeButton}
+              onPress={() => {
+                if (Platform.OS !== "web") {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }
+                setShowProMode(!showProMode);
+              }}
+            >
+              <Ionicons
+                name={showProMode ? "settings" : "settings-outline"}
+                size={28}
+                color="#FFFFFF"
+              />
+              <Text style={styles.proModeText}>PRO</Text>
+            </TouchableOpacity>
           </View>
+
+          {/* 专业模式控制面板 */}
+          <ProModePanel
+            visible={showProMode}
+            params={proModeParams}
+            onParamsChange={setProModeParams}
+          />
         </View>
       </CameraView>
     </View>
@@ -646,5 +675,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: "#FFFFFF",
+  },
+  proModeButton: {
+    width: 70,
+    alignItems: "center",
+    gap: 4,
+  },
+  proModeText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    textShadowColor: "rgba(167, 139, 250, 0.8)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
   },
 });
