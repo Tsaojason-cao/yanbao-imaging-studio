@@ -17,6 +17,7 @@ import {
   recordSpotVisit,
   type ShootingSpot,
 } from "@/lib/shooting-spots-service";
+import { openNavigation } from "@/lib/navigation-service";
 
 interface SpotDiscoveryDrawerProps {
   visible: boolean;
@@ -59,6 +60,21 @@ export function SpotDiscoveryDrawer({
     await recordSpotVisit(spot.id);
     onSelectSpot(spot);
     onClose();
+  };
+
+  const handleNavigate = async (spot: ShootingSpot, event: any) => {
+    event.stopPropagation();
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    
+    try {
+      await openNavigation({
+        latitude: spot.latitude,
+        longitude: spot.longitude,
+        name: spot.name,
+      });
+    } catch (error) {
+      console.error("打开导航失败:", error);
+    }
   };
 
   return (
@@ -146,6 +162,18 @@ export function SpotDiscoveryDrawer({
                           {spot.visitCount} 人打卡
                         </Text>
                       </View>
+
+                      {/* 导航按钮 */}
+                      <Pressable
+                        style={({ pressed }) => [
+                          styles.navigateButton,
+                          pressed && styles.navigateButtonPressed,
+                        ]}
+                        onPress={(e) => handleNavigate(spot, e)}
+                      >
+                        <Text style={styles.navigateIcon}>🧭</Text>
+                        <Text style={styles.navigateText}>导航</Text>
+                      </Pressable>
                     </View>
                   </Pressable>
                 ))}
@@ -316,5 +344,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#FF69B4",
+  },
+  navigateButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(59, 130, 246, 0.3)",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 12,
+    marginTop: 12,
+    gap: 6,
+  },
+  navigateButtonPressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.98 }],
+  },
+  navigateIcon: {
+    fontSize: 16,
+  },
+  navigateText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#60A5FA",
   },
 });

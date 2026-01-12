@@ -20,8 +20,9 @@ export default function CameraScreen() {
   const router = useRouter();
   const cameraRef = useRef<CameraView>(null);
   const [facing, setFacing] = useState<CameraType>("front");
-  const [flash, setFlash] = useState(false);
-  const [timer, setTimer] = useState(3);
+  const [flash, setFlash] = useState<"off" | "on" | "auto">("off");
+  const [timer, setTimer] = useState<0 | 3 | 10>(0);
+  const [countdown, setCountdown] = useState<number | null>(null);
   const [showLUT, setShowLUT] = useState(false);
   const [selectedLUT, setSelectedLUT] = useState("原图");
   const [showProMode, setShowProMode] = useState(false);
@@ -96,7 +97,11 @@ export default function CameraScreen() {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-    setFlash(!flash);
+    setFlash((current) => {
+      if (current === "off") return "on";
+      if (current === "on") return "auto";
+      return "off";
+    });
   };
 
   const takePicture = async () => {
@@ -150,7 +155,7 @@ export default function CameraScreen() {
         ref={cameraRef}
         style={styles.camera}
         facing={facing}
-        flash={flash ? "on" : "off"}
+        flash={flash}
         mode="picture"
         videoQuality="1080p"
         responsiveOrientationWhenOrientationLocked={true}
@@ -159,10 +164,13 @@ export default function CameraScreen() {
         <View style={styles.topBar}>
           <TouchableOpacity style={styles.topButton} onPress={toggleFlash}>
             <Ionicons
-              name={flash ? "flash" : "flash-off"}
+              name={flash === "off" ? "flash-off" : flash === "on" ? "flash" : "flash-outline"}
               size={28}
               color="#FFFFFF"
             />
+            {flash === "auto" && (
+              <Text style={{ fontSize: 10, color: "#FFFFFF", marginTop: 2 }}>自动</Text>
+            )}
           </TouchableOpacity>
 
           <View style={styles.timerContainer}>
