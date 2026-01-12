@@ -5,6 +5,12 @@
 
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  getPhotographyParams,
+  getCurrentTimeOfDay,
+  SceneType,
+  type PhotographyParams,
+} from "./photography-params-database";
 
 export type ContentCategory = "all" | "spots" | "poses" | "styles";
 
@@ -32,10 +38,18 @@ export interface SpotDetail {
   description: string;
   recommendedStyles: string[];
   shootingTips: {
-    bestTime: string;
-    filter: string;
-    beautyIntensity: number;
-    exposure: string;
+    bestTime: string;           // 最佳拍摄时间
+    filter: string;             // 推荐滤镜
+    beautyIntensity: number;    // 美颜强度 (0-100)
+    exposure: string;           // 曝光补偿
+    iso: string;                // ISO范围
+    whiteBalance: string;       // 白平衡
+    focusMode: string;          // 对焦模式
+    composition: string;        // 构图建议
+    lighting: string;           // 光线条件
+    weatherSuggestion: string;  // 天气建议
+    clothingTips: string;       // 穿搭建议
+    propsSuggestion?: string;   // 道具建议
   };
   poseReferences: string[];
   sourceUrl?: string;
@@ -234,6 +248,21 @@ export async function getInspirationDetail(id: string): Promise<SpotDetail | nul
     // const response = await fetch(`https://api.example.com/detail/${id}`);
     // const data = await response.json();
 
+    // 获取当前时间段
+    const currentTime = getCurrentTimeOfDay();
+    
+    // 根据id判断场景类型（这里可以根据实际情况优化）
+    const location = id.includes('xihu') ? '杭州西湖' : 
+                     id.includes('gugong') ? '北京故宫' : 
+                     id.includes('bund') ? '上海外滩' : '杭州西湖';
+    
+    // 获取专业摄影参数
+    const professionalParams = getPhotographyParams(
+      SceneType.LAKESIDE,
+      currentTime,
+      location
+    );
+    
     // 模拟数据
     const mockDetail: SpotDetail = {
       id,
@@ -251,11 +280,18 @@ export async function getInspirationDetail(id: string): Promise<SpotDetail | nul
       description:
         "西湖断桥是杭州最经典的拍照机位之一，春天桃花盛开时尤其美丽。推荐穿着浅色系服装，可以拍出清新脱俗的感觉。最佳拍摄时间是清晨或傍晚，光线柔和，人也相对较少。",
       recommendedStyles: ["日系", "复古", "清新"],
-      shootingTips: {
+      shootingTips: professionalParams || {
         bestTime: "黄金时刻（日出后1小时 / 日落前1小时）",
         filter: "暖调滤镜",
         beautyIntensity: 60,
         exposure: "+0.5 EV",
+        iso: "ISO 100-400",
+        whiteBalance: "日光（5500K）",
+        focusMode: "单次自动对焦（AF-S）",
+        composition: "三分法构图",
+        lighting: "侧光或逆光",
+        weatherSuggestion: "晴天最佳",
+        clothingTips: "浅色系服装",
       },
       poseReferences: [
         "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400",

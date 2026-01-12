@@ -14,27 +14,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { getInspirationDetail } from "@/lib/inspiration-service";
+import { getInspirationDetail, type SpotDetail } from "@/lib/inspiration-service";
 
 const { width } = Dimensions.get("window");
-
-interface SpotDetail {
-  id: string;
-  title: string;
-  images: string[];
-  location: string;
-  address: string;
-  views: number;
-  description: string;
-  recommendedStyles: string[];
-  shootingTips: {
-    bestTime: string;
-    filter: string;
-    beautyIntensity: number;
-    exposure: string;
-  };
-  poseReferences: string[];
-}
 
 export default function InspirationDetailScreen() {
   const params = useLocalSearchParams();
@@ -61,9 +43,17 @@ export default function InspirationDetailScreen() {
     recommendedStyles: ["日系", "复古", "清新"],
     shootingTips: {
       bestTime: "黄金时刻（日出后1小时 / 日落前1小时）",
-      filter: "暖调滤镜",
+      filter: "暖调滤镜（色温+200K）",
       beautyIntensity: 60,
       exposure: "+0.5 EV",
+      iso: "ISO 100-400",
+      whiteBalance: "日光（5500K）",
+      focusMode: "单次自动对焦（AF-S）",
+      composition: "三分法构图，将断桥置于画面右侧1/3处，留出湖面和远山",
+      lighting: "侧光或逆光，柔和的光线从侧面照射，适合拍摄轮廓",
+      weatherSuggestion: "晴天或薄雾天气最佳，雾气可增加朦胧美感",
+      clothingTips: "浅色系汉服或长裙，白色、淡粉、浅蓝为佳",
+      propsSuggestion: "油纸伞、团扇、桃花枝",
     },
     poseReferences: [
       "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400",
@@ -215,24 +205,65 @@ export default function InspirationDetailScreen() {
 
           {/* Shooting Tips */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📸 拍摄建议</Text>
+            <Text style={styles.sectionTitle}>📸 专业摄影参数</Text>
             <View style={styles.tipsContainer}>
               <View style={styles.tipRow}>
-                <Text style={styles.tipLabel}>最佳时间</Text>
+                <Text style={styles.tipLabel}>⏰ 最佳时间</Text>
                 <Text style={styles.tipValue}>{detail.shootingTips.bestTime}</Text>
               </View>
               <View style={styles.tipRow}>
-                <Text style={styles.tipLabel}>推荐滤镜</Text>
+                <Text style={styles.tipLabel}>🎨 推荐滤镜</Text>
                 <Text style={styles.tipValue}>{detail.shootingTips.filter}</Text>
               </View>
               <View style={styles.tipRow}>
-                <Text style={styles.tipLabel}>美颜强度</Text>
+                <Text style={styles.tipLabel}>✨ 美颜强度</Text>
                 <Text style={styles.tipValue}>{detail.shootingTips.beautyIntensity}%</Text>
               </View>
               <View style={styles.tipRow}>
-                <Text style={styles.tipLabel}>曝光补偿</Text>
+                <Text style={styles.tipLabel}>🔆 曝光补偿</Text>
                 <Text style={styles.tipValue}>{detail.shootingTips.exposure}</Text>
               </View>
+              <View style={styles.tipRow}>
+                <Text style={styles.tipLabel}>📷 ISO范围</Text>
+                <Text style={styles.tipValue}>{detail.shootingTips.iso}</Text>
+              </View>
+              <View style={styles.tipRow}>
+                <Text style={styles.tipLabel}>☀️ 白平衡</Text>
+                <Text style={styles.tipValue}>{detail.shootingTips.whiteBalance}</Text>
+              </View>
+              <View style={styles.tipRow}>
+                <Text style={styles.tipLabel}>🎯 对焦模式</Text>
+                <Text style={styles.tipValue}>{detail.shootingTips.focusMode}</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Advanced Tips */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>💡 进阶建议</Text>
+            <View style={styles.advancedTipsContainer}>
+              <View style={styles.advancedTipCard}>
+                <Text style={styles.advancedTipTitle}>📍 构图建议</Text>
+                <Text style={styles.advancedTipContent}>{detail.shootingTips.composition}</Text>
+              </View>
+              <View style={styles.advancedTipCard}>
+                <Text style={styles.advancedTipTitle}>🌞 光线条件</Text>
+                <Text style={styles.advancedTipContent}>{detail.shootingTips.lighting}</Text>
+              </View>
+              <View style={styles.advancedTipCard}>
+                <Text style={styles.advancedTipTitle}>☁️ 天气建议</Text>
+                <Text style={styles.advancedTipContent}>{detail.shootingTips.weatherSuggestion}</Text>
+              </View>
+              <View style={styles.advancedTipCard}>
+                <Text style={styles.advancedTipTitle}>👗 穿搭建议</Text>
+                <Text style={styles.advancedTipContent}>{detail.shootingTips.clothingTips}</Text>
+              </View>
+              {detail.shootingTips.propsSuggestion && (
+                <View style={styles.advancedTipCard}>
+                  <Text style={styles.advancedTipTitle}>🎭 道具建议</Text>
+                  <Text style={styles.advancedTipContent}>{detail.shootingTips.propsSuggestion}</Text>
+                </View>
+              )}
             </View>
           </View>
 
@@ -479,5 +510,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#FFFFFF",
+  },
+  advancedTipsContainer: {
+    gap: 12,
+  },
+  advancedTipCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: "#9333EA",
+  },
+  advancedTipTitle: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#1F2937",
+    marginBottom: 8,
+  },
+  advancedTipContent: {
+    fontSize: 14,
+    lineHeight: 22,
+    color: "#4B5563",
   },
 });
