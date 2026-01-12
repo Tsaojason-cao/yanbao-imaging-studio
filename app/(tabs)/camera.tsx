@@ -143,6 +143,9 @@ export default function CameraScreen() {
         style={styles.camera}
         facing={facing}
         flash={flash ? "on" : "off"}
+        mode="picture"
+        videoQuality="1080p"
+        responsiveOrientationWhenOrientationLocked={true}
       >
         {/* 顶部控制栏 */}
         <View style={styles.topBar}>
