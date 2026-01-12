@@ -371,6 +371,29 @@ export default function CameraScreen() {
                           { width: `${param.value}%` },
                         ]}
                       />
+                      {/* 可拖动滑块 */}
+                      <View
+                        style={[
+                          styles.sliderThumb,
+                          { left: `${param.value}%` },
+                        ]}
+                        onStartShouldSetResponder={() => true}
+                        onResponderMove={(e) => {
+                          const locationX = e.nativeEvent.locationX;
+                          const trackWidth = 200; // 滑块轨道宽度
+                          const newValue = Math.max(0, Math.min(100, Math.round((locationX / trackWidth) * 100)));
+                          
+                          // 每隔5个单位触发一次细腻震动
+                          if (Math.abs(newValue - param.value) >= 5) {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                          }
+                          
+                          setBeautyParams(prev => ({
+                            ...prev,
+                            [param.key]: newValue,
+                          }));
+                        }}
+                      />
                     </View>
                     <Text style={styles.sliderValue}>{param.value}</Text>
                   </View>
@@ -680,6 +703,22 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     width: 36,
     textAlign: "right",
+  },
+  sliderThumb: {
+    position: "absolute",
+    top: -6,
+    width: 20,
+    height: 20,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#EC4899",
+    marginLeft: -10, // 居中对齐
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
   panelKuromi: {
     position: "absolute",
