@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Platform, ScrollView, Dimensi
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
+import { KuromiSlider } from "@/components/kuromi-ui";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
@@ -75,26 +76,11 @@ export default function EditScreen() {
               { key: "saturation", label: "饱和度", value: adjustParams.saturation },
               { key: "temperature", label: "色温", value: adjustParams.temperature },
             ].map((param) => (
-              <View key={param.key} style={styles.sliderRow}>
-                <View style={styles.skullLeft}>
-                  <View style={styles.skull} />
-                </View>
-                <View style={styles.sliderContainer}>
-                  <Text style={styles.sliderLabel}>{param.label}</Text>
-                  <View style={styles.sliderTrack}>
-                    <View
-                      style={[
-                        styles.sliderFill,
-                        { width: `${param.value}%` },
-                      ]}
-                    />
-                  </View>
-                </View>
-                <View style={styles.skullRight}>
-                  <View style={styles.skull} />
-                </View>
-                <Text style={styles.sliderValue}>{param.value}</Text>
-              </View>
+              <KuromiSlider
+                key={param.key}
+                label={param.label}
+                value={param.value}
+              />
             ))}
           </View>
         );

@@ -3,6 +3,7 @@ import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useState, useRef } from "react";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
+import { KuromiShutterButton } from "@/components/kuromi-ui";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
@@ -91,6 +92,24 @@ export default function CameraScreen() {
   };
 
   const takePicture = async () => {
+    if (!cameraRef.current) return;
+    
+    try {
+      const photo = await cameraRef.current.takePictureAsync();
+      if (photo && mediaPermission?.granted) {
+        await MediaLibrary.saveToLibraryAsync(photo.uri);
+        if (Platform.OS !== "web") {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
+        alert("照片已保存到相册");
+      }
+    } catch (error) {
+      console.error("Failed to take picture:", error);
+      alert("拍照失败，请重试");
+    }
+  };
+
+  const takePictureOld = async () => {
     if (!cameraRef.current) return;
 
     try {
@@ -289,12 +308,8 @@ export default function CameraScreen() {
               </View>
             </TouchableOpacity>
 
-            {/* 拍照按钮 */}
-            <Animated.View style={buttonAnimatedStyle}>
-              <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
-                <View style={styles.captureButtonInner} />
-              </TouchableOpacity>
-            </Animated.View>
+            {/* 拍照按钮 - 库洛米快门 */}
+            <KuromiShutterButton onPress={takePicture} size={80} />
 
             {/* 占位 */}
             <View style={styles.placeholder} />

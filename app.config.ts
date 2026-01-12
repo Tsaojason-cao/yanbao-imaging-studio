@@ -32,6 +32,9 @@ const config: ExpoConfig = {
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   extra: {
+    eas: {
+      projectId: "b22b66a5-a241-486e-9d1b-d412b9b55965",
+    },
     supabaseUrl: process.env.SUPABASE_URL,
     supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
   },
@@ -49,7 +52,17 @@ const config: ExpoConfig = {
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: env.androidPackage,
-    permissions: ["POST_NOTIFICATIONS"],
+    permissions: [
+      "CAMERA",
+      "READ_EXTERNAL_STORAGE",
+      "WRITE_EXTERNAL_STORAGE",
+      "READ_MEDIA_IMAGES",
+      "READ_MEDIA_VIDEO",
+      "VIBRATE",
+      "INTERNET",
+      "ACCESS_NETWORK_STATE",
+      "POST_NOTIFICATIONS"
+    ],
     intentFilters: [
       {
         action: "VIEW",
@@ -71,6 +84,22 @@ const config: ExpoConfig = {
   },
   plugins: [
     "expo-router",
+    [
+      "expo-camera",
+      {
+        cameraPermission: "允许 $(PRODUCT_NAME) 访问相机以拍摄照片。",
+        microphonePermission: "允许 $(PRODUCT_NAME) 访问麦克风以录制视频。",
+        recordAudioAndroid: true
+      }
+    ],
+    [
+      "expo-media-library",
+      {
+        photosPermission: "允许 $(PRODUCT_NAME) 访问相册以保存和读取照片。",
+        savePhotosPermission: "允许 $(PRODUCT_NAME) 保存照片到相册。",
+        isAccessMediaLocationEnabled: true
+      }
+    ],
     [
       "expo-audio",
       {
