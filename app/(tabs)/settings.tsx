@@ -12,6 +12,8 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors } from "@/hooks/use-colors";
 import * as Haptics from "expo-haptics";
+import { handleLogoTap, getEasterEggContent } from "@/lib/easter-egg";
+import { EasterEggModal } from "@/components/easter-egg-modal";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -51,7 +53,7 @@ export default function SettingsScreen() {
   const heartScale = useSharedValue(0);
   const heartOpacity = useSharedValue(0);
 
-  const handleLogoPress = () => {
+  const handleLogoPress = async () => {
     // Logo 弹跳动画
     logoScale.value = withSequence(
       withSpring(0.9),
@@ -59,19 +61,12 @@ export default function SettingsScreen() {
       withSpring(1)
     );
 
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // 处理彩蛋触发（10次点击）
+    const triggered = await handleLogoTap();
+    if (triggered && !showEasterEgg) {
+      setShowEasterEgg(true);
+      triggerEasterEgg();
     }
-
-    setEasterEggCount((prev) => {
-      const newCount = prev + 1;
-      if (newCount >= 5 && !showEasterEgg) {
-        // 触发彩蛋
-        setShowEasterEgg(true);
-        triggerEasterEgg();
-      }
-      return newCount;
-    });
   };
 
   const triggerEasterEgg = () => {
@@ -81,19 +76,6 @@ export default function SettingsScreen() {
 
     // 3 秒后淡出
     heartOpacity.value = withDelay(3000, withSpring(0));
-
-    if (Platform.OS !== "web") {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    }
-
-    // 显示浪漫弹窗
-    setTimeout(() => {
-      Alert.alert(
-        "💜 浪漫彩蛋 💜",
-        "这不只是一个App，这是用代码写的情书💜\n\n每一张照片，都是我们的美好回忆\n愿时光温柔，岁月静好\n\n— 致最特别的雁宝",
-        [{ text: "好的 ❤️", onPress: () => setShowEasterEgg(false) }]
-      );
-    }, 500);
   };
 
   const logoAnimatedStyle = useAnimatedStyle(() => ({
@@ -404,9 +386,20 @@ export default function SettingsScreen() {
     </ScrollView>
   );
 
+  const easterEggContent = getEasterEggContent();
+
   return (
     <ScreenContainer className="bg-background">
       {showStats ? renderStats() : renderSettings()}
+      
+      {/* 1017彩蛛 Modal */}
+      <EasterEggModal
+        visible={showEasterEgg}
+        onClose={() => setShowEasterEgg(false)}
+        title={easterEggContent.title}
+        message={easterEggContent.message}
+        specialEffect={easterEggContent.specialEffect}
+      />
     </ScreenContainer>
   );
 }
