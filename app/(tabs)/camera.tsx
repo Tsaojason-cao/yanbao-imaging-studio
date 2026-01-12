@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, Platform, Alert } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Platform, Alert, ScrollView } from "react-native";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useState, useRef } from "react";
 import { useRouter } from "expo-router";
@@ -20,6 +20,8 @@ export default function CameraScreen() {
   const [facing, setFacing] = useState<CameraType>("front");
   const [flash, setFlash] = useState(false);
   const [timer, setTimer] = useState(3);
+  const [showLUT, setShowLUT] = useState(false);
+  const [selectedLUT, setSelectedLUT] = useState("原图");
   const [permission, requestPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
 
@@ -39,6 +41,16 @@ export default function CameraScreen() {
   const buttonAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: buttonScale.value }],
   }));
+
+  // LUT预设列表
+  const lutPresets = [
+    { name: "原图", color: "#FFFFFF" },
+    { name: "清新", color: "#A7F3D0" },
+    { name: "复古", color: "#FDE68A" },
+    { name: "冷色", color: "#BFDBFE" },
+    { name: "暖色", color: "#FED7AA" },
+    { name: "黑白", color: "#E5E7EB" },
+  ];
 
   if (!permission || !mediaPermission) {
     return <View style={styles.container}><Text>正在加载...</Text></View>;
@@ -96,7 +108,6 @@ export default function CameraScreen() {
       });
 
       if (photo && photo.uri) {
-        // 保存到相册
         await MediaLibrary.saveToLibraryAsync(photo.uri);
         Alert.alert("成功", "照片已保存到相册");
       }
@@ -104,10 +115,6 @@ export default function CameraScreen() {
       console.error("拍照失败:", error);
       Alert.alert("错误", "拍照失败，请重试");
     }
-  };
-
-  const updateBeautyParam = (param: keyof typeof beautyParams, value: number) => {
-    setBeautyParams((prev) => ({ ...prev, [param]: value }));
   };
 
   return (
@@ -140,7 +147,7 @@ export default function CameraScreen() {
 
         {/* 右侧装饰 */}
         <View style={styles.rightSide}>
-          {/* Kuromi头像 */}
+          {/* 库洛米头像 */}
           <View style={styles.kuromiAvatar}>
             <View style={styles.kuromiHead}>
               <View style={[styles.kuromiEar, styles.kuromiEarLeft]} />
@@ -162,13 +169,62 @@ export default function CameraScreen() {
           <View style={styles.hdBadge}>
             <Text style={styles.hdText}>HD</Text>
           </View>
+
+          {/* LUT预设按钮 */}
+          <TouchableOpacity
+            style={styles.lutButton}
+            onPress={() => {
+              if (Platform.OS !== "web") {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }
+              setShowLUT(!showLUT);
+            }}
+          >
+            <MaterialCommunityIcons name="palette" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
         </View>
+
+        {/* LUT预设选择器 */}
+        {showLUT && (
+          <View style={styles.lutPanel}>
+            <BlurView intensity={40} style={styles.lutBlur}>
+              <LinearGradient
+                colors={["rgba(168, 85, 247, 0.3)" as const, "rgba(236, 72, 153, 0.3)" as const]}
+                style={styles.lutGradient}
+              >
+                <Text style={styles.lutTitle}>LUT预设</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <View style={styles.lutList}>
+                    {lutPresets.map((lut, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={[
+                          styles.lutItem,
+                          selectedLUT === lut.name && styles.lutItemActive,
+                        ]}
+                        onPress={() => {
+                          if (Platform.OS !== "web") {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                          }
+                          setSelectedLUT(lut.name);
+                        }}
+                      >
+                        <View style={[styles.lutPreview, { backgroundColor: lut.color }]} />
+                        <Text style={styles.lutName}>{lut.name}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </ScrollView>
+              </LinearGradient>
+            </BlurView>
+          </View>
+        )}
 
         {/* 底部美颜参数面板 */}
         <View style={styles.bottomPanel}>
           <BlurView intensity={40} style={styles.beautyPanel}>
             <LinearGradient
-              colors={["rgba(168, 85, 247, 0.3)", "rgba(236, 72, 153, 0.3)"]}
+              colors={["rgba(168, 85, 247, 0.3)" as const, "rgba(236, 72, 153, 0.3)" as const]}
               style={styles.beautyPanelGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -199,7 +255,7 @@ export default function CameraScreen() {
                 ))}
               </View>
 
-              {/* 右下角Kuromi装饰 */}
+              {/* 右下角库洛米装饰 */}
               <View style={styles.panelKuromi}>
                 <View style={styles.kuromiHead}>
                   <View style={[styles.kuromiEar, styles.kuromiEarLeft]} />
@@ -309,6 +365,66 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
     color: "#1F2937",
+  },
+  lutButton: {
+    width: 48,
+    height: 48,
+    backgroundColor: "rgba(139, 92, 246, 0.8)",
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  lutPanel: {
+    position: "absolute",
+    top: 120,
+    left: 20,
+    right: 100,
+    borderRadius: 20,
+    overflow: "hidden",
+    borderWidth: 2,
+    borderColor: "rgba(168, 85, 247, 0.5)",
+  },
+  lutBlur: {
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+  },
+  lutGradient: {
+    padding: 16,
+  },
+  lutTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    marginBottom: 12,
+  },
+  lutList: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  lutItem: {
+    alignItems: "center",
+    gap: 6,
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+  },
+  lutItemActive: {
+    backgroundColor: "rgba(236, 72, 153, 0.3)",
+    borderWidth: 2,
+    borderColor: "#EC4899",
+  },
+  lutPreview: {
+    width: 60,
+    height: 60,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  lutName: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
   bottomPanel: {
     position: "absolute",
