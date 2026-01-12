@@ -89,25 +89,25 @@ const config: ExpoConfig = {
     [
       "expo-camera",
       {
-        cameraPermission: "允许 $(PRODUCT_NAME) 访问相机以拍摄照片。",
-        microphonePermission: "允许 $(PRODUCT_NAME) 访问麦克风以录制视频。",
+        cameraPermission: "雁宝AI需要相机权限，帮你记录每一个美好的瞬间📸",
+        microphonePermission: "雁宝AI需要麦克风权限，让你的视频更加生动🎥",
         recordAudioAndroid: true
       }
     ],
     [
       "expo-media-library",
       {
-        photosPermission: "允许 $(PRODUCT_NAME) 访问相册以保存和读取照片。",
-        savePhotosPermission: "允许 $(PRODUCT_NAME) 保存照片到相册。",
+        photosPermission: "雁宝AI需要相册权限，守护你们的美好回忆📚",
+        savePhotosPermission: "雁宝AI需要保存权限，珍藏每一张精心修图的作品✨",
         isAccessMediaLocationEnabled: true
       }
     ],
     [
       "expo-location",
       {
-        locationAlwaysAndWhenInUsePermission: "允许 $(PRODUCT_NAME) 访问位置以推荐附近的拍摄机位。",
-        locationAlwaysPermission: "允许 $(PRODUCT_NAME) 访问位置以推荐附近的拍摄机位。",
-        locationWhenInUsePermission: "允许 $(PRODUCT_NAME) 访问位置以推荐附近的拍摄机位。"
+        locationAlwaysAndWhenInUsePermission: "雁宝AI需要位置权限，带你发现身边的美好机位📍",
+        locationAlwaysPermission: "雁宝AI需要位置权限，带你发现身边的美好机位📍",
+        locationWhenInUsePermission: "雁宝AI需要位置权限，带你发现身边的美好机位📍"
       }
     ],
     [
