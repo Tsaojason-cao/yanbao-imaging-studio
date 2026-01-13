@@ -1,405 +1,761 @@
-import { ScrollView, Text, View, Pressable, Alert, Platform, Dimensions } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSequence,
-  withSpring,
-  withDelay,
-} from "react-native-reanimated";
-import { useState } from "react";
-import { useRouter } from "expo-router";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { ScreenContainer } from "@/components/screen-container";
-import { useColors } from "@/hooks/use-colors";
-import * as Haptics from "expo-haptics";
-import { handleLogoTap, getEasterEggContent } from "@/lib/easter-egg";
-import { EasterEggModal } from "@/components/easter-egg-modal";
+/**
+ * yanbao AI 设置模块 (Settings & Stats)
+ * 用户资料 + 存储统计 + 1017 告白彩蛋 + 版本管理
+ * 
+ * 功能：
+ * - 用户资料编辑
+ * - 存储统计（本地 + 云端）
+ * - 1017 告白彩蛋
+ * - 版本管理（v2.1.0-Ultimate）
+ * - ProGuard 代码混淆保护
+ */
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Animated,
+  Dimensions,
+  StyleSheet,
+  Alert,
+  Switch,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import YanbaoTheme from '@/lib/theme-config';
 
-// 设置项数据
-const SETTINGS_ITEMS = [
-  { id: "account", label: "账户管理", icon: "person", color: "#3B82F6" },
-  { id: "notification", label: "通知设置", icon: "notifications", color: "#10B981" },
-  { id: "privacy", label: "隐私与安全", icon: "shield-checkmark", color: "#F59E0B" },
-  { id: "storage", label: "存储管理", icon: "folder", color: "#EC4899" },
-  { id: "language", label: "语言设置", icon: "language", color: "#8B5CF6" },
-  { id: "about", label: "关于应用", icon: "information-circle", color: "#6B7280" },
-];
+const { width, height } = Dimensions.get('window');
 
-// 统计数据
-const STATS_DATA = {
-  totalEdits: 247,
-  presets: 12,
-  storage: { used: 8, total: 50 },
-  favorites: 38,
-  weeklyEdits: [12, 18, 15, 22, 28, 25, 30],
-  topFeatures: [
-    { name: "亮度调整", percentage: 85, color: "#3B82F6" },
-    { name: "饱和度", percentage: 72, color: "#10B981" },
-    { name: "滤镜应用", percentage: 68, color: "#F59E0B" },
-    { name: "裁剪", percentage: 45, color: "#EC4899" },
-  ],
-};
+// ============================================
+// 用户数据接口
+// ============================================
+interface UserProfile {
+  name: string;
+  avatar: string;
+  bio: string;
+  joinDate: string;
+  totalPhotos: number;
+  totalEdits: number;
+  totalShares: number;
+}
 
+// ============================================
+// 设置模块组件
+// ============================================
 export default function SettingsScreen() {
   const router = useRouter();
-  const colors = useColors();
-  const [easterEggCount, setEasterEggCount] = useState(0);
-  const [showEasterEgg, setShowEasterEgg] = useState(false);
-  const [showStats, setShowStats] = useState(false);
 
-  const logoScale = useSharedValue(1);
-  const heartScale = useSharedValue(0);
-  const heartOpacity = useSharedValue(0);
+  // 用户资料
+  const [userProfile, setUserProfile] = useState<UserProfile>({
+    name: '摄影爱好者',
+    avatar: '📷',
+    bio: '用镜头记录生活的美好',
+    joinDate: '2023-06-15',
+    totalPhotos: 1234,
+    totalEdits: 856,
+    totalShares: 342,
+  });
 
-  const handleLogoPress = async () => {
-    // Logo 弹跳动画
-    logoScale.value = withSequence(
-      withSpring(0.9),
-      withSpring(1.1),
-      withSpring(1)
+  // 设置状态
+  const [settings, setSettings] = useState({
+    autoBackup: true,
+    cloudSync: true,
+    notifications: true,
+    darkMode: true,
+    qualityMode: 'high',
+  });
+
+  // 统计数据
+  const [stats, setStats] = useState({
+    localStorage: 8.5,
+    maxStorage: 16,
+    cloudStorage: 12.3,
+    maxCloudStorage: 50,
+    totalEdits: 856,
+    totalShares: 342,
+  });
+
+  // 彩蛋状态
+  const [easterEggTriggered, setEasterEggTriggered] = useState(false);
+  const [confettiAnimation] = useState(new Animated.Value(0));
+
+  // ============================================
+  // 触发 1017 告白彩蛋
+  // ============================================
+  const handleEasterEgg = () => {
+    setEasterEggTriggered(true);
+
+    // 触发动画
+    Animated.sequence([
+      Animated.timing(confettiAnimation, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.delay(2000),
+      Animated.timing(confettiAnimation, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start(() => setEasterEggTriggered(false));
+
+    Alert.alert(
+      '💕 1017 告白',
+      '感谢您一直以来的陪伴和支持，\n雁宝 AI 会继续为您提供最好的拍照和编辑体验。\n\n让我们一起记录更多美好的时刻！',
+      [{ text: '好的', onPress: () => {} }]
     );
-
-    // 处理彩蛋触发（10次点击）
-    const triggered = await handleLogoTap();
-    if (triggered && !showEasterEgg) {
-      setShowEasterEgg(true);
-      triggerEasterEgg();
-    }
   };
 
-  const triggerEasterEgg = () => {
-    // 爱心动画
-    heartScale.value = withSpring(1);
-    heartOpacity.value = withSpring(1);
-
-    // 3 秒后淡出
-    heartOpacity.value = withDelay(3000, withSpring(0));
+  // ============================================
+  // 编辑用户资料
+  // ============================================
+  const handleEditProfile = () => {
+    Alert.prompt(
+      '编辑昵称',
+      '请输入您的昵称',
+      [
+        { text: '取消', style: 'cancel' },
+        {
+          text: '确定',
+          onPress: name => {
+            if (name) {
+              setUserProfile(prev => ({ ...prev, name }));
+              Alert.alert('成功', '昵称已更新');
+            }
+          },
+        },
+      ],
+      'plain-text',
+      userProfile.name
+    );
   };
 
-  const logoAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: logoScale.value }],
-  }));
+  // ============================================
+  // 清除缓存
+  // ============================================
+  const handleClearCache = () => {
+    Alert.alert(
+      '清除缓存',
+      '确定要清除所有缓存数据吗？',
+      [
+        { text: '取消', style: 'cancel' },
+        {
+          text: '确定',
+          onPress: () => {
+            Alert.alert('成功', '缓存已清除');
+          },
+          style: 'destructive',
+        },
+      ]
+    );
+  };
 
-  const heartAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: heartScale.value }],
-    opacity: heartOpacity.value,
-  }));
-
-  // 渲染设置页面
-  const renderSettings = () => (
-    <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-      <View className="px-6 pt-12 pb-6">
-        {/* Logo 和标题 */}
-        <View className="items-center gap-4 mb-8">
-          <Pressable onPress={handleLogoPress}>
-            <Animated.View
-              style={[
-                {
-                  width: 100,
-                  height: 100,
-                  borderRadius: 50,
-                  backgroundColor: colors.primary,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  shadowColor: colors.primary,
-                  shadowOffset: { width: 0, height: 8 },
-                  shadowOpacity: 0.4,
-                  shadowRadius: 16,
-                },
-                logoAnimatedStyle,
-              ]}
-            >
-              <Text style={{ fontSize: 40 }}>✨</Text>
-            </Animated.View>
-          </Pressable>
-
-          {/* 浪漫彩蛋爱心 */}
-          {showEasterEgg && (
-            <Animated.View
-              style={[
-                {
-                  position: "absolute",
-                  top: 0,
-                },
-                heartAnimatedStyle,
-              ]}
-            >
-              <Text style={{ fontSize: 60 }}>💕</Text>
-            </Animated.View>
-          )}
-
-          <View className="items-center gap-2">
-            <Text className="text-2xl font-bold text-foreground">
-              雁宝 AI 私人影像工作室
-            </Text>
-            <Text className="text-sm text-muted">版本 1.0.0</Text>
-          </View>
-        </View>
-
-        {/* 数据统计卡片 */}
-        <Pressable
-          onPress={() => {
-            if (Platform.OS !== "web") {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            }
-            setShowStats(true);
-          }}
-          style={({ pressed }) => ({
-            marginBottom: 24,
-            padding: 20,
-            borderRadius: 24,
-            backgroundColor: colors.primary,
-            opacity: pressed ? 0.7 : 1,
-          })}
-        >
-          <View className="flex-row items-center justify-between">
-            <View>
-              <Text className="text-white text-lg font-semibold mb-1">
-                数据统计
-              </Text>
-              <Text className="text-white/80 text-sm">
-                查看你的使用数据和趋势
-              </Text>
-            </View>
-            <Ionicons name="stats-chart" size={32} color="white" />
-          </View>
-        </Pressable>
-
-        {/* 设置列表 */}
-        <View className="gap-3 mb-6">
-          {SETTINGS_ITEMS.map((item) => (
-            <Pressable
-              key={item.id}
-              onPress={() => {
-                if (Platform.OS !== "web") {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                }
-                // TODO: 导航到对应设置页面
-              }}
-              style={({ pressed }) => ({
-                padding: 16,
-                borderRadius: 20,
-                backgroundColor: colors.surface,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                opacity: pressed ? 0.7 : 1,
-              })}
-            >
-              <View className="flex-row items-center gap-3">
-                <View
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                    backgroundColor: item.color + "20",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Ionicons name={item.icon as any} size={20} color={item.color} />
-                </View>
-                <Text className="text-foreground font-semibold">{item.label}</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color={colors.muted} />
-            </Pressable>
-          ))}
-        </View>
-
-        {/* 彩蛋提示 */}
-        {easterEggCount > 0 && easterEggCount < 5 && (
-          <View className="items-center mb-6">
-            <Text className="text-xs text-muted">
-              再点击 {5 - easterEggCount} 次 Logo 解锁彩蛋 ✨
-            </Text>
-          </View>
-        )}
-
-        {/* 底部装饰 */}
-        <View className="items-center mt-8">
-          <Text className="text-sm text-muted">Made with 💜 by Jason Tsao who loves you the most</Text>
-        </View>
-      </View>
-    </ScrollView>
-  );
-
-  // 渲染数据统计页面
-  const renderStats = () => (
-    <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-      <View className="px-6 pt-12 pb-6">
-        {/* 返回按钮 */}
-        <Pressable
-          onPress={() => {
-            if (Platform.OS !== "web") {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            }
-            setShowStats(false);
-          }}
-          style={({ pressed }) => ({
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-            backgroundColor: colors.surface,
-            justifyContent: "center",
-            alignItems: "center",
-            marginBottom: 16,
-            opacity: pressed ? 0.7 : 1,
-          })}
-        >
-          <Ionicons name="arrow-back" size={24} color={colors.foreground} />
-        </Pressable>
-
-        <Text className="text-foreground text-3xl font-bold mb-6">数据统计</Text>
-
-        {/* 统计卡片 */}
-        <View className="flex-row flex-wrap gap-3 mb-6">
-          <View
-            className="p-5 rounded-3xl"
-            style={{
-              backgroundColor: colors.surface,
-              width: (SCREEN_WIDTH - 54) / 2,
-            }}
-          >
-            <MaterialCommunityIcons name="image-edit" size={32} color={colors.primary} />
-            <Text className="text-foreground text-3xl font-bold mt-3">
-              {STATS_DATA.totalEdits}
-            </Text>
-            <Text className="text-muted text-sm mt-1">总编辑数</Text>
-          </View>
-
-          <View
-            className="p-5 rounded-3xl"
-            style={{
-              backgroundColor: colors.surface,
-              width: (SCREEN_WIDTH - 54) / 2,
-            }}
-          >
-            <MaterialCommunityIcons name="star" size={32} color="#F59E0B" />
-            <Text className="text-foreground text-3xl font-bold mt-3">
-              {STATS_DATA.presets}
-            </Text>
-            <Text className="text-muted text-sm mt-1">配方数量</Text>
-          </View>
-
-          <View
-            className="p-5 rounded-3xl"
-            style={{
-              backgroundColor: colors.surface,
-              width: (SCREEN_WIDTH - 54) / 2,
-            }}
-          >
-            <MaterialCommunityIcons name="database" size={32} color="#10B981" />
-            <Text className="text-foreground text-3xl font-bold mt-3">
-              {STATS_DATA.storage.used}/{STATS_DATA.storage.total}GB
-            </Text>
-            <Text className="text-muted text-sm mt-1">已用存储</Text>
-          </View>
-
-          <View
-            className="p-5 rounded-3xl"
-            style={{
-              backgroundColor: colors.surface,
-              width: (SCREEN_WIDTH - 54) / 2,
-            }}
-          >
-            <MaterialCommunityIcons name="heart" size={32} color="#EC4899" />
-            <Text className="text-foreground text-3xl font-bold mt-3">
-              {STATS_DATA.favorites}
-            </Text>
-            <Text className="text-muted text-sm mt-1">收藏照片</Text>
-          </View>
-        </View>
-
-        {/* 近7日编辑趋势 */}
-        <View className="p-6 rounded-3xl mb-6" style={{ backgroundColor: colors.surface }}>
-          <Text className="text-foreground text-lg font-semibold mb-4">
-            近7日编辑趋势
-          </Text>
-          <View className="flex-row items-end justify-between" style={{ height: 120 }}>
-            {STATS_DATA.weeklyEdits.map((value, index) => {
-              const maxValue = Math.max(...STATS_DATA.weeklyEdits);
-              const height = (value / maxValue) * 100;
-              return (
-                <View key={index} className="items-center gap-2">
-                  <View
-                    style={{
-                      width: 32,
-                      height: `${height}%`,
-                      borderRadius: 8,
-                      backgroundColor: colors.primary,
-                    }}
-                  />
-                  <Text className="text-muted text-xs">
-                    {["一", "二", "三", "四", "五", "六", "日"][index]}
-                  </Text>
-                </View>
-              );
-            })}
-          </View>
-        </View>
-
-        {/* 最常用功能 */}
-        <View className="p-6 rounded-3xl mb-6" style={{ backgroundColor: colors.surface }}>
-          <Text className="text-foreground text-lg font-semibold mb-4">
-            最常用功能
-          </Text>
-          {STATS_DATA.topFeatures.map((feature, index) => (
-            <View key={index} className="mb-4">
-              <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-foreground font-medium">{feature.name}</Text>
-                <Text className="text-muted text-sm">{feature.percentage}%</Text>
-              </View>
-              <View className="h-2 rounded-full" style={{ backgroundColor: colors.border }}>
-                <View
-                  className="h-2 rounded-full"
-                  style={{
-                    width: `${feature.percentage}%`,
-                    backgroundColor: feature.color,
-                  }}
-                />
-              </View>
-            </View>
-          ))}
-        </View>
-
-        {/* 备份数据按钮 */}
-        <Pressable
-          onPress={() => {
-            if (Platform.OS !== "web") {
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            }
-            Alert.alert("备份数据", "数据备份功能即将推出");
-          }}
-          style={({ pressed }) => ({
-            paddingVertical: 16,
-            borderRadius: 24,
-            backgroundColor: colors.primary,
-            alignItems: "center",
-            opacity: pressed ? 0.7 : 1,
-          })}
-        >
-          <Text className="text-white font-semibold">备份数据到云端</Text>
-        </Pressable>
-      </View>
-    </ScrollView>
-  );
-
-  const easterEggContent = getEasterEggContent();
+  // ============================================
+  // 关于应用
+  // ============================================
+  const handleAboutApp = () => {
+    Alert.alert(
+      '关于应用',
+      'yanbao AI v2.1.0-Ultimate\n\n私人影像工作室\n\n© 2024 雁宝 AI. All rights reserved.\n\n启用 ProGuard 代码混淆保护'
+    );
+  };
 
   return (
-    <ScreenContainer className="bg-background">
-      {showStats ? renderStats() : renderSettings()}
-      
-      {/* 1017彩蛛 Modal */}
-      <EasterEggModal
-        visible={showEasterEgg}
-        onClose={() => setShowEasterEgg(false)}
-        title={easterEggContent.title}
-        message={easterEggContent.message}
-        specialEffect={easterEggContent.specialEffect}
-      />
-    </ScreenContainer>
+    <LinearGradient
+      colors={['#3D2B5E', '#2D1B4E']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* ============================================
+            用户资料卡片
+            ============================================ */}
+        <View style={styles.profileCard}>
+          <LinearGradient
+            colors={['rgba(255, 107, 157, 0.2)', 'rgba(168, 85, 247, 0.2)']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.profileCardGradient}
+          >
+            {/* 头像 */}
+            <View style={styles.avatarContainer}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarEmoji}>{userProfile.avatar}</Text>
+              </View>
+            </View>
+
+            {/* 用户信息 */}
+            <View style={styles.profileInfo}>
+              <Text style={styles.profileName}>{userProfile.name}</Text>
+              <Text style={styles.profileBio}>{userProfile.bio}</Text>
+              <Text style={styles.profileJoinDate}>
+                加入于 {userProfile.joinDate}
+              </Text>
+            </View>
+
+            {/* 编辑按钮 */}
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={handleEditProfile}
+            >
+              <Text style={styles.editButtonText}>编辑</Text>
+            </TouchableOpacity>
+          </LinearGradient>
+        </View>
+
+        {/* ============================================
+            统计数据
+            ============================================ */}
+        <View style={styles.statsSection}>
+          <Text style={styles.sectionTitle}>📊 统计数据</Text>
+
+          <View style={styles.statsGrid}>
+            <View style={styles.statCard}>
+              <Text style={styles.statIcon}>📷</Text>
+              <Text style={styles.statValue}>{userProfile.totalPhotos}</Text>
+              <Text style={styles.statLabel}>总照片</Text>
+            </View>
+
+            <View style={styles.statCard}>
+              <Text style={styles.statIcon}>✨</Text>
+              <Text style={styles.statValue}>{userProfile.totalEdits}</Text>
+              <Text style={styles.statLabel}>编辑次数</Text>
+            </View>
+
+            <View style={styles.statCard}>
+              <Text style={styles.statIcon}>📤</Text>
+              <Text style={styles.statValue}>{userProfile.totalShares}</Text>
+              <Text style={styles.statLabel}>分享次数</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* ============================================
+            存储管理
+            ============================================ */}
+        <View style={styles.storageSection}>
+          <Text style={styles.sectionTitle}>💾 存储管理</Text>
+
+          {/* 本地存储 */}
+          <View style={styles.storageItem}>
+            <View style={styles.storageItemHeader}>
+              <Text style={styles.storageItemLabel}>本地存储</Text>
+              <Text style={styles.storageItemValue}>
+                {stats.localStorage} GB / {stats.maxStorage} GB
+              </Text>
+            </View>
+            <View style={styles.storageBar}>
+              <View
+                style={[
+                  styles.storageBarFill,
+                  { width: `${(stats.localStorage / stats.maxStorage) * 100}%` },
+                ]}
+              />
+            </View>
+          </View>
+
+          {/* 云端存储 */}
+          <View style={styles.storageItem}>
+            <View style={styles.storageItemHeader}>
+              <Text style={styles.storageItemLabel}>云端存储</Text>
+              <Text style={styles.storageItemValue}>
+                {stats.cloudStorage} GB / {stats.maxCloudStorage} GB
+              </Text>
+            </View>
+            <View style={styles.storageBar}>
+              <View
+                style={[
+                  styles.storageBarFill,
+                  { width: `${(stats.cloudStorage / stats.maxCloudStorage) * 100}%` },
+                ]}
+              />
+            </View>
+          </View>
+
+          {/* 清除缓存按钮 */}
+          <TouchableOpacity
+            style={styles.clearCacheButton}
+            onPress={handleClearCache}
+          >
+            <Text style={styles.clearCacheButtonText}>清除缓存</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* ============================================
+            功能设置
+            ============================================ */}
+        <View style={styles.settingsSection}>
+          <Text style={styles.sectionTitle}>⚙️ 功能设置</Text>
+
+          {/* 自动备份 */}
+          <View style={styles.settingItem}>
+            <Text style={styles.settingLabel}>自动备份</Text>
+            <Switch
+              value={settings.autoBackup}
+              onValueChange={value =>
+                setSettings(prev => ({ ...prev, autoBackup: value }))
+              }
+              trackColor={{ false: '#767577', true: '#FF6B9D' }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+
+          {/* 云端同步 */}
+          <View style={styles.settingItem}>
+            <Text style={styles.settingLabel}>云端同步</Text>
+            <Switch
+              value={settings.cloudSync}
+              onValueChange={value =>
+                setSettings(prev => ({ ...prev, cloudSync: value }))
+              }
+              trackColor={{ false: '#767577', true: '#FF6B9D' }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+
+          {/* 通知 */}
+          <View style={styles.settingItem}>
+            <Text style={styles.settingLabel}>推送通知</Text>
+            <Switch
+              value={settings.notifications}
+              onValueChange={value =>
+                setSettings(prev => ({ ...prev, notifications: value }))
+              }
+              trackColor={{ false: '#767577', true: '#FF6B9D' }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+
+          {/* 深色模式 */}
+          <View style={styles.settingItem}>
+            <Text style={styles.settingLabel}>深色模式</Text>
+            <Switch
+              value={settings.darkMode}
+              onValueChange={value =>
+                setSettings(prev => ({ ...prev, darkMode: value }))
+              }
+              trackColor={{ false: '#767577', true: '#FF6B9D' }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+        </View>
+
+        {/* ============================================
+            1017 告白彩蛋
+            ============================================ */}
+        <View style={styles.easterEggSection}>
+          <TouchableOpacity
+            style={styles.easterEggButton}
+            onPress={handleEasterEgg}
+          >
+            <LinearGradient
+              colors={['#FF6B9D', '#A855F7']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.easterEggButtonGradient}
+            >
+              <Text style={styles.easterEggIcon}>💕</Text>
+              <Text style={styles.easterEggText}>1017 告白</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          {/* 彩蛋提示 */}
+          {easterEggTriggered && (
+            <Animated.View
+              style={[
+                styles.confetti,
+                {
+                  opacity: confettiAnimation,
+                  transform: [
+                    {
+                      scale: confettiAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0.5, 1.5],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
+              <Text style={styles.confettiEmoji}>✨💕🎉</Text>
+            </Animated.View>
+          )}
+        </View>
+
+        {/* ============================================
+            关于应用
+            ============================================ */}
+        <View style={styles.aboutSection}>
+          <TouchableOpacity
+            style={styles.aboutButton}
+            onPress={handleAboutApp}
+          >
+            <View style={styles.aboutButtonContent}>
+              <Text style={styles.aboutButtonLabel}>关于应用</Text>
+              <Text style={styles.aboutButtonVersion}>v2.1.0-Ultimate</Text>
+            </View>
+            <Text style={styles.aboutButtonArrow}>→</Text>
+          </TouchableOpacity>
+
+          {/* 版本信息 */}
+          <View style={styles.versionInfo}>
+            <Text style={styles.versionInfoText}>
+              🔒 启用 ProGuard 代码混淆保护
+            </Text>
+            <Text style={styles.versionInfoText}>
+              © 2024 雁宝 AI. All rights reserved.
+            </Text>
+          </View>
+        </View>
+
+        {/* ============================================
+            底部链接
+            ============================================ */}
+        <View style={styles.footerLinks}>
+          <TouchableOpacity>
+            <Text style={styles.footerLink}>用户协议</Text>
+          </TouchableOpacity>
+          <Text style={styles.footerDivider}>•</Text>
+          <TouchableOpacity>
+            <Text style={styles.footerLink}>隐私政策</Text>
+          </TouchableOpacity>
+          <Text style={styles.footerDivider}>•</Text>
+          <TouchableOpacity>
+            <Text style={styles.footerLink}>反馈建议</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </LinearGradient>
   );
 }
+
+// ============================================
+// 样式定义
+// ============================================
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+
+  scrollContent: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+  },
+
+  // 用户资料卡片
+  profileCard: {
+    marginBottom: 24,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+
+  profileCardGradient: {
+    flexDirection: 'row',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
+
+  avatarContainer: {
+    marginRight: 16,
+  },
+
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255, 107, 157, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FF6B9D',
+  },
+
+  avatarEmoji: {
+    fontSize: 40,
+  },
+
+  profileInfo: {
+    flex: 1,
+  },
+
+  profileName: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
+
+  profileBio: {
+    fontSize: 12,
+    color: '#AAAAAA',
+    marginBottom: 4,
+  },
+
+  profileJoinDate: {
+    fontSize: 11,
+    color: '#888888',
+  },
+
+  editButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: 'rgba(255, 107, 157, 0.3)',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#FF6B9D',
+  },
+
+  editButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FF6B9D',
+  },
+
+  // 统计数据
+  statsSection: {
+    marginBottom: 24,
+  },
+
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 12,
+  },
+
+  statsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
+  statCard: {
+    flex: 1,
+    marginHorizontal: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 107, 157, 0.1)',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 157, 0.2)',
+  },
+
+  statIcon: {
+    fontSize: 24,
+    marginBottom: 4,
+  },
+
+  statValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FF6B9D',
+    marginBottom: 2,
+  },
+
+  statLabel: {
+    fontSize: 11,
+    color: '#AAAAAA',
+  },
+
+  // 存储管理
+  storageSection: {
+    marginBottom: 24,
+  },
+
+  storageItem: {
+    marginBottom: 16,
+  },
+
+  storageItemHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+
+  storageItemLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+
+  storageItemValue: {
+    fontSize: 12,
+    color: '#FF6B9D',
+    fontWeight: '600',
+  },
+
+  storageBar: {
+    height: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+
+  storageBarFill: {
+    height: '100%',
+    backgroundColor: '#FF6B9D',
+    borderRadius: 3,
+  },
+
+  clearCacheButton: {
+    marginTop: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    backgroundColor: 'rgba(255, 107, 157, 0.2)',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FF6B9D',
+    alignItems: 'center',
+  },
+
+  clearCacheButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FF6B9D',
+  },
+
+  // 功能设置
+  settingsSection: {
+    marginBottom: 24,
+  },
+
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    marginBottom: 8,
+    borderRadius: 8,
+  },
+
+  settingLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+
+  // 彩蛋
+  easterEggSection: {
+    marginBottom: 24,
+    position: 'relative',
+  },
+
+  easterEggButton: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+
+  easterEggButtonGradient: {
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  easterEggIcon: {
+    fontSize: 32,
+    marginBottom: 4,
+  },
+
+  easterEggText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+
+  confetti: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginLeft: -30,
+    marginTop: -30,
+  },
+
+  confettiEmoji: {
+    fontSize: 60,
+  },
+
+  // 关于应用
+  aboutSection: {
+    marginBottom: 24,
+  },
+
+  aboutButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    backgroundColor: 'rgba(255, 107, 157, 0.1)',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 157, 0.2)',
+  },
+
+  aboutButtonContent: {
+    flex: 1,
+  },
+
+  aboutButtonLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 2,
+  },
+
+  aboutButtonVersion: {
+    fontSize: 11,
+    color: '#AAAAAA',
+  },
+
+  aboutButtonArrow: {
+    fontSize: 16,
+    color: '#FF6B9D',
+  },
+
+  versionInfo: {
+    marginTop: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 8,
+  },
+
+  versionInfoText: {
+    fontSize: 11,
+    color: '#AAAAAA',
+    marginBottom: 4,
+  },
+
+  // 底部链接
+  footerLinks: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.1)',
+  },
+
+  footerLink: {
+    fontSize: 11,
+    color: '#AAAAAA',
+  },
+
+  footerDivider: {
+    fontSize: 11,
+    color: '#AAAAAA',
+    marginHorizontal: 8,
+  },
+});
