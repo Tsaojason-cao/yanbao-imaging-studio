@@ -33,7 +33,7 @@ const config: ExpoConfig = {
   newArchEnabled: true,
   extra: {
     eas: {
-      projectId: "b22b66a5-a241-486e-9d1b-d412b9b55965",
+      projectId: "009c619b-efd9-4ad3-b2f7-661fe9b76b58",
     },
     supabaseUrl: process.env.SUPABASE_URL,
     supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
