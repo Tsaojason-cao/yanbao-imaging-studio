@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雁宝影像工作室 v2.2.0 - 一键下载 APK</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1A0B2E 0%, #0A051E 100%);
+            color: #FFFFFF;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 40px;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #E879F9 0%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #888888;
+            margin-bottom: 20px;
+        }
+
+        .version {
+            display: inline-block;
+            background: #E879F9;
+            color: #1A0B2E;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .card {
+            background: rgba(45, 27, 78, 0.6);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(232, 121, 249, 0.3);
+            border: 2px solid rgba(232, 121, 249, 0.2);
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #E879F9;
+        }
+
+        .download-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #E879F9 0%, #C084FC 100%);
+            color: #FFFFFF;
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 20px rgba(232, 121, 249, 0.4);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(232, 121, 249, 0.6);
+        }
+
+        .qr-code {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .qr-code img {
+            width: 200px;
+            height: 200px;
+            border-radius: 15px;
+            background: #FFFFFF;
+            padding: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            background: rgba(10, 5, 30, 0.5);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(232, 121, 249, 0.2);
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #888888;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #E879F9;
+        }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(232, 121, 249, 0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .checklist li:before {
+            content: "□";
+            font-size: 20px;
+            color: #E879F9;
+            margin-right: 12px;
+        }
+
+        .steps {
+            counter-reset: step;
+        }
+
+        .step {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: rgba(10, 5, 30, 0.5);
+            border-radius: 12px;
+            border-left: 4px solid #E879F9;
+            counter-increment: step;
+            position: relative;
+            padding-left: 50px;
+        }
+
+        .step:before {
+            content: counter(step);
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            width: 28px;
+            height: 28px;
+            background: #E879F9;
+            color: #1A0B2E;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .warning-title {
+            color: #FFC107;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px 0;
+            color: #888888;
+            font-size: 14px;
+        }
+
+        .signature {
+            color: #E879F9;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .logo {
+                font-size: 36px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .download-btn {
+                font-size: 18px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">yanbao AI</div>
+            <div class="subtitle">雁宝影像工作室</div>
+            <div class="version">v2.2.0 (Build 1)</div>
+        </div>
+
+        <!-- 一键下载 -->
+        <div class="card">
+            <div class="card-title">📦 一键下载 APK</div>
+            <a href="https://expo.dev/accounts/tsao-jason/projects/yanbao-eas-build/builds/1dcee137-c50e-4e89-992a-83671faf5274" class="download-btn" target="_blank">
+                ⬇️ 立即下载 APK
+            </a>
+            <p style="text-align: center; color: #888888; font-size: 14px;">
+                点击按钮后，在新页面中点击「Install」按钮下载
+            </p>
+        </div>
+
+        <!-- 二维码下载 -->
+        <div class="card">
+            <div class="card-title">📱 扫码下载（手机端）</div>
+            <div class="qr-code">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://expo.dev/accounts/tsao-jason/projects/yanbao-eas-build/builds/1dcee137-c50e-4e89-992a-83671faf5274" alt="下载二维码">
+                <p style="margin-top: 15px; color: #888888; font-size: 14px;">
+                    使用手机相机扫描二维码
+                </p>
+            </div>
+        </div>
+
+        <!-- 构建信息 -->
+        <div class="card">
+            <div class="card-title">ℹ️ 构建信息</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">版本号</div>
+                    <div class="info-value">2.1.1 (1)</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">构建状态</div>
+                    <div class="info-value">✅ 已完成</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">构建时间</div>
+                    <div class="info-value">11m 2s</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">可用期限</div>
+                    <div class="info-value">13 天</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">SDK 版本</div>
+                    <div class="info-value">54.0.0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">配置</div>
+                    <div class="info-value">preview</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 安装步骤 -->
+        <div class="card">
+            <div class="card-title">📝 安装步骤</div>
+            <div class="steps">
+                <div class="step">
+                    点击上方「立即下载 APK」按钮，在新页面中点击「Install」按钮下载 APK 文件
+                </div>
+                <div class="step">
+                    下载完成后，在手机上找到 APK 文件（通常在「下载」文件夹）
+                </div>
+                <div class="step">
+                    点击 APK 文件，如果提示「无法安装未知应用」，点击「设置」并允许从此来源安装
+                </div>
+                <div class="step">
+                    返回并重新点击 APK 文件，点击「安装」按钮
+                </div>
+                <div class="step">
+                    等待安装完成（约 10-30 秒），点击「打开」启动 App
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能测试清单 -->
+        <div class="card">
+            <div class="card-title">✅ 功能测试清单</div>
+            <p style="color: #888888; margin-bottom: 20px;">安装完成后，请测试以下 11 项核心功能：</p>
+            <ul class="checklist">
+                <li>App 启动正常，显示库洛米紫色启动页</li>
+                <li>首页显示 7 大模块入口 + Jason Tsao 签名</li>
+                <li>底部导航栏切换流畅（7 个 Tab）</li>
+                <li>相机模块可以打开取景框</li>
+                <li>点击紫色心形按钮可以保存雁宝记忆</li>
+                <li>相册模块显示 2.5 列照片网格 + 风格流</li>
+                <li>编辑模块可以裁剪照片（9:16 比例）</li>
+                <li>灵感模块显示 AI 推荐构图</li>
+                <li>足迹模块显示地图 + 拍摄点</li>
+                <li>设定模块显示 KuromiQueen 用户卡 + 1017 秘密信箱</li>
+                <li>所有页面主题颜色一致（#1A0B2E + #E879F9）</li>
+            </ul>
+        </div>
+
+        <!-- 注意事项 -->
+        <div class="card">
+            <div class="card-title">⚠️ 注意事项</div>
+            <div class="warning">
+                <div class="warning-title">APK 可用期限</div>
+                <p>此 APK 下载链接将在 <strong>13 天</strong>后失效。请尽快下载并保存到本地。</p>
+            </div>
+            <div class="warning">
+                <div class="warning-title">安装未知应用</div>
+                <p>Android 系统默认不允许安装非 Google Play 的应用。首次安装时，需要在系统设置中允许从此来源安装应用。这是正常的安全提示，不影响使用。</p>
+            </div>
+            <div class="warning">
+                <div class="warning-title">版本更新</div>
+                <p>如果您修改了代码并重新构建，需要卸载旧版本 APK 后再安装新版本，或确保新版本的 versionCode 更高。</p>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>Made with 💜 by <span class="signature">Jason Tsao</span></p>
+            <p style="margin-top: 10px;">雁宝影像工作室 v2.2.0 | 2026-01-14</p>
+            <p style="margin-top: 10px; font-size: 12px;">
+                <a href="https://github.com/Tsaojason-cao/yanbao-imaging-studio" style="color: #E879F9; text-decoration: none;" target="_blank">
+                    GitHub 仓库
+                </a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
