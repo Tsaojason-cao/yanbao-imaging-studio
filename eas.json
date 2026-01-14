@@ -37,8 +37,8 @@
         "resourceClass": "m-medium"
       },
       "android": {
-        "buildType": "app-bundle",
-        "gradleCommand": ":app:bundleRelease"
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
       },
       "env": {
         "SUPABASE_URL": "$SUPABASE_URL",
