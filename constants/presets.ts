@@ -50,15 +50,15 @@ export const DEFAULT_BEAUTY_PRESET: MasterPreset = {
   id: 'preset_0_default',
   name: '自然原生',
   photographer: 'yanbao AI',
-  description: '保留皮肤质感，但气色瞬间提升，超越系统原生相机',
+  description: '自然无痕：保留皮肤纹理（毛孔），仅淡化暗沉与痘印，拒绝「蛇精脸」',
   beautyParams: {
-    smooth: 15,   // 磨皮 15%（去瑕疵）
-    slim: 0,      // 不瘦脸
-    eye: 0,       // 不放大眼睛
-    bright: 10,   // 亮眼 10%
-    teeth: 0,     // 不美白牙齿
-    nose: 0,      // 不隆鼻
-    blush: 5,     // 红润 5%
+    smooth: 22,   // 磨皮 22% (18%-25% 区间)：保留皮肤纹理（毛孔），仅淡化暗沉与痘印
+    slim: 12,     // 瘦脸 12%：针对下颌线进行微调，拒绝「蛇精脸」，保持原生骨相
+    eye: 8,       // 大眼 8%：轻微提升神采，模拟广角镜头下的中心汇聚感
+    bright: 15,   // 亮眼 15%：增加瞳孔高光，让眼神看起来更清澈
+    teeth: 10,    // 白牙 10%：自然去黄，不产生假白感
+    nose: 5,      // 隆鼻 5%：仅在山根处增加微弱阴影，提升五官立体度
+    blush: 12,    // 红润 12%：提升肤色饱和度，模拟运动后的健康血色
   },
   filterParams: {
     contrast: 0,
