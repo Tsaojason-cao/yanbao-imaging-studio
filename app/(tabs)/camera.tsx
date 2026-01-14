@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Platform, ScrollView, Alert } from "react-native";";
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Platform, ScrollView, Alert } from "react-native";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "expo-router";
