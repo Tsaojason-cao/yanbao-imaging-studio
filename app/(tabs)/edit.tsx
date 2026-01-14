@@ -155,6 +155,26 @@ export default function EditScreen() {
                     
                     // 执行裁剪
                     try {
+                      console.log(`🔄 正在裁剪图片为 ${preset.label} 比例...`);
+                      
+                      // 计算裁剪尺寸
+                      let cropWidth = 1000;
+                      let cropHeight = 1000;
+                      
+                      if (preset.ratio === 9/16) {
+                        cropWidth = 1080;
+                        cropHeight = 1920; // 9:16 (小红书/朋友圈专用)
+                      } else if (preset.ratio === 1) {
+                        cropWidth = 1080;
+                        cropHeight = 1080; // 1:1 (正方形)
+                      } else if (preset.ratio === 4/3) {
+                        cropWidth = 1080;
+                        cropHeight = 1440; // 4:3
+                      } else if (preset.ratio === 16/9) {
+                        cropWidth = 1920;
+                        cropHeight = 1080; // 16:9
+                      }
+                      
                       const manipResult = await ImageManipulator.manipulateAsync(
                         currentImageUri,
                         [
@@ -162,8 +182,8 @@ export default function EditScreen() {
                             crop: {
                               originX: 0,
                               originY: 0,
-                              width: 1000,
-                              height: preset.ratio === 9/16 ? 1778 : preset.ratio === 1 ? 1000 : 750,
+                              width: cropWidth,
+                              height: cropHeight,
                             },
                           },
                         ],
@@ -171,10 +191,13 @@ export default function EditScreen() {
                       );
                       
                       setCurrentImageUri(manipResult.uri);
-                      Alert.alert('成功', `已裁剪为 ${preset.label} 比例`);
+                      console.log(`✅ 裁剪成功: ${preset.label} (${cropWidth}x${cropHeight})`);
+                      console.log(`💾 裁剪后图片 URI: ${manipResult.uri}`);
+                      
+                      Alert.alert('✅ 裁剪成功', `已裁剪为 ${preset.label} 比例\n尺寸: ${cropWidth}x${cropHeight}`);
                     } catch (error) {
-                      console.error('Crop error:', error);
-                      Alert.alert('错误', '裁剪失败，请重试');
+                      console.error('❌ 裁剪失败:', error);
+                      Alert.alert('❌ 错误', '裁剪失败，请重试');
                     }
                   }}
                 >

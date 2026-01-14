@@ -12,6 +12,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import * as MediaLibrary from "expo-media-library";
+import { MASTER_PRESETS, MasterPreset } from "@/constants/presets";
+import { YanbaoMemoryService, StatsService } from "@/services/database";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -54,156 +56,24 @@ export default function CameraScreen() {
     blush: 5,      // 红润 Rosy Cheeks（默认 5% 自带美颜）
   });
 
-  // 大师预设系统：1 个自带美颜 + 5 个世界顶级摄影师参数
-  const masterPresets = [
-    {
-      id: 0,
-      name: "自然原生",
-      nameEn: "Default Beauty",
-      photographer: "自带美颜",
-      description: "保留皮肤质感，气色瞬间提升",
-      params: {
-        smooth: 15,
-        slim: 0,
-        eye: 0,
-        bright: 10,
-        teeth: 0,
-        nose: 0,
-        blush: 5,
-      },
-      filter: {
-        contrast: 0,
-        saturation: 0,
-        brightness: 0,
-        grain: 0,
-        temperature: 0,
-      },
-    },
-    {
-      id: 1,
-      name: "街头诗人",
-      nameEn: "Street Poet",
-      photographer: "Alan Schaller",
-      description: "高对比黑白、强化光影边界、颗粒感 20%",
-      params: {
-        smooth: 15,
-        slim: 0,
-        eye: 0,
-        bright: 10,
-        teeth: 0,
-        nose: 0,
-        blush: 5,
-      },
-      filter: {
-        contrast: 40,
-        saturation: -100, // 黑白
-        brightness: 0,
-        grain: 20,
-        temperature: 0,
-      },
-    },
-    {
-      id: 2,
-      name: "国家地理",
-      nameEn: "National Geographic",
-      photographer: "Luisa Dörr",
-      description: "暖色调补偿、饱和度 +15%、自然光感增强",
-      params: {
-        smooth: 15,
-        slim: 0,
-        eye: 0,
-        bright: 10,
-        teeth: 0,
-        nose: 0,
-        blush: 5,
-      },
-      filter: {
-        contrast: 0,
-        saturation: 15,
-        brightness: 5,
-        grain: 0,
-        temperature: 10, // 暖色调
-      },
-    },
-    {
-      id: 3,
-      name: "城市霓虹",
-      nameEn: "City Neon",
-      photographer: "Liam Wong",
-      description: "青橙色调 (Teal & Orange)、暗部偏紫、高光偏蓝",
-      params: {
-        smooth: 15,
-        slim: 0,
-        eye: 0,
-        bright: 10,
-        teeth: 0,
-        nose: 0,
-        blush: 5,
-      },
-      filter: {
-        contrast: 20,
-        saturation: 30,
-        brightness: -5,
-        grain: 0,
-        temperature: -15, // 偏冷（青色）
-      },
-    },
-    {
-      id: 4,
-      name: "静谧极简",
-      nameEn: "Minimalist",
-      photographer: "Minh T",
-      description: "低饱和、高亮度、冷色调",
-      params: {
-        smooth: 15,
-        slim: 0,
-        eye: 0,
-        bright: 10,
-        teeth: 0,
-        nose: 0,
-        blush: 5,
-      },
-      filter: {
-        contrast: -10,
-        saturation: -20,
-        brightness: 15,
-        grain: 0,
-        temperature: -10, // 冷色调
-      },
-    },
-    {
-      id: 5,
-      name: "温润情感",
-      nameEn: "Warm Emotion",
-      photographer: "Tasneem Alsultan",
-      description: "柔光滚镜效果、肤色暖化、对比度调低",
-      params: {
-        smooth: 15,
-        slim: 0,
-        eye: 0,
-        bright: 10,
-        teeth: 0,
-        nose: 0,
-        blush: 5,
-      },
-      filter: {
-        contrast: -15,
-        saturation: 10,
-        brightness: 10,
-        grain: 0,
-        temperature: 15, // 暖色调
-      },
-    },
-  ];
+  // 大师预设系统：使用导入的 MASTER_PRESETS
+  const masterPresets = MASTER_PRESETS;
 
   const buttonScale = useSharedValue(1);
 
   // 应用大师预设
-  const applyMasterPreset = (presetId: number) => {
-    const preset = masterPresets.find(p => p.id === presetId);
+  const applyMasterPreset = async (presetIndex: number) => {
+    const preset = masterPresets[presetIndex];
     if (preset) {
-      setBeautyParams(preset.params);
-      setSelectedPreset(presetId);
+      console.log(`🎨 正在应用大师预设: ${preset.name} (${preset.photographer})`);
+      
+      // 应用美颜参数
+      setBeautyParams(preset.beautyParams);
+      setSelectedPreset(presetIndex);
+      
+      console.log('✅ 美颜参数已套用:', preset.beautyParams);
+      console.log('🌈 滤镜参数:', preset.filterParams);
+      
       if (Platform.OS !== "web") {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       }
@@ -211,24 +81,35 @@ export default function CameraScreen() {
   };
 
   // 存入雁宝记忆
-  const saveToYanbaoMemory = () => {
-    const currentPreset = masterPresets[selectedPreset];
-    const memoryData = {
-      presetName: currentPreset.name,
-      photographer: currentPreset.photographer,
-      beautyParams,
-      filterParams: currentPreset.filter,
-      timestamp: Date.now(),
-    };
-    
-    // TODO: 存储到本地或云端
-    console.log('雁宝记忆已保存:', memoryData);
-    
-    if (Platform.OS !== "web") {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  const saveToYanbaoMemory = async () => {
+    try {
+      const currentPreset = masterPresets[selectedPreset];
+      
+      console.log(`💜 正在存入雁宝记忆: ${currentPreset.name}`);
+      
+      // 存储到 AsyncStorage
+      await YanbaoMemoryService.saveMemory({
+        presetName: currentPreset.name,
+        photographer: currentPreset.photographer,
+        beautyParams,
+        filterParams: currentPreset.filterParams,
+      });
+      
+      // 增加照片计数
+      await StatsService.incrementPhotoCount();
+      
+      console.log('✅ 雁宝记忆已存入 AsyncStorage');
+      console.log('📊 照片计数已更新');
+      
+      if (Platform.OS !== "web") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+      
+      Alert.alert('❤️ 雁宝记忆', `已保存 ${currentPreset.name} 预设\n下次拍照时可一键载入`);
+    } catch (error) {
+      console.error('❌ 存入雁宝记忆失败:', error);
+      Alert.alert('❌ 错误', '保存失败，请重试');
     }
-    
-    Alert.alert('❤️ 雁宝记忆', `已保存 ${currentPreset.name} 预设\n下次拍照时可一键载入`);
   };
 
   // 定时拍照倒计时逻辑

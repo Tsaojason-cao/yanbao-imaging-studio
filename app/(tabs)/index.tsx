@@ -3,12 +3,15 @@ import { StyleSheet, View, Text, Image, ScrollView, TouchableOpacity, Dimensions
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { StatsService, DatabaseService } from '../../services/database';
 
 const { width, height } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const router = useRouter();
   const [rotation] = useState(new Animated.Value(0));
+  const [stats, setStats] = useState({ photoCount: 0, editCount: 0, activeDays: 0 });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // 轮盘旋转动画
@@ -19,7 +22,30 @@ export default function HomeScreen() {
         useNativeDriver: true,
       })
     ).start();
+    
+    // 初始化数据库并加载统计数据
+    loadStats();
   }, []);
+  
+  // 加载统计数据
+  const loadStats = async () => {
+    try {
+      console.log('🔄 正在加载首页统计数据...');
+      
+      // 初始化数据库
+      await DatabaseService.initialize();
+      
+      // 读取统计数据
+      const data = await StatsService.getAllStats();
+      setStats(data);
+      setLoading(false);
+      
+      console.log('✅ 首页统计数据加载完成:', data);
+    } catch (error) {
+      console.error('❌ 加载统计数据失败:', error);
+      setLoading(false);
+    }
+  };
 
   const rotateInterpolate = rotation.interpolate({
     inputRange: [0, 1],
@@ -167,7 +193,7 @@ export default function HomeScreen() {
               style={styles.statGradient}
             >
               <Ionicons name="camera" size={32} color="#E879F9" />
-              <Text style={styles.statNumber}>2450</Text>
+              <Text style={styles.statNumber}>{loading ? '...' : stats.photoCount}</Text>
               <Text style={styles.statLabel}>Photos</Text>
               <Text style={styles.statSubLabel}>总照片数</Text>
               <View style={styles.statProgressBar}>
@@ -182,9 +208,9 @@ export default function HomeScreen() {
               style={styles.statGradient}
             >
               <Ionicons name="cloud" size={32} color="#E879F9" />
-              <Text style={styles.statNumber}>15GB</Text>
-              <Text style={styles.statLabel}>Storage</Text>
-              <Text style={styles.statSubLabel}>已用空间</Text>
+              <Text style={styles.statNumber}>{loading ? '...' : stats.editCount}</Text>
+              <Text style={styles.statLabel}>Edits</Text>
+              <Text style={styles.statSubLabel}>编辑次数</Text>
               <View style={styles.statProgressBar}>
                 <View style={[styles.statProgress, { width: '60%' }]} />
               </View>
@@ -197,7 +223,7 @@ export default function HomeScreen() {
               style={styles.statGradient}
             >
               <Ionicons name="calendar" size={32} color="#E879F9" />
-              <Text style={styles.statNumber}>28</Text>
+              <Text style={styles.statNumber}>{loading ? '...' : stats.activeDays}</Text>
               <Text style={styles.statLabel}>Days Active</Text>
               <Text style={styles.statSubLabel}>活跃天数</Text>
               <View style={styles.statProgressBar}>
