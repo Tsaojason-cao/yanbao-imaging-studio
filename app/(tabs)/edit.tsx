@@ -18,6 +18,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Sharing from 'expo-sharing';
 import * as MediaLibrary from 'expo-media-library';
 import { YanbaoBeautyBridge } from '@/lib/YanbaoBeautyBridge';
+import { applyMasterStyle } from '@/lib/BeautyProcessor';
 
 const { width } = Dimensions.get("window");
 
@@ -83,28 +84,37 @@ export default function EditScreen() {
         alert("需要相册权限才能保存照片");
         return;
       }
-
-      // 应用原生美颜处理
+      
+      // 应用美颜处理（使用 BeautyProcessor 模拟）
       let processedUri = currentImageUri;
       try {
-        // 将调整参数转换为 12 维美颜参数格式 (v2.3.0)
+        const memoryParams = await YanbaoMemoryService.getLatestMemory();
         const beautyParams = {
-          // 原有 7 维
-          smooth: adjustParams.brightness, // 使用亮度作为磨皮
-          slim: 0,
-          eye: 0,
-          bright: adjustParams.contrast, // 使用对比度作为亮眼
-          teeth: 0,
-          nose: 0,
-          blush: adjustParams.saturation, // 使用饱和度作为红润
-          // v2.3.0 新增 5 维
+          smooth: memoryParams?.smooth || 0,
+          slim: memoryParams?.slim || 0,
+          eye: memoryParams?.eye || 0,
+          bright: memoryParams?.bright || 0,
+          teeth: memoryParams?.teeth || 0,
+          nose: memoryParams?.nose || 0,
+          blush: memoryParams?.blush || 0,
           sculpting3D: memoryParams?.sculpting3D || 0,
-          textureRetention: memoryParams?.textureRetention || 30,
+          textureRetention: memoryParams?.textureRetention || 0,
           teethWhiteningPro: memoryParams?.teethWhiteningPro || 0,
           darkCircleRemoval: memoryParams?.darkCircleRemoval || 0,
           hairlineAdjustment: memoryParams?.hairlineAdjustment || 0,
         };
-        processedUri = await YanbaoBeautyBridge.processImage(currentImageUri, beautyParams);
+        
+        // 应用美颜和滚镜调整
+        processedUri = await applyMasterStyle(
+          currentImageUri,
+          beautyParams,
+          {
+            contrast: adjustParams.contrast - 50, // 转换为 -50 to +50
+            saturation: adjustParams.saturation - 50,
+            brightness: adjustParams.brightness - 50,
+            temperature: adjustParams.temperature - 50,
+          }
+        );
         console.log('✅ 编辑器美颜处理完成:', processedUri);
       } catch (error) {
         console.warn('⚠️ 编辑器美颜处理失败，使用原图:', error);
