@@ -547,6 +547,41 @@ export default function GalleryScreen() {
           </Text>
         </View>
 
+        {/* 雁宝记忆入口 */}
+        <View
+          style={{
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            backgroundColor: colors.surface,
+          }}
+        >
+          <Pressable
+            style={({ pressed }) => ({
+              flexDirection: "row",
+              alignItems: "center",
+              paddingHorizontal: 16,
+              paddingVertical: 12,
+              borderRadius: 12,
+              backgroundColor: "#E879F9",
+              opacity: pressed ? 0.8 : 1,
+            })}
+            onPress={() => {
+              if (Platform.OS !== "web") {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              }
+            }}
+          >
+            <MaterialCommunityIcons name="heart" size={24} color="white" />
+            <Text style={{ fontSize: 16, fontWeight: "700", color: "white", marginLeft: 12, flex: 1 }}>
+              💜 雁宝记忆
+            </Text>
+            <Text style={{ fontSize: 12, color: "rgba(255,255,255,0.8)" }}>
+              {presets.length} 个预设
+            </Text>
+            <Ionicons name="chevron-forward" size={20} color="white" style={{ marginLeft: 8 }} />
+          </Pressable>
+        </View>
+
         {/* Tab切换 */}
         <View
           style={{

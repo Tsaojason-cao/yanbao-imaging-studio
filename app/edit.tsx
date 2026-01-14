@@ -369,10 +369,56 @@ export default function EditScreen() {
           )}
 
           {selectedTool === "crop" && (
-            <View className="items-center justify-center py-8">
-              <MaterialCommunityIcons name="crop" size={48} color={colors.muted} />
-              <Text className="text-muted mt-4">裁剪功能即将推出</Text>
-            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View className="gap-3">
+                <Text className="text-foreground font-semibold mb-2">裁剪比例</Text>
+                <View className="flex-row gap-2">
+                  {[
+                    { ratio: "1:1", label: "正方形" },
+                    { ratio: "9:16", label: "竖屏" },
+                    { ratio: "3:4", label: "3:4" },
+                    { ratio: "free", label: "自由" },
+                  ].map(({ ratio, label }) => (
+                    <Pressable
+                      key={ratio}
+                      style={({ pressed }) => ({
+                        flex: 1,
+                        paddingVertical: 10,
+                        borderRadius: 12,
+                        backgroundColor: colors.surface,
+                        borderWidth: 2,
+                        borderColor: colors.primary,
+                        alignItems: "center",
+                        opacity: pressed ? 0.7 : 1,
+                      })}
+                    >
+                      <Text className="text-foreground text-sm font-semibold">{ratio}</Text>
+                      <Text className="text-muted text-xs mt-1">{label}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+              <View className="mt-4 gap-3">
+                <Text className="text-foreground font-semibold">旋轉</Text>
+                <View className="flex-row gap-2">
+                  {["↺ 左轉", "↻ 右轉", "翻轉"].map((action, idx) => (
+                    <Pressable
+                      key={idx}
+                      style={({ pressed }) => ({
+                        flex: 1,
+                        paddingVertical: 10,
+                        borderRadius: 12,
+                        backgroundColor: colors.primary,
+                        alignItems: "center",
+                        opacity: pressed ? 0.7 : 1,
+                      })}
+                    >
+                      <Text className="text-white font-semibold text-sm">{action}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+            </ScrollView>
           )}
 
           {selectedTool === "tools" && (

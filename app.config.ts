@@ -146,8 +146,8 @@ const config: ExpoConfig = {
           // Ultimate Edition: 启用R8深度混淆
           usesCleartextTraffic: false, // 禁止明文HTTP流量，提高安全性
           minSdkVersion: 24, // Android 7.0+
-          targetSdkVersion: 34, // Android 14
-          compileSdkVersion: 34,
+          targetSdkVersion: 35, // Android 15
+          compileSdkVersion: 35,
         },
       },
     ]
