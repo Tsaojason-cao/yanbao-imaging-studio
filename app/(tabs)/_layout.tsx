@@ -87,7 +87,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="footprints"
+        name="style"
+        options={{
+          title: "风格",
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paintpalette.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="footprint"
         options={{
           title: "足迹",
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="map.fill" color={color} />,

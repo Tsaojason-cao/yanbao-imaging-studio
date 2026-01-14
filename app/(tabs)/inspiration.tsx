@@ -1,413 +1,250 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-  RefreshControl,
-  Dimensions,
-  StyleSheet,
-  TextInput,
-  ActivityIndicator,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import * as Haptics from "expo-haptics";
-import { IconSymbol } from "@/components/ui/icon-symbol";
-import { router } from "expo-router";
-import {
-  getInspirationContent,
-  searchInspirationContent,
-} from "@/lib/inspiration-service";
+import React, { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Dimensions } from 'react-native';
 
-const { width } = Dimensions.get("window");
-const CARD_WIDTH = (width - 48) / 2; // 左右各16px padding，中间16px gap
-
-type ContentCategory = "all" | "spots" | "poses" | "styles";
-
-interface InspirationItem {
-  id: string;
-  title: string;
-  imageUrl: string;
-  location?: string;
-  category: ContentCategory;
-  views?: number;
-  author?: string;
-}
+const { width } = Dimensions.get('window');
 
 export default function InspirationScreen() {
-  const [selectedCategory, setSelectedCategory] = useState<ContentCategory>("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [items, setItems] = useState<InspirationItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
+  const [selectedTab, setSelectedTab] = useState('构图');
 
-  // 模拟数据（后续会从API获取）
-  const mockData: InspirationItem[] = [
-    {
-      id: "1",
-      title: "西湖断桥·白娘子同款",
-      imageUrl: "https://images.unsplash.com/photo-1548919973-5cef591cdbc9?w=400",
-      location: "杭州·西湖",
-      category: "spots",
-      views: 1234,
-      author: "小红书用户",
-    },
-    {
-      id: "2",
-      title: "复古港风拍照姿势",
-      imageUrl: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400",
-      location: "通用",
-      category: "poses",
-      views: 5678,
-      author: "抖音用户",
-    },
-    {
-      id: "3",
-      title: "日系清新穿搭妆造",
-      imageUrl: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400",
-      location: "通用",
-      category: "styles",
-      views: 3456,
-      author: "小红书用户",
-    },
-    {
-      id: "4",
-      title: "北京故宫·红墙机位",
-      imageUrl: "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400",
-      location: "北京·故宫",
-      category: "spots",
-      views: 9012,
-      author: "小红书用户",
-    },
+  const tabs = ['构图', '拍摄点', 'AI推荐'];
+  
+  const inspirations = [
+    { id: 1, title: '对称构图法', type: '构图', difficulty: '简单', likes: '8.2k', image: '📐' },
+    { id: 2, title: '黄金分割', type: '构图', difficulty: '中等', likes: '12.5k', image: '✨' },
+    { id: 3, title: '故宫角楼', type: '拍摄点', difficulty: '简单', likes: '15.3k', image: '🏛️' },
+    { id: 4, title: '咖啡馆窗边', type: '拍摄点', difficulty: '简单', likes: '9.8k', image: '☕' },
+    { id: 5, title: '库洛米风格人像', type: 'AI推荐', difficulty: '中等', likes: '18.7k', image: '💜' },
+    { id: 6, title: '夜景光轨', type: 'AI推荐', difficulty: '困难', likes: '6.4k', image: '🌃' },
   ];
 
-  useEffect(() => {
-    loadContent();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory]);
+  const filteredInspirations = selectedTab === 'AI推荐' 
+    ? inspirations 
+    : inspirations.filter(i => i.type === selectedTab);
 
-  useEffect(() => {
-    // 搜索防抖
-    const timer = setTimeout(() => {
-      if (searchQuery.trim()) {
-        handleSearch();
-      } else {
-        loadContent();
-      }
-    }, 500);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery]);
-
-  const loadContent = async () => {
-    setLoading(true);
-    try {
-      const results = await getInspirationContent(selectedCategory);
-      setItems(results as InspirationItem[]);
-    } catch (error) {
-      console.error("加载内容失败:", error);
-      // 失败时使用模拟数据
-      const filtered =
-        selectedCategory === "all"
-          ? mockData
-          : mockData.filter((item) => item.category === selectedCategory);
-      setItems(filtered);
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case '简单': return '#4ECDC4';
+      case '中等': return '#FFA500';
+      case '困难': return '#FF6B6B';
+      default: return '#888888';
     }
-    setLoading(false);
-  };
-
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) {
-      loadContent();
-      return;
-    }
-    setLoading(true);
-    try {
-      const results = await searchInspirationContent(searchQuery);
-      setItems(results as InspirationItem[]);
-    } catch (error) {
-      console.error("搜索失败:", error);
-    }
-    setLoading(false);
-  };
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await loadContent();
-    setRefreshing(false);
-  };
-
-  const handleCategoryChange = (category: ContentCategory) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setSelectedCategory(category);
-  };
-
-  const handleItemPress = (item: InspirationItem) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    // 跳转到详情页
-    router.push({
-      pathname: "/inspiration-detail",
-      params: { id: item.id },
-    });
-  };
-
-  const renderCategoryTab = (category: ContentCategory, label: string) => {
-    const isSelected = selectedCategory === category;
-    return (
-      <TouchableOpacity
-        key={category}
-        onPress={() => handleCategoryChange(category)}
-        style={[styles.categoryTab, isSelected && styles.categoryTabActive]}
-      >
-        <Text style={[styles.categoryText, isSelected && styles.categoryTextActive]}>
-          {label}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
-
-  const renderItem = (item: InspirationItem, index: number) => {
-    return (
-      <TouchableOpacity
-        key={item.id}
-        style={[styles.card, { marginRight: index % 2 === 0 ? 16 : 0 }]}
-        onPress={() => handleItemPress(item)}
-        activeOpacity={0.8}
-      >
-        <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
-        <View style={styles.cardContent}>
-          <Text style={styles.cardTitle} numberOfLines={2}>
-            {item.title}
-          </Text>
-          {item.location && (
-            <View style={styles.locationRow}>
-              <IconSymbol name="location.fill" size={12} color="#E879F9" />
-              <Text style={styles.locationText}>{item.location}</Text>
-            </View>
-          )}
-          <View style={styles.metaRow}>
-            <Text style={styles.authorText}>{item.author}</Text>
-            <View style={styles.viewsRow}>
-              <IconSymbol name="eye.fill" size={12} color="#9CA3AF" />
-              <Text style={styles.viewsText}>{item.views}</Text>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      {/* Header */}
+    <View style={styles.container}>
+      {/* 顶部栏 */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>灵感推荐</Text>
-        <Text style={styles.headerSubtitle}>发现拍照的无限可能</Text>
+        <Text style={styles.headerTitle}>yanbao AI 灵感</Text>
       </View>
 
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <IconSymbol name="magnifyingglass" size={20} color="#9CA3AF" />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="搜索地点、风格、姿势..."
-          placeholderTextColor="#9CA3AF"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
+      {/* 标签栏 */}
+      <View style={styles.tabContainer}>
+        {tabs.map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            style={[
+              styles.tabButton,
+              selectedTab === tab && styles.tabButtonActive
+            ]}
+            onPress={() => setSelectedTab(tab)}
+          >
+            <Text style={[
+              styles.tabText,
+              selectedTab === tab && styles.tabTextActive
+            ]}>
+              {tab}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
-      {/* Category Tabs */}
-      <View style={styles.categoryContainer}>
-        {renderCategoryTab("all", "全部")}
-        {renderCategoryTab("spots", "机位")}
-        {renderCategoryTab("poses", "姿势")}
-        {renderCategoryTab("styles", "风格")}
+      {/* AI 推荐横幅 */}
+      <View style={styles.aiBanner}>
+        <Text style={styles.aiBannerIcon}>✨</Text>
+        <View style={styles.aiBannerTextContainer}>
+          <Text style={styles.aiBannerTitle}>AI 为你推荐</Text>
+          <Text style={styles.aiBannerSubtitle}>基于你的拍摄习惯和风格偏好</Text>
+        </View>
       </View>
 
-      {/* Content */}
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-        showsVerticalScrollIndicator={false}
-      >
-        {loading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#E879F9" />
-            <Text style={styles.loadingText}>加载中...</Text>
-          </View>
-        ) : (
-          <View style={styles.grid}>
-            {items.map((item, index) => renderItem(item, index))}
-          </View>
-        )}
+      {/* 灵感卡片列表 */}
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {filteredInspirations.map((item) => (
+          <TouchableOpacity key={item.id} style={styles.inspirationCard}>
+            {/* 左侧图标 */}
+            <View style={styles.iconContainer}>
+              <Text style={styles.iconText}>{item.image}</Text>
+            </View>
+
+            {/* 中间信息 */}
+            <View style={styles.infoContainer}>
+              <Text style={styles.inspirationTitle}>{item.title}</Text>
+              <View style={styles.metaRow}>
+                <View style={[styles.difficultyBadge, { backgroundColor: getDifficultyColor(item.difficulty) }]}>
+                  <Text style={styles.difficultyText}>{item.difficulty}</Text>
+                </View>
+                <Text style={styles.likesText}>❤️ {item.likes}</Text>
+              </View>
+            </View>
+
+            {/* 右侧箭头 */}
+            <Text style={styles.arrow}>›</Text>
+          </TouchableOpacity>
+        ))}
+
+        {/* 底部占位 */}
+        <View style={{ height: 80 }} />
       </ScrollView>
-      
-      {/* 署名 */}
-      <View style={styles.signature}>
-        <Text style={styles.signatureText}>by Jason Tsao who loves you the most ♥</Text>
+
+      {/* 底部签名 */}
+      <View style={styles.footer}>
+        <Text style={styles.signature}>Made with 💜 by Jason Tsao who loves you the most</Text>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: '#1A0B2E',
   },
   header: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
+    height: 100,
+    backgroundColor: '#2D1B4E',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 40,
   },
   headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    backgroundColor: '#1A0B2E',
+    justifyContent: 'space-around',
+  },
+  tabButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 18,
+    backgroundColor: '#2D1B4E',
+    borderWidth: 2,
+    borderColor: '#E879F9',
+  },
+  tabButtonActive: {
+    backgroundColor: '#E879F9',
+  },
+  tabText: {
+    fontSize: 14,
+    color: '#E879F9',
+  },
+  tabTextActive: {
+    color: '#FFFFFF',
+  },
+  aiBanner: {
+    marginHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 15,
+    padding: 15,
+    backgroundColor: '#2D1B4E',
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#E879F9',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  aiBannerIcon: {
     fontSize: 32,
-    fontWeight: "700",
-    color: "#1F2937",
+    marginRight: 15,
+  },
+  aiBannerTextContainer: {
+    flex: 1,
+  },
+  aiBannerTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
     marginBottom: 4,
   },
-  headerSubtitle: {
-    fontSize: 14,
-    color: "#6B7280",
+  aiBannerSubtitle: {
+    fontSize: 12,
+    color: '#888888',
   },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    marginHorizontal: 16,
-    marginVertical: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  searchInput: {
+  content: {
     flex: 1,
-    marginLeft: 12,
-    fontSize: 16,
-    color: "#1F2937",
-  },
-  categoryContainer: {
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    marginBottom: 16,
-    gap: 12,
-  },
-  categoryTab: {
     paddingHorizontal: 20,
-    paddingVertical: 10,
+  },
+  inspirationCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2D1B4E',
     borderRadius: 20,
-    backgroundColor: "#FFFFFF",
+    borderWidth: 2,
+    borderColor: '#E879F9',
+    padding: 15,
+    marginBottom: 12,
   },
-  categoryTabActive: {
-    backgroundColor: "#E879F9",
+  iconContainer: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#1A0B2E',
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
   },
-  categoryText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#6B7280",
+  iconText: {
+    fontSize: 28,
   },
-  categoryTextActive: {
-    color: "#FFFFFF",
-  },
-  scrollView: {
+  infoContainer: {
     flex: 1,
   },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 100,
-  },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  card: {
-    width: CARD_WIDTH,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    marginBottom: 16,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  cardImage: {
-    width: "100%",
-    height: CARD_WIDTH * 1.2,
-    backgroundColor: "#E5E7EB",
-  },
-  cardContent: {
-    padding: 12,
-  },
-  cardTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#1F2937",
-    marginBottom: 6,
-  },
-  locationRow: {
-    flexDirection: "row",
-    alignItems: "center",
+  inspirationTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
     marginBottom: 8,
   },
-  locationText: {
-    fontSize: 12,
-    color: "#E879F9",
-    marginLeft: 4,
-  },
   metaRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
-  authorText: {
-    fontSize: 11,
-    color: "#9CA3AF",
+  difficultyBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
   },
-  viewsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
+  difficultyText: {
+    fontSize: 12,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
-  viewsText: {
-    fontSize: 11,
-    color: "#9CA3AF",
+  likesText: {
+    fontSize: 12,
+    color: '#888888',
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 60,
+  arrow: {
+    fontSize: 24,
+    color: '#888888',
   },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: "#9CA3AF",
-  },
-  // 署名
-  signature: {
-    position: "absolute",
-    bottom: 20,
+  footer: {
+    position: 'absolute',
+    bottom: 0,
     left: 0,
     right: 0,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
+    height: 40,
+    backgroundColor: '#1A0B2E',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  signatureText: {
-    fontSize: 11,
-    fontWeight: "600",
-    color: "rgba(232, 121, 249, 0.7)",
-    fontStyle: "italic",
-    textAlign: "center",
+  signature: {
+    fontSize: 10,
+    color: '#E879F9',
   },
 });
