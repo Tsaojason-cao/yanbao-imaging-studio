@@ -14,6 +14,7 @@ import * as Haptics from "expo-haptics";
 import * as MediaLibrary from "expo-media-library";
 import { MASTER_PRESETS, MasterPreset, PresetRegion, getPresetsByRegion, getRegionDisplayName } from "@/constants/presets";
 import { YanbaoMemoryService, StatsService } from "@/services/database";
+import { YanbaoBeautyBridge } from "@/lib/YanbaoBeautyBridge";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -201,7 +202,16 @@ export default function CameraScreen() {
       });
       
       if (photo && mediaPermission?.granted) {
-        await MediaLibrary.saveToLibraryAsync(photo.uri);
+        // 应用原生美颜处理
+        let processedUri = photo.uri;
+        try {
+          processedUri = await YanbaoBeautyBridge.processImage(photo.uri, beautyParams);
+          console.log('✅ 美颜处理完成:', processedUri);
+        } catch (error) {
+          console.warn('⚠️ 美颜处理失败，使用原图:', error);
+        }
+        
+        await MediaLibrary.saveToLibraryAsync(processedUri);
         
         // 保存缩略图
         setLastPhoto(photo.uri);

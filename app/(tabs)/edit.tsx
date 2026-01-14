@@ -17,6 +17,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import * as Sharing from 'expo-sharing';
 import * as MediaLibrary from 'expo-media-library';
+import { YanbaoBeautyBridge } from '@/lib/YanbaoBeautyBridge';
 
 const { width } = Dimensions.get("window");
 
@@ -83,8 +84,27 @@ export default function EditScreen() {
         return;
       }
 
+      // 应用原生美颜处理
+      let processedUri = currentImageUri;
+      try {
+        // 将调整参数转换为美颜参数格式
+        const beautyParams = {
+          smooth: adjustParams.brightness, // 使用亮度作为磨皮
+          slim: 0,
+          eye: 0,
+          bright: adjustParams.contrast, // 使用对比度作为亮眼
+          teeth: 0,
+          nose: 0,
+          blush: adjustParams.saturation, // 使用饱和度作为红润
+        };
+        processedUri = await YanbaoBeautyBridge.processImage(currentImageUri, beautyParams);
+        console.log('✅ 编辑器美颜处理完成:', processedUri);
+      } catch (error) {
+        console.warn('⚠️ 编辑器美颜处理失败，使用原图:', error);
+      }
+      
       // 保存到相册
-      await MediaLibrary.saveToLibraryAsync(currentImageUri);
+      await MediaLibrary.saveToLibraryAsync(processedUri);
       alert("照片已保存到相册");
     } catch (error) {
       console.error('保存失败:', error);
