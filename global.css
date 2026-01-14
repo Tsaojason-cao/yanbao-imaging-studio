@@ -1,3 +1,82 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 庫洛米紫色全局樣式 - 強制覆蓋 */
+:root {
+  /* 主色調 - 庫洛米紫色 */
+  --color-primary: #6A0DAD;
+  --color-secondary: #E879F9;
+  --color-accent: #A855F7;
+  
+  /* 背景色 - 酷黑色 */
+  --color-background: #1A1A1A;
+  --color-surface: #2D1B4E;
+  --color-card: rgba(45, 27, 78, 0.95);
+  
+  /* 文字色 - 白色 */
+  --color-foreground: #FFFFFF;
+  --color-muted: #B8B8B8;
+  
+  /* 邊框 - 紫色 */
+  --color-border: rgba(106, 13, 173, 0.3);
+}
+
+/* 強制應用背景色 */
+body {
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+}
+
+#root {
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+}
+
+/* 強制應用主題色 */
+.bg-background {
+  background-color: #1A1A1A !important;
+}
+
+.bg-surface {
+  background-color: #2D1B4E !important;
+}
+
+.bg-card {
+  background-color: rgba(45, 27, 78, 0.95) !important;
+}
+
+.text-foreground {
+  color: #FFFFFF !important;
+}
+
+.text-primary {
+  color: #6A0DAD !important;
+}
+
+.text-secondary {
+  color: #E879F9 !important;
+}
+
+/* 按鈕樣式 - 庫洛米紫色 */
+button {
+  background-color: #6A0DAD !important;
+  color: #FFFFFF !important;
+}
+
+button:hover {
+  background-color: #A855F7 !important;
+}
+
+/* 標籤欄樣式 */
+[role="tablist"] {
+  background-color: #FFFFFF !important;
+}
+
+[role="tab"][aria-selected="true"] {
+  color: #6A0DAD !important;
+}
+
+[role="tab"][aria-selected="false"] {
+  color: #6B7280 !important;
+}

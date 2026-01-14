@@ -1,30 +1,30 @@
 /** @type {const} */
 const themeColors = {
-  // 主色调 - 紫粉渐变系统
-  primary: { light: '#A78BFA', dark: '#A78BFA' },
-  secondary: { light: '#F472B6', dark: '#F472B6' },
-  accent: { light: '#EC4899', dark: '#EC4899' },
+  // 主色調 - 庫洛米紫色系統 (強制覆蓋)
+  primary: { light: '#6A0DAD', dark: '#6A0DAD' },      // 庫洛米紫
+  secondary: { light: '#E879F9', dark: '#E879F9' },    // 粉紫色
+  accent: { light: '#A855F7', dark: '#A855F7' },       // 紫色
   
-  // 背景色
-  background: { light: '#E9D5FF', dark: '#1E1B4B' },
-  surface: { light: '#FFFFFF', dark: '#312E81' },
-  card: { light: 'rgba(255, 255, 255, 0.9)', dark: 'rgba(49, 46, 129, 0.9)' },
+  // 背景色 - 酷黑色
+  background: { light: '#1A1A1A', dark: '#1A1A1A' },   // 酷黑色
+  surface: { light: '#2D1B4E', dark: '#2D1B4E' },      // 深紫色
+  card: { light: 'rgba(45, 27, 78, 0.95)', dark: 'rgba(45, 27, 78, 0.95)' }, // 深紫卡片
   
-  // 文字色
-  foreground: { light: '#1F2937', dark: '#F9FAFB' },
-  muted: { light: '#6B7280', dark: '#D1D5DB' },
+  // 文字色 - 白色
+  foreground: { light: '#FFFFFF', dark: '#FFFFFF' },   // 白色文字
+  muted: { light: '#B8B8B8', dark: '#B8B8B8' },        // 灰色文字
   
-  // 边框
-  border: { light: 'rgba(167, 139, 250, 0.3)', dark: 'rgba(167, 139, 250, 0.3)' },
+  // 邊框 - 紫色
+  border: { light: 'rgba(106, 13, 173, 0.3)', dark: 'rgba(106, 13, 173, 0.3)' },
   
-  // 状态色
+  // 狀態色
   success: { light: '#10B981', dark: '#34D399' },
   warning: { light: '#F59E0B', dark: '#FBBF24' },
   error: { light: '#EF4444', dark: '#F87171' },
   
-  // 渐变色
-  gradient1: { light: '#E9D5FF', dark: '#C084FC' },
-  gradient2: { light: '#FCA5A5', dark: '#F472B6' },
+  // 漸變色 - 庫洛米紫色漸變
+  gradient1: { light: '#2D1B4E', dark: '#2D1B4E' },    // 深紫色
+  gradient2: { light: '#E879F9', dark: '#E879F9' },    // 粉紫色
 };
 
 module.exports = { themeColors };
