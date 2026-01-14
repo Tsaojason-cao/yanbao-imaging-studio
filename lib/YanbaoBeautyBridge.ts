@@ -4,7 +4,7 @@
  * 连接 TypeScript 和原生模块（iOS/Android）
  * 
  * @author Jason Tsao
- * @version 2.2.0
+ * @version 2.3.0
  * @since 2026-01-14
  */
 
@@ -18,9 +18,10 @@ const beautyEmitter = YanbaoBeautyModule
   : null;
 
 /**
- * 美颜参数接口
+ * 美颜参数接口 (v2.3.0 - 12维专业美学引擎)
  */
 export interface BeautyParams {
+  // 原有 7 维美颜引擎
   smooth: number;   // 磨皮 (0-100)
   slim: number;     // 瘦脸 (0-100)
   eye: number;      // 大眼 (0-100)
@@ -28,6 +29,13 @@ export interface BeautyParams {
   teeth: number;    // 白牙 (0-100)
   nose: number;     // 隆鼻 (0-100)
   blush: number;    // 红润 (0-100)
+  
+  // v2.3.0 新增 5 维专业美学引擎
+  sculpting3D: number;          // 骨相立体 (0-100)
+  textureRetention: number;     // 原生膚质保护 (0-100)
+  teethWhiteningPro: number;    // 牙齿美白增强版 (0-100)
+  darkCircleRemoval: number;    // 黑眼圈淡化 (0-100)
+  hairlineAdjustment: number;   // 发际线修饰 (0-100)
 }
 
 /**
@@ -209,6 +217,12 @@ export class YanbaoBeautyBridge {
           teeth: 10,
           nose: 5,
           blush: 12,
+          // v2.3.0 新增
+          sculpting3D: 0,
+          textureRetention: 30,
+          teethWhiteningPro: 0,
+          darkCircleRemoval: 0,
+          hairlineAdjustment: 0,
         },
         filterParams: {
           contrast: 0,

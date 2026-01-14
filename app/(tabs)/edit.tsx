@@ -87,8 +87,9 @@ export default function EditScreen() {
       // 应用原生美颜处理
       let processedUri = currentImageUri;
       try {
-        // 将调整参数转换为美颜参数格式
+        // 将调整参数转换为 12 维美颜参数格式 (v2.3.0)
         const beautyParams = {
+          // 原有 7 维
           smooth: adjustParams.brightness, // 使用亮度作为磨皮
           slim: 0,
           eye: 0,
@@ -96,6 +97,12 @@ export default function EditScreen() {
           teeth: 0,
           nose: 0,
           blush: adjustParams.saturation, // 使用饱和度作为红润
+          // v2.3.0 新增 5 维
+          sculpting3D: memoryParams?.sculpting3D || 0,
+          textureRetention: memoryParams?.textureRetention || 30,
+          teethWhiteningPro: memoryParams?.teethWhiteningPro || 0,
+          darkCircleRemoval: memoryParams?.darkCircleRemoval || 0,
+          hairlineAdjustment: memoryParams?.hairlineAdjustment || 0,
         };
         processedUri = await YanbaoBeautyBridge.processImage(currentImageUri, beautyParams);
         console.log('✅ 编辑器美颜处理完成:', processedUri);

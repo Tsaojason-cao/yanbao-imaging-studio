@@ -526,9 +526,10 @@ export default function CameraScreen() {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
-              {/* 7维美颜滑块（磨皮、瘦脸、大眼、亮眼、白牙、隆鼻、红润） */}
+               {/* 12维专业美学引擎 (v2.3.0) */}
               <View style={styles.beautySliders}>
                 {[
+                  // 原有 7 维
                   { key: "smooth", label: "磨皮", sublabel: "Skin Smoothness", value: beautyParams.smooth, icon: "✨" },
                   { key: "slim", label: "瘦脸", sublabel: "Face Slimming", value: beautyParams.slim, icon: "👆" },
                   { key: "eye", label: "大眼", sublabel: "Eye Enlargement", value: beautyParams.eye, icon: "👁️" },
@@ -536,6 +537,12 @@ export default function CameraScreen() {
                   { key: "teeth", label: "白牙", sublabel: "Teeth Whitening", value: beautyParams.teeth, icon: "🦷" },
                   { key: "nose", label: "隆鼻", sublabel: "Nose Enhancement", value: beautyParams.nose, icon: "👃" },
                   { key: "blush", label: "红润", sublabel: "Rosy Cheeks", value: beautyParams.blush, icon: "🌹" },
+                  // v2.3.0 新增 5 维
+                  { key: "sculpting3D", label: "骨相立体", sublabel: "3D Sculpting", value: beautyParams.sculpting3D, icon: "💎" },
+                  { key: "textureRetention", label: "膚质保护", sublabel: "Texture Retention", value: beautyParams.textureRetention, icon: "🌿" },
+                  { key: "teethWhiteningPro", label: "牙齿美白", sublabel: "Teeth Whitening Pro", value: beautyParams.teethWhiteningPro, icon: "✨" },
+                  { key: "darkCircleRemoval", label: "黑眼圈淡化", sublabel: "Dark Circle Removal", value: beautyParams.darkCircleRemoval, icon: "👁️" },
+                  { key: "hairlineAdjustment", label: "发际线修饰", sublabel: "Hairline Adjustment", value: beautyParams.hairlineAdjustment, icon: "💇" },
                 ].map((param) => (
                   <View key={param.key} style={styles.sliderRow}>
                     <View style={styles.sliderLabelContainer}>

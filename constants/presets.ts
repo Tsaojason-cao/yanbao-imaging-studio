@@ -34,6 +34,7 @@ export interface MasterPreset {
   region: PresetRegion;  // 地区标签
   description: string;
   beautyParams: {
+    // 原有 7 维美颜引擎
     smooth: number;      // 磨皮 (0-100)
     slim: number;        // 瘦脸 (0-100)
     eye: number;         // 大眼 (0-100)
@@ -41,6 +42,13 @@ export interface MasterPreset {
     teeth: number;       // 白牙 (0-100)
     nose: number;        // 隆鼻 (0-100)
     blush: number;       // 红润 (0-100)
+    
+    // v2.3.0 新增 5 维专业美学引擎
+    sculpting3D: number;          // 骨相立体 (0-100)
+    textureRetention: number;     // 原生膚質保护 (0-100)
+    teethWhiteningPro: number;    // 牙齿美白增强版 (0-100)
+    darkCircleRemoval: number;    // 黑眼圈淡化 (0-100)
+    hairlineAdjustment: number;   // 发际线修饰 (0-100)
   };
   filterParams: {
     contrast: number;     // 对比度 (-100 到 +100)
@@ -84,6 +92,12 @@ export const DEFAULT_BEAUTY_PRESET: MasterPreset = {
     teeth: 10,    // 白牙 10%
     nose: 5,      // 隆鼻 5%
     blush: 12,    // 红润 12%
+    // v2.3.0 新增
+    sculpting3D: 0,
+    textureRetention: 30,
+    teethWhiteningPro: 0,
+    darkCircleRemoval: 0,
+    hairlineAdjustment: 0,
   },
   filterParams: {
     contrast: 0,
@@ -130,6 +144,12 @@ export const PRESET_XIAO_QUAN: MasterPreset = {
     teeth: 0,
     nose: 0,
     blush: 0,
+  // v2.3.0 新增
+  sculpting3D: 0,
+  textureRetention: 100,
+  teethWhiteningPro: 0,
+  darkCircleRemoval: 0,
+  hairlineAdjustment: 0,
   },
   filterParams: {
     contrast: 25,
@@ -172,6 +192,12 @@ export const PRESET_SUN_JUN: MasterPreset = {
     teeth: 5,
     nose: 0,
     blush: 15,
+  // v2.3.0 新增
+  sculpting3D: 10,
+  textureRetention: 50,
+  teethWhiteningPro: 5,
+  darkCircleRemoval: 15,
+  hairlineAdjustment: 0,
   },
   filterParams: {
     contrast: 0,
@@ -214,6 +240,12 @@ export const PRESET_CHEN_MAN: MasterPreset = {
     teeth: 20,
     nose: 10,
     blush: 15,
+  // v2.3.0 新增
+  sculpting3D: 45,
+  textureRetention: 20,
+  teethWhiteningPro: 30,
+  darkCircleRemoval: 40,
+  hairlineAdjustment: 0,
   },
   filterParams: {
     contrast: 15,
@@ -256,6 +288,12 @@ export const PRESET_NINAGAWA_MIKA_CN: MasterPreset = {
     teeth: 15,
     nose: 5,
     blush: 20,
+  // v2.3.0 新增
+  sculpting3D: 25,
+  textureRetention: 30,
+  teethWhiteningPro: 20,
+  darkCircleRemoval: 30,
+  hairlineAdjustment: 0,
   },
   filterParams: {
     contrast: 10,
@@ -298,6 +336,12 @@ export const PRESET_LUO_YANG: MasterPreset = {
     teeth: 5,
     nose: 0,
     blush: 8,
+  // v2.3.0 新增
+  sculpting3D: 0,
+  textureRetention: 80,
+  teethWhiteningPro: 5,
+  darkCircleRemoval: 10,
+  hairlineAdjustment: 0,
   },
   filterParams: {
     contrast: -15,
@@ -344,6 +388,12 @@ export const PRESET_SUGIMOTO_HIROSHI: MasterPreset = {
     teeth: 0,
     nose: 0,
     blush: 0,
+  // v2.3.0 新增
+  sculpting3D: 0,
+  textureRetention: 100,
+  teethWhiteningPro: 0,
+  darkCircleRemoval: 0,
+  hairlineAdjustment: 0,
   },
   filterParams: {
     contrast: -20,
@@ -386,6 +436,12 @@ export const PRESET_NINAGAWA_MIKA_JP: MasterPreset = {
     teeth: 15,
     nose: 5,
     blush: 25,
+  // v2.3.0 新增
+  sculpting3D: 30,
+  textureRetention: 25,
+  teethWhiteningPro: 25,
+  darkCircleRemoval: 35,
+  hairlineAdjustment: 0,
   },
   filterParams: {
     contrast: 15,
@@ -428,6 +484,12 @@ export const PRESET_HAMADA_HIDEAKI: MasterPreset = {
     teeth: 10,
     nose: 0,
     blush: 12,
+  // v2.3.0 新增
+  sculpting3D: 15,
+  textureRetention: 60,
+  teethWhiteningPro: 15,
+  darkCircleRemoval: 20,
+  hairlineAdjustment: 0,
   },
   filterParams: {
     contrast: -10,
@@ -470,6 +532,12 @@ export const PRESET_MORIYAMA_DAIDO: MasterPreset = {
     teeth: 0,
     nose: 0,
     blush: 0,
+  // v2.3.0 新增
+  sculpting3D: 0,
+  textureRetention: 100,
+  teethWhiteningPro: 0,
+  darkCircleRemoval: 0,
+  hairlineAdjustment: 0,
   },
   filterParams: {
     contrast: 45,
@@ -512,6 +580,12 @@ export const PRESET_KAWAUCHI_RINKO: MasterPreset = {
     teeth: 5,
     nose: 0,
     blush: 8,
+  // v2.3.0 新增
+  sculpting3D: 5,
+  textureRetention: 70,
+  teethWhiteningPro: 10,
+  darkCircleRemoval: 15,
+  hairlineAdjustment: 0,
   },
   filterParams: {
     contrast: -25,
@@ -558,6 +632,12 @@ export const PRESET_CHO_SUN_HEE: MasterPreset = {
     teeth: 18,
     nose: 15,
     blush: 15,
+  // v2.3.0 新增
+  sculpting3D: 40,
+  textureRetention: 25,
+  teethWhiteningPro: 30,
+  darkCircleRemoval: 45,
+  hairlineAdjustment: 10,
   },
   filterParams: {
     contrast: 15,
@@ -600,6 +680,12 @@ export const PRESET_MU_GUNG: MasterPreset = {
     teeth: 15,
     nose: 8,
     blush: 20,
+  // v2.3.0 新增
+  sculpting3D: 20,
+  textureRetention: 20,
+  teethWhiteningPro: 25,
+  darkCircleRemoval: 50,
+  hairlineAdjustment: 5,
   },
   filterParams: {
     contrast: 5,
@@ -642,6 +728,12 @@ export const PRESET_LESS: MasterPreset = {
     teeth: 8,
     nose: 0,
     blush: 5,
+  // v2.3.0 新增
+  sculpting3D: 10,
+  textureRetention: 70,
+  teethWhiteningPro: 10,
+  darkCircleRemoval: 15,
+  hairlineAdjustment: 0,
   },
   filterParams: {
     contrast: 10,
@@ -684,6 +776,12 @@ export const PRESET_HONG_JANG_HYUN: MasterPreset = {
     teeth: 20,
     nose: 12,
     blush: 15,
+  // v2.3.0 新增
+  sculpting3D: 50,
+  textureRetention: 15,
+  teethWhiteningPro: 35,
+  darkCircleRemoval: 50,
+  hairlineAdjustment: 15,
   },
   filterParams: {
     contrast: 20,
@@ -726,6 +824,12 @@ export const PRESET_KOO_BOHN_CHANG: MasterPreset = {
     teeth: 15,
     nose: 0,
     blush: 8,
+  // v2.3.0 新增
+  sculpting3D: 5,
+  textureRetention: 40,
+  teethWhiteningPro: 20,
+  darkCircleRemoval: 25,
+  hairlineAdjustment: 0,
   },
   filterParams: {
     contrast: -30,
