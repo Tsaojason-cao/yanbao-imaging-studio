@@ -45,16 +45,8 @@ export default function CameraScreen() {
   const [showPresetPanel, setShowPresetPanel] = useState(false); // 大师预设面板显示状态
   const [selectedPreset, setSelectedPreset] = useState(0); // 默认选中自然原生
 
-  // 7维美颜参数（匹配用户需求：磨皮、瘦脸、大眼、亮眼、白牙、隆鼻、红润）
-  const [beautyParams, setBeautyParams] = useState({
-    smooth: 15,    // 磨皮 Skin Smoothness（默认 15% 自带美颜）
-    slim: 0,       // 瘦脸 Face Slimming
-    eye: 0,        // 大眼 Eye Enlargement
-    bright: 10,    // 亮眼 Eye Brightness（默认 10% 自带美颜）
-    teeth: 0,      // 白牙 Teeth Whitening
-    nose: 0,       // 隆鼻 Nose Enhancement
-    blush: 5,      // 红润 Rosy Cheeks（默认 5% 自带美颜）
-  });
+  // 7维美颜参数：默认开启「自然原生」预设（自然无痕版本）
+  const [beautyParams, setBeautyParams] = useState(MASTER_PRESETS[0].beautyParams);
 
   // 大师预设系统：使用导入的 MASTER_PRESETS
   const masterPresets = MASTER_PRESETS;
@@ -111,6 +103,13 @@ export default function CameraScreen() {
       Alert.alert('❌ 错误', '保存失败，请重试');
     }
   };
+
+  // 初始化日志：验证「自然原生」预设已加载
+  useEffect(() => {
+    console.log('🎨 相机模块初始化完成');
+    console.log('✅ 默认预设:', MASTER_PRESETS[0].name);
+    console.log('✅ 初始美颜参数:', beautyParams);
+  }, []);
 
   // 定时拍照倒计时逻辑
   useEffect(() => {
