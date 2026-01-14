@@ -116,7 +116,29 @@ export default function EditScreen() {
         return (
           <View style={styles.adjustPanel}>
             <Text style={styles.panelTitle}>裁剪</Text>
-            <Text style={styles.placeholderText}>裁剪功能开发中...</Text>
+            <View style={styles.cropPresets}>
+              {[
+                { label: "9:16", ratio: 9/16 },
+                { label: "16:9", ratio: 16/9 },
+                { label: "1:1", ratio: 1 },
+                { label: "4:3", ratio: 4/3 },
+                { label: "自由", ratio: 0 },
+              ].map((preset, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.cropPresetButton}
+                  onPress={() => {
+                    if (Platform.OS !== "web") {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    }
+                    alert(`裁剪比例: ${preset.label}`);
+                  }}
+                >
+                  <Text style={styles.cropPresetLabel}>{preset.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text style={styles.cropHintText}>选择裁剪比例后，在图片上拖动调整裁剪区域</Text>
           </View>
         );
       case "rotate":
@@ -131,7 +153,7 @@ export default function EditScreen() {
 
   return (
     <LinearGradient
-      colors={["#1a0a2e" as const, "#2d1b4e" as const]}
+      colors={["#2d1b4e" as const, "#2d1b4e" as const]}
       style={{ flex: 1 }}
     >
       <ScreenContainer containerClassName="bg-transparent">
@@ -415,7 +437,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: "#A78BFA",
+    backgroundColor: "#E879F9",
     borderWidth: 2,
     borderColor: "#FFFFFF",
   },
@@ -480,5 +502,32 @@ const styles = StyleSheet.create({
     color: "rgba(255, 255, 255, 0.5)",
     textAlign: "center",
     marginTop: 20,
+  },
+  cropPresets: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+    marginTop: 16,
+  },
+  cropPresetButton: {
+    width: "30%",
+    padding: 16,
+    backgroundColor: "rgba(45, 27, 78, 0.8)",
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: "rgba(232, 121, 249, 0.3)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cropPresetLabel: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+  cropHintText: {
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.6)",
+    marginTop: 20,
+    textAlign: "center",
   },
 });

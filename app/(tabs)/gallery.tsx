@@ -11,7 +11,7 @@ import * as FileSystem from "expo-file-system/legacy";
 import { KuromiLoadingAnimation } from "@/components/kuromi-ui";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const IMAGE_SIZE = (SCREEN_WIDTH - 48) / 3;
+const IMAGE_SIZE = (SCREEN_WIDTH - 48) / 2.5;
 
 // Tab类型
 type TabType = "photos" | "presets" | "backup";
@@ -238,7 +238,7 @@ export default function GalleryScreen() {
           <Pressable
             style={{
               marginTop: 24,
-              backgroundColor: "#9333EA",
+              backgroundColor: "#E879F9",
               paddingHorizontal: 32,
               paddingVertical: 12,
               borderRadius: 12,
@@ -671,7 +671,55 @@ export default function GalleryScreen() {
         {activeTab === "presets" && renderPresets()}
         {activeTab === "backup" && renderBackup()}
       </View>
-    </ScreenContainer>
+    
+        {/* 雁宝记忆按钮 */}
+        <Pressable
+          style={({ pressed }) => [
+            styles.memoryFloatingButton,
+            pressed && { opacity: 0.8, transform: [{ scale: 0.95 }] },
+          ]}
+          onPress={() => {
+            if (Platform.OS !== "web") {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            }
+            router.push("/(tabs)/inspiration");
+          }}
+        >
+          <LinearGradient
+            colors={["#F472B6", "#EC4899"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.memoryButtonGradient}
+          >
+            <Ionicons name="heart" size={28} color="#FFFFFF" />
+          </LinearGradient>
+        </Pressable>
+
+      
+        {/* 雁宝记忆按钮 */}
+        <Pressable
+          style={({ pressed }) => [
+            styles.memoryFloatingButton,
+            pressed && { opacity: 0.8, transform: [{ scale: 0.95 }] },
+          ]}
+          onPress={() => {
+            if (Platform.OS !== "web") {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            }
+            router.push("/(tabs)/inspiration");
+          }}
+        >
+          <LinearGradient
+            colors={["#F472B6", "#EC4899"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.memoryButtonGradient}
+          >
+            <Ionicons name="heart" size={28} color="#FFFFFF" />
+          </LinearGradient>
+        </Pressable>
+
+      </ScreenContainer>
   );
 }
 

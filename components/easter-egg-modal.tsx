@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#9333EA',
+    color: '#E879F9',
     textAlign: 'center',
     marginBottom: 20,
   },
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   closeButton: {
     marginTop: 20,
     paddingVertical: 16,
-    backgroundColor: '#9333EA',
+    backgroundColor: '#E879F9',
     borderRadius: 16,
     alignItems: 'center',
   },

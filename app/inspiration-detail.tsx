@@ -174,7 +174,7 @@ export default function InspirationDetailScreen() {
           <View style={styles.titleSection}>
             <Text style={styles.title}>{detail.title}</Text>
             <View style={styles.locationRow}>
-              <IconSymbol name="location.fill" size={16} color="#9333EA" />
+              <IconSymbol name="location.fill" size={16} color="#E879F9" />
               <Text style={styles.locationText}>{detail.location}</Text>
             </View>
             <View style={styles.metaRow}>
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
   },
   dotActive: {
     width: 20,
-    backgroundColor: "#9333EA",
+    backgroundColor: "#E879F9",
   },
   content: {
     paddingHorizontal: 20,
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 16,
-    color: "#9333EA",
+    color: "#E879F9",
     fontWeight: "600",
     marginLeft: 6,
   },
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#9333EA",
+    color: "#E879F9",
   },
   tipsContainer: {
     backgroundColor: "#FFFFFF",
@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 16,
     borderRadius: 16,
-    backgroundColor: "#9333EA",
+    backgroundColor: "#E879F9",
     gap: 8,
   },
   shootText: {
@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderLeftWidth: 4,
-    borderLeftColor: "#9333EA",
+    borderLeftColor: "#E879F9",
   },
   advancedTipTitle: {
     fontSize: 15,

@@ -1,0 +1,13 @@
+#!/bin/bash
+echo "Web 预览地址: https://8081-iqgwz89cczu9f3hj3am8z-cb72c035.sg1.manus.computer"
+echo ""
+echo "✅ Web 服务器已启动并运行在端口 8081"
+echo "✅ 所有 UI 更新已应用："
+echo "   - 库洛米紫色主题 (#6A0DAD, #E879F9)"
+echo "   - 霓虹边框效果"
+echo "   - 粉紫渐变背景"
+echo "   - 相册 2.5 列布局"
+echo "   - 裁剪工具（含 9:16 预设）"
+echo "   - 雁宝记忆心形按钮"
+echo ""
+echo "请在浏览器中打开上述地址查看实时效果"

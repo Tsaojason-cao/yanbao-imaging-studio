@@ -69,7 +69,7 @@ export default function FootprintsScreen() {
   return (
     <ScreenContainer>
       <LinearGradient
-        colors={["#1A0A2E", "#2D1B4E", "#3D2463"]}
+        colors={["#2d1b4e", "#2D1B4E", "#3D2463"]}
         style={styles.background}
       >
         {/* 顶部导航栏 */}
@@ -189,7 +189,7 @@ function StatCard({
       <MaterialCommunityIcons
         name={icon as any}
         size={32}
-        color="#A78BFA"
+        color="#E879F9"
       />
       <Text style={styles.statValue}>{value}</Text>
       <Text style={styles.statLabel}>{label}</Text>
@@ -228,7 +228,7 @@ function FootprintCard({
             <MaterialCommunityIcons
               name="map-marker"
               size={24}
-              color="#A78BFA"
+              color="#E879F9"
             />
             <Text style={styles.footprintName}>{footprint.spotName}</Text>
           </View>
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 12,
     right: 12,
-    backgroundColor: "#A78BFA",
+    backgroundColor: "#E879F9",
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,

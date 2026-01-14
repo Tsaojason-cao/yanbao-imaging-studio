@@ -261,6 +261,34 @@ export default function CameraScreen() {
             <Text style={{ fontSize: 10, color: "#FFFFFF", marginTop: 2 }}>机位</Text>
           </TouchableOpacity>
 
+          
+          <TouchableOpacity 
+            style={styles.memoryButton} 
+            onPress={() => {
+              if (Platform.OS !== "web") {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              }
+              router.push("/(tabs)/inspiration");
+            }}
+          >
+            <Ionicons name="heart" size={28} color="#F472B6" />
+            <Text style={{ fontSize: 10, color: "#F472B6", marginTop: 2 }}>记忆</Text>
+          </TouchableOpacity>
+
+          
+          <TouchableOpacity 
+            style={styles.memoryButton} 
+            onPress={() => {
+              if (Platform.OS !== "web") {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              }
+              router.push("/(tabs)/inspiration");
+            }}
+          >
+            <Ionicons name="heart" size={28} color="#F472B6" />
+            <Text style={{ fontSize: 10, color: "#F472B6", marginTop: 2 }}>记忆</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.topButton} onPress={toggleCameraFacing}>
             <Ionicons name="camera-reverse" size={28} color="#FFFFFF" />
           </TouchableOpacity>
@@ -862,7 +890,7 @@ const styles = StyleSheet.create({
     color: "#1F2937",
   },
   permissionButton: {
-    backgroundColor: "#9333EA",
+    backgroundColor: "#E879F9",
     paddingHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 16,
@@ -990,5 +1018,33 @@ const styles = StyleSheet.create({
   thumbnail: {
     width: "100%",
     height: "100%",
+  },
+  memoryButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: "rgba(244, 114, 182, 0.2)",
+    borderWidth: 2,
+    borderColor: "#F472B6",
+    shadowColor: "#F472B6",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  memoryButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: "rgba(244, 114, 182, 0.2)",
+    borderWidth: 2,
+    borderColor: "#F472B6",
+    shadowColor: "#F472B6",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 10,
+    elevation: 5,
   },
 });

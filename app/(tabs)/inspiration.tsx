@@ -182,7 +182,7 @@ export default function InspirationScreen() {
           </Text>
           {item.location && (
             <View style={styles.locationRow}>
-              <IconSymbol name="location.fill" size={12} color="#9333EA" />
+              <IconSymbol name="location.fill" size={12} color="#E879F9" />
               <Text style={styles.locationText}>{item.location}</Text>
             </View>
           )}
@@ -235,7 +235,7 @@ export default function InspirationScreen() {
       >
         {loading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#9333EA" />
+            <ActivityIndicator size="large" color="#E879F9" />
             <Text style={styles.loadingText}>加载中...</Text>
           </View>
         ) : (
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   categoryTabActive: {
-    backgroundColor: "#9333EA",
+    backgroundColor: "#E879F9",
   },
   categoryText: {
     fontSize: 14,
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 12,
-    color: "#9333EA",
+    color: "#E879F9",
     marginLeft: 4,
   },
   metaRow: {

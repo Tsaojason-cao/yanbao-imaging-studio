@@ -94,7 +94,7 @@ export function ProModePanel({
                 step={100}
                 value={params.iso}
                 onValueChange={handleISOChange}
-                minimumTrackTintColor="#A78BFA"
+                minimumTrackTintColor="#E879F9"
                 maximumTrackTintColor="rgba(255, 255, 255, 0.2)"
                 thumbTintColor="#FFFFFF"
               />
@@ -124,7 +124,7 @@ export function ProModePanel({
                 maximumValue={30}
                 value={params.shutterSpeed}
                 onValueChange={handleShutterSpeedChange}
-                minimumTrackTintColor="#A78BFA"
+                minimumTrackTintColor="#E879F9"
                 maximumTrackTintColor="rgba(255, 255, 255, 0.2)"
                 thumbTintColor="#FFFFFF"
               />
@@ -155,7 +155,7 @@ export function ProModePanel({
                 step={100}
                 value={params.whiteBalance}
                 onValueChange={handleWhiteBalanceChange}
-                minimumTrackTintColor="#A78BFA"
+                minimumTrackTintColor="#E879F9"
                 maximumTrackTintColor="rgba(255, 255, 255, 0.2)"
                 thumbTintColor="#FFFFFF"
               />
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   valueText: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#A78BFA",
+    color: "#E879F9",
   },
   rangeLabels: {
     flexDirection: "row",
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   peakingSwitchActive: {
-    backgroundColor: "#A78BFA",
+    backgroundColor: "#E879F9",
   },
   peakingThumb: {
     width: 28,
@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
   },
   sliderFill: {
     height: "100%",
-    backgroundColor: "#A78BFA",
+    backgroundColor: "#E879F9",
     borderRadius: 4,
   },
 });

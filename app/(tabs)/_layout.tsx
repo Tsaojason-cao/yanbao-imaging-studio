@@ -13,7 +13,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#9333EA", // 紫色高亮
+        tabBarActiveTintColor: "#E879F9", // 紫色高亮
         tabBarInactiveTintColor: "#6B7280", // 灰色
         headerShown: false,
         tabBarButton: HapticTab,
