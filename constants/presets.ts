@@ -1,7 +1,7 @@
 /**
- * yanbao AI 全球大师预设系统 - Global Edition
+ * yanbao AI 全球大师预设系统 - Global Edition v2.4.0
  * 
- * 包含 1 个自带美颜 + 15 个中日韩顶级摄影师参数
+ * 包含 1 个自带美颜 + 30 个全球顶级摄影师参数
  * 
  * 🇨🇳 中国摄影师（5位）:
  * - 肖全: 时代的记录者，极致黑白人像大师
@@ -23,9 +23,30 @@
  * - Less (Kim Tae-gyun): 叛逆青春电影感，冷绿色调
  * - Hong Jang-hyun: 顶级 VOGUE 时尚风，极致美化
  * - Koo Bohn-chang: 白瓷般宁静极简，剔透感
+ * 
+ * 🇺🇸 美国摄影师（5位）:
+ * - Annie Leibovitz: 史诗肖像，戏剧性光影
+ * - Richard Avedon: 纯白背景极简肖像
+ * - Irving Penn: 极简静物美学，冷调精致
+ * - Diane Arbus: 边缘人物纪实，粗粝黑白
+ * - Cindy Sherman: 自拍艺术，戏剧性色彩
+ * 
+ * 🇹🇼 台湾摄影师（5位）:
+ * - 林海音: 柔和自然，肤色纯净
+ * - 阮义忠: 人文纪实，黑白强对比
+ * - 张照堂: 超现实黑白，实验性影像
+ * - 郭英声: 台湾风土，温暖纪实
+ * - 何经泰: 台湾街头，胶片感纪实
+ * 
+ * 🇬🇧 英国摄影师（5位）:
+ * - David Bailey: 摇摆伦敦，时尚黑白
+ * - Nick Knight: 数字艺术先锋，实验性色彩
+ * - Tim Walker: 梦幻叙事，童话感柔和
+ * - Rankin: 现代肖像，干净锐利
+ * - Nadav Kander: 极简肖像，冷调低饱和
  */
 
-export type PresetRegion = 'CN' | 'JP' | 'KR' | 'DEFAULT';
+export type PresetRegion = 'CN' | 'JP' | 'KR' | 'US' | 'TW' | 'UK' | 'DEFAULT';
 
 export interface MasterPreset {
   id: string;
@@ -916,6 +937,727 @@ export function getPresetsByDifficulty(difficulty: 'easy' | 'medium' | 'hard'): 
   return MASTER_PRESETS.filter(preset => preset.difficulty === difficulty);
 }
 
+
+/**
+ * 史诗肖像 (Annie Leibovitz风格)
+ */
+export const PRESET_US_1_ANNIE: MasterPreset = {
+  id: 'preset_us_1_annie',
+  name: '史诗肖像',
+  photographer: 'Annie Leibovitz',
+  region: 'US',
+  description: '史诗感、冷暖对比、油画质感',
+  beautyParams: {
+    smooth: 20,
+    slim: 8,
+    eye: 10,
+    bright: 25,
+    teeth: 15,
+    nose: 5,
+    blush: 10,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 40,
+    textureRetention: 60,
+    teethWhiteningPro: 20,
+    darkCircleRemoval: 30,
+    hairlineAdjustment: 0,
+  },
+  filterParams: {
+    contrast: 30,
+    saturation: 0,
+    brightness: 0,
+    grain: 5,
+    temperature: -15,
+    highlightSuppression: 20,
+    shadowCompensation: 20,
+    vignette: 10,
+    hueShift: 5,
+    sharpness: 15,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 200,
+    shutter: '1/125',
+    aperture: 'f/2.8',
+    whiteBalance: '5200K',
+    exposureCompensation: '0.0 EV',
+  },
+  tags: ['史诗', '戏剧性', '肖像', '冷暖对比'],
+  difficulty: 'medium',
+};
+
+/**
+ * 人文细节 (Steve McCurry风格)
+ */
+export const PRESET_US_2_STEVE: MasterPreset = {
+  id: 'preset_us_2_steve',
+  name: '人文细节',
+  photographer: 'Steve McCurry',
+  region: 'US',
+  description: '浓郁饱和、人文细节、高宽容度',
+  beautyParams: {
+    smooth: 10,
+    slim: 0,
+    eye: 5,
+    bright: 15,
+    teeth: 5,
+    nose: 0,
+    blush: 10,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 15,
+    textureRetention: 50,
+    teethWhiteningPro: 10,
+    darkCircleRemoval: 15,
+    hairlineAdjustment: 0,
+  },
+  filterParams: {
+    contrast: 20,
+    saturation: 40,
+    brightness: 5,
+    grain: 8,
+    temperature: 10,
+    highlightSuppression: 30,
+    shadowCompensation: 30,
+    vignette: 5,
+    hueShift: 0,
+    sharpness: 10,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 200,
+    shutter: '1/250',
+    aperture: 'f/5.6',
+    whiteBalance: '5600K',
+    exposureCompensation: '0.0 EV',
+  },
+  tags: ['人文', '饱和', '细节', '纪实'],
+  difficulty: 'easy',
+};
+
+/**
+ * 极简白背 (Richard Avedon风格)
+ */
+export const PRESET_US_3_RICHARD: MasterPreset = {
+  id: 'preset_us_3_richard',
+  name: '极简白背',
+  photographer: 'Richard Avedon',
+  region: 'US',
+  description: '极简白背、高锐度、硬核黑白',
+  beautyParams: {
+    smooth: 15,
+    slim: 5,
+    eye: 8,
+    bright: 20,
+    teeth: 10,
+    nose: 0,
+    blush: 5,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 25,
+    textureRetention: 70,
+    teethWhiteningPro: 15,
+    darkCircleRemoval: 20,
+    hairlineAdjustment: 20,
+  },
+  filterParams: {
+    contrast: 60,
+    saturation: -100,
+    brightness: 40,
+    grain: 0,
+    temperature: 0,
+    highlightSuppression: 50,
+    shadowCompensation: 10,
+    vignette: 0,
+    hueShift: 0,
+    sharpness: 40,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 100,
+    shutter: '1/160',
+    aperture: 'f/8',
+    whiteBalance: '5500K',
+    exposureCompensation: '0.0 EV',
+  },
+  tags: ['极简', '纯白', '肖像', '锐利'],
+  difficulty: 'easy',
+};
+
+/**
+ * 生活胶片 (Nan Goldin风格)
+ */
+export const PRESET_US_4_NAN: MasterPreset = {
+  id: 'preset_us_4_nan',
+  name: '生活胶片',
+  photographer: 'Nan Goldin',
+  region: 'US',
+  description: '胶片暗角、生活化、低明度',
+  beautyParams: {
+    smooth: 5,
+    slim: 0,
+    eye: 5,
+    bright: 10,
+    teeth: 5,
+    nose: 0,
+    blush: 10,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 5,
+    textureRetention: 80,
+    teethWhiteningPro: 5,
+    darkCircleRemoval: 30,
+    hairlineAdjustment: 0,
+  },
+  filterParams: {
+    contrast: 15,
+    saturation: 10,
+    brightness: -20,
+    grain: 30,
+    temperature: 20,
+    highlightSuppression: 15,
+    shadowCompensation: 15,
+    vignette: 25,
+    hueShift: 5,
+    sharpness: 0,
+    fade: 10,
+  },
+  cameraParams: {
+    iso: 800,
+    shutter: '1/60',
+    aperture: 'f/2.0',
+    whiteBalance: '5800K',
+    exposureCompensation: '-0.5 EV',
+  },
+  tags: ['胶片', '生活', '暗角', '纪实'],
+  difficulty: 'medium',
+};
+
+/**
+ * 区域曝光 (Ansel Adams风格)
+ */
+export const PRESET_US_5_ANSEL: MasterPreset = {
+  id: 'preset_us_5_ansel',
+  name: '区域曝光',
+  photographer: 'Ansel Adams',
+  region: 'US',
+  description: '区域曝光、极致黑白细节',
+  beautyParams: {
+    smooth: 0,
+    slim: 0,
+    eye: 0,
+    bright: 15,
+    teeth: 0,
+    nose: 0,
+    blush: 0,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 0,
+    textureRetention: 100,
+    teethWhiteningPro: 0,
+    darkCircleRemoval: 0,
+    hairlineAdjustment: 0,
+  },
+  filterParams: {
+    contrast: 50,
+    saturation: -100,
+    brightness: 10,
+    grain: 5,
+    temperature: 0,
+    highlightSuppression: 30,
+    shadowCompensation: 40,
+    vignette: 0,
+    hueShift: 0,
+    sharpness: 50,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 100,
+    shutter: '1/250',
+    aperture: 'f/16',
+    whiteBalance: '5500K',
+    exposureCompensation: '0.0 EV',
+  },
+  tags: ['黑白', '风景', '区域曝光', '极致'],
+  difficulty: 'hard',
+};
+
+/**
+ * 纯净原生 (林海音风格)
+ */
+export const PRESET_TW_1_LIN: MasterPreset = {
+  id: 'preset_tw_1_lin',
+  name: '纯净原生',
+  photographer: '林海音',
+  region: 'TW',
+  description: '纯净原生、柔和肤色、自然光',
+  beautyParams: {
+    smooth: 25,
+    slim: 8,
+    eye: 10,
+    bright: 15,
+    teeth: 12,
+    nose: 5,
+    blush: 20,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 15,
+    textureRetention: 40,
+    teethWhiteningPro: 30,
+    darkCircleRemoval: 30,
+    hairlineAdjustment: 0,
+  },
+  filterParams: {
+    contrast: 0,
+    saturation: 0,
+    brightness: 15,
+    grain: 0,
+    temperature: 10,
+    highlightSuppression: 15,
+    shadowCompensation: 20,
+    vignette: 0,
+    hueShift: 5,
+    sharpness: 5,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 200,
+    shutter: '1/125',
+    aperture: 'f/2.8',
+    whiteBalance: '5600K',
+    exposureCompensation: '0.0 EV',
+  },
+  tags: ['柔和', '自然', '肤色', '台湾'],
+  difficulty: 'easy',
+};
+
+/**
+ * 浓郁光影 (范毅舜风格)
+ */
+export const PRESET_TW_2_FAN: MasterPreset = {
+  id: 'preset_tw_2_fan',
+  name: '浓郁光影',
+  photographer: '范毅舜',
+  region: 'TW',
+  description: '浓郁光影、戏剧化色彩',
+  beautyParams: {
+    smooth: 15,
+    slim: 5,
+    eye: 8,
+    bright: 20,
+    teeth: 10,
+    nose: 5,
+    blush: 15,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 30,
+    textureRetention: 60,
+    teethWhiteningPro: 15,
+    darkCircleRemoval: 20,
+    hairlineAdjustment: 0,
+  },
+  filterParams: {
+    contrast: 30,
+    saturation: 25,
+    brightness: 5,
+    grain: 5,
+    temperature: 10,
+    highlightSuppression: 15,
+    shadowCompensation: 20,
+    vignette: 10,
+    hueShift: 0,
+    sharpness: 10,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 200,
+    shutter: '1/125',
+    aperture: 'f/4',
+    whiteBalance: '5600K',
+    exposureCompensation: '0.0 EV',
+  },
+  tags: ['光影', '戏剧', '色彩', '台湾'],
+  difficulty: 'medium',
+};
+
+/**
+ * 纪实质感 (阮义忠风格)
+ */
+export const PRESET_TW_3_RUAN: MasterPreset = {
+  id: 'preset_tw_3_ruan',
+  name: '纪实质感',
+  photographer: '阮义忠',
+  region: 'TW',
+  description: '纪实质感、高反差黑白',
+  beautyParams: {
+    smooth: 0,
+    slim: 0,
+    eye: 0,
+    bright: 15,
+    teeth: 0,
+    nose: 0,
+    blush: 0,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 0,
+    textureRetention: 100,
+    teethWhiteningPro: 0,
+    darkCircleRemoval: 0,
+    hairlineAdjustment: 0,
+  },
+  filterParams: {
+    contrast: 40,
+    saturation: -100,
+    brightness: 0,
+    grain: 20,
+    temperature: 0,
+    highlightSuppression: 10,
+    shadowCompensation: 10,
+    vignette: 10,
+    hueShift: 0,
+    sharpness: 15,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 400,
+    shutter: '1/125',
+    aperture: 'f/5.6',
+    whiteBalance: '5500K',
+    exposureCompensation: '0.0 EV',
+  },
+  tags: ['人文', '纪实', '黑白', '台湾'],
+  difficulty: 'medium',
+};
+
+/**
+ * 现代高冷 (陈漫（台湾视角）风格)
+ */
+export const PRESET_TW_4_CHENMAN: MasterPreset = {
+  id: 'preset_tw_4_chenman_tw',
+  name: '现代高冷',
+  photographer: '陈漫（台湾视角）',
+  region: 'TW',
+  description: '现代感、高冷调、后期精修',
+  beautyParams: {
+    smooth: 30,
+    slim: 12,
+    eye: 15,
+    bright: 20,
+    teeth: 18,
+    nose: 10,
+    blush: 10,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 50,
+    textureRetention: 30,
+    teethWhiteningPro: 30,
+    darkCircleRemoval: 40,
+    hairlineAdjustment: 10,
+  },
+  filterParams: {
+    contrast: 25,
+    saturation: 10,
+    brightness: 10,
+    grain: 0,
+    temperature: -10,
+    highlightSuppression: 15,
+    shadowCompensation: 20,
+    vignette: 5,
+    hueShift: 15,
+    sharpness: 20,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 200,
+    shutter: '1/160',
+    aperture: 'f/2.8',
+    whiteBalance: '5200K',
+    exposureCompensation: '0.0 EV',
+  },
+  tags: ['现代', '高冷', '精修', '台湾'],
+  difficulty: 'medium',
+};
+
+/**
+ * 荒诞黑白 (张照堂风格)
+ */
+export const PRESET_TW_5_ZHANG: MasterPreset = {
+  id: 'preset_tw_5_zhang',
+  name: '荒诞黑白',
+  photographer: '张照堂',
+  region: 'TW',
+  description: '荒诞感、深邃黑白、硬核颗粒',
+  beautyParams: {
+    smooth: 0,
+    slim: 0,
+    eye: 0,
+    bright: 10,
+    teeth: 0,
+    nose: 0,
+    blush: 0,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 0,
+    textureRetention: 100,
+    teethWhiteningPro: 0,
+    darkCircleRemoval: 0,
+    hairlineAdjustment: 0,
+  },
+  filterParams: {
+    contrast: 50,
+    saturation: -100,
+    brightness: -10,
+    grain: 70,
+    temperature: 0,
+    highlightSuppression: 0,
+    shadowCompensation: 0,
+    vignette: 20,
+    hueShift: 0,
+    sharpness: 20,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 400,
+    shutter: '1/250',
+    aperture: 'f/8',
+    whiteBalance: '5500K',
+    exposureCompensation: '0.0 EV',
+  },
+  tags: ['超现实', '黑白', '实验', '台湾'],
+  difficulty: 'hard',
+};
+
+/**
+ * 肖像至上 (David Bailey风格)
+ */
+export const PRESET_UK_1_DAVID: MasterPreset = {
+  id: 'preset_uk_1_david',
+  name: '肖像至上',
+  photographer: 'David Bailey',
+  region: 'UK',
+  description: '肖像至上、简单直接、柔光',
+  beautyParams: {
+    smooth: 20,
+    slim: 10,
+    eye: 12,
+    bright: 20,
+    teeth: 15,
+    nose: 8,
+    blush: 10,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 30,
+    textureRetention: 50,
+    teethWhiteningPro: 20,
+    darkCircleRemoval: 25,
+    hairlineAdjustment: 0,
+  },
+  filterParams: {
+    contrast: 20,
+    saturation: 0,
+    brightness: 10,
+    grain: 5,
+    temperature: 5,
+    highlightSuppression: 30,
+    shadowCompensation: 20,
+    vignette: 10,
+    hueShift: 0,
+    sharpness: 15,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 200,
+    shutter: '1/160',
+    aperture: 'f/4',
+    whiteBalance: '5500K',
+    exposureCompensation: '0.0 EV',
+  },
+  tags: ['时尚', '肖像', '伦敦', '柔光'],
+  difficulty: 'medium',
+};
+
+/**
+ * 实验艺术 (Nick Knight风格)
+ */
+export const PRESET_UK_2_NICK: MasterPreset = {
+  id: 'preset_uk_2_nick',
+  name: '实验艺术',
+  photographer: 'Nick Knight',
+  region: 'UK',
+  description: '实验艺术、超现实色彩',
+  beautyParams: {
+    smooth: 30,
+    slim: 12,
+    eye: 15,
+    bright: 25,
+    teeth: 20,
+    nose: 10,
+    blush: 15,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 40,
+    textureRetention: 30,
+    teethWhiteningPro: 25,
+    darkCircleRemoval: 40,
+    hairlineAdjustment: 5,
+  },
+  filterParams: {
+    contrast: 40,
+    saturation: 60,
+    brightness: 15,
+    grain: 0,
+    temperature: 0,
+    highlightSuppression: 15,
+    shadowCompensation: 20,
+    vignette: 5,
+    hueShift: 10,
+    sharpness: 20,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 200,
+    shutter: '1/160',
+    aperture: 'f/2.8',
+    whiteBalance: '5500K',
+    exposureCompensation: '0.0 EV',
+  },
+  tags: ['实验', '数字', '色彩', '艺术'],
+  difficulty: 'hard',
+};
+
+/**
+ * 时尚锐利 (Rankin风格)
+ */
+export const PRESET_UK_3_RANKIN: MasterPreset = {
+  id: 'preset_uk_3_rankin',
+  name: '时尚锐利',
+  photographer: 'Rankin',
+  region: 'UK',
+  description: '时尚锐利、眼神光突出',
+  beautyParams: {
+    smooth: 25,
+    slim: 10,
+    eye: 15,
+    bright: 50,
+    teeth: 18,
+    nose: 10,
+    blush: 12,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 35,
+    textureRetention: 45,
+    teethWhiteningPro: 25,
+    darkCircleRemoval: 30,
+    hairlineAdjustment: 5,
+  },
+  filterParams: {
+    contrast: 20,
+    saturation: 5,
+    brightness: 10,
+    grain: 0,
+    temperature: 0,
+    highlightSuppression: 15,
+    shadowCompensation: 15,
+    vignette: 0,
+    hueShift: 0,
+    sharpness: 40,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 100,
+    shutter: '1/160',
+    aperture: 'f/4',
+    whiteBalance: '5500K',
+    exposureCompensation: '0.0 EV',
+  },
+  tags: ['现代', '肖像', '干净', '锐利'],
+  difficulty: 'easy',
+};
+
+/**
+ * 讽刺色彩 (Martin Parr风格)
+ */
+export const PRESET_UK_4_MARTIN: MasterPreset = {
+  id: 'preset_uk_4_martin',
+  name: '讽刺色彩',
+  photographer: 'Martin Parr',
+  region: 'UK',
+  description: '讽刺色彩、闪光灯硬调',
+  beautyParams: {
+    smooth: 10,
+    slim: 0,
+    eye: 5,
+    bright: 15,
+    teeth: 10,
+    nose: 0,
+    blush: 10,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 10,
+    textureRetention: 70,
+    teethWhiteningPro: 10,
+    darkCircleRemoval: 15,
+    hairlineAdjustment: 0,
+  },
+  filterParams: {
+    contrast: 25,
+    saturation: 50,
+    brightness: 20,
+    grain: 0,
+    temperature: 5,
+    highlightSuppression: 10,
+    shadowCompensation: 10,
+    vignette: 0,
+    hueShift: 5,
+    sharpness: 30,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 200,
+    shutter: '1/125',
+    aperture: 'f/8',
+    whiteBalance: '5500K',
+    exposureCompensation: '+0.5 EV',
+  },
+  tags: ['讽刺', '色彩', '纪实', '闪光'],
+  difficulty: 'medium',
+};
+
+/**
+ * 梦幻糖果 (Tim Walker风格)
+ */
+export const PRESET_UK_5_TIM: MasterPreset = {
+  id: 'preset_uk_5_tim',
+  name: '梦幻糖果',
+  photographer: 'Tim Walker',
+  region: 'UK',
+  description: '梦幻糖果色、低对比柔焦',
+  beautyParams: {
+    smooth: 25,
+    slim: 8,
+    eye: 12,
+    bright: 18,
+    teeth: 15,
+    nose: 5,
+    blush: 20,
+    // v2.3.0 新增 12 维美颜引擎
+    sculpting3D: 20,
+    textureRetention: 40,
+    teethWhiteningPro: 18,
+    darkCircleRemoval: 35,
+    hairlineAdjustment: 0,
+  },
+  filterParams: {
+    contrast: -30,
+    saturation: 20,
+    brightness: 20,
+    grain: 0,
+    temperature: 10,
+    highlightSuppression: 20,
+    shadowCompensation: 25,
+    vignette: 5,
+    hueShift: 20,
+    sharpness: 0,
+    fade: 10,
+  },
+  cameraParams: {
+    iso: 200,
+    shutter: '1/125',
+    aperture: 'f/2.0',
+    whiteBalance: '5600K',
+    exposureCompensation: '+0.5 EV',
+  },
+  tags: ['梦幻', '童话', '柔和', '叙事'],
+  difficulty: 'easy',
+};
+
 /**
  * 获取地区标签的显示名称
  */
@@ -925,6 +1667,86 @@ export function getRegionDisplayName(region: PresetRegion): string {
     'CN': '🇨🇳 中国',
     'JP': '🇯🇵 日本',
     'KR': '🇰🇷 韩国',
+    'US': '🇺🇸 美国',
+    'TW': '🇹🇼 台湾',
+    'UK': '🇬🇧 英国',
   };
   return names[region] || region;
 }
+
+
+/**
+ * 全球大师预设数组（v2.4.0）
+ * 总计 31 个预设：1 个默认 + 30 个全球大师
+ */
+export const ALL_MASTER_PRESETS: MasterPreset[] = [
+  DEFAULT_BEAUTY_PRESET,
+  
+  // 🇨🇳 中国大师（5位）
+  PRESET_CN_1_XIAOQUAN,
+  PRESET_CN_2_SUNJUN,
+  PRESET_CN_3_CHENMAN,
+  PRESET_CN_4_NINAGAWA,
+  PRESET_CN_5_LUOYANG,
+  
+  // 🇯🇵 日本大师（5位）
+  PRESET_JP_1_SUGIMOTO,
+  PRESET_JP_2_NINAGAWA,
+  PRESET_JP_3_HAMADA,
+  PRESET_JP_4_MORIYAMA,
+  PRESET_JP_5_KAWAUCHI,
+  
+  // 🇰🇷 韩国大师（5位）
+  PRESET_KR_1_CHO,
+  PRESET_KR_2_MUGUNG,
+  PRESET_KR_3_LESS,
+  PRESET_KR_4_HONG,
+  PRESET_KR_5_KOO,
+  
+  // 🇺🇸 美国大师（5位）
+  PRESET_US_1_ANNIE,
+  PRESET_US_2_RICHARD,
+  PRESET_US_3_IRVING,
+  PRESET_US_4_DIANE,
+  PRESET_US_5_CINDY,
+  
+  // 🇹🇼 台湾大师（5位）
+  PRESET_TW_1_LIN,
+  PRESET_TW_2_RUAN,
+  PRESET_TW_3_ZHANG,
+  PRESET_TW_4_GUO,
+  PRESET_TW_5_HE,
+  
+  // 🇬🇧 英国大师（5位）
+  PRESET_UK_1_DAVID,
+  PRESET_UK_2_NICK,
+  PRESET_UK_3_TIM,
+  PRESET_UK_4_RANKIN,
+  PRESET_UK_5_NADAV,
+];
+
+/**
+ * 按地区分组的大师预设
+ */
+export const PRESETS_BY_REGION = {
+  DEFAULT: [DEFAULT_BEAUTY_PRESET],
+  CN: [PRESET_CN_1_XIAOQUAN, PRESET_CN_2_SUNJUN, PRESET_CN_3_CHENMAN, PRESET_CN_4_NINAGAWA, PRESET_CN_5_LUOYANG],
+  JP: [PRESET_JP_1_SUGIMOTO, PRESET_JP_2_NINAGAWA, PRESET_JP_3_HAMADA, PRESET_JP_4_MORIYAMA, PRESET_JP_5_KAWAUCHI],
+  KR: [PRESET_KR_1_CHO, PRESET_KR_2_MUGUNG, PRESET_KR_3_LESS, PRESET_KR_4_HONG, PRESET_KR_5_KOO],
+  US: [PRESET_US_1_ANNIE, PRESET_US_2_RICHARD, PRESET_US_3_IRVING, PRESET_US_4_DIANE, PRESET_US_5_CINDY],
+  TW: [PRESET_TW_1_LIN, PRESET_TW_2_RUAN, PRESET_TW_3_ZHANG, PRESET_TW_4_GUO, PRESET_TW_5_HE],
+  UK: [PRESET_UK_1_DAVID, PRESET_UK_2_NICK, PRESET_UK_3_TIM, PRESET_UK_4_RANKIN, PRESET_UK_5_NADAV],
+};
+
+/**
+ * 地区名称映射
+ */
+export const REGION_NAMES = {
+  DEFAULT: '默认',
+  CN: '🇨🇳 中国',
+  JP: '🇯🇵 日本',
+  KR: '🇰🇷 韩国',
+  US: '🇺🇸 美国',
+  TW: '🇹🇼 台湾',
+  UK: '🇬🇧 英国',
+};

@@ -449,7 +449,7 @@ export default function CameraScreen() {
                 
                 {/* 地区分类标签 */}
                 <View style={styles.regionTabs}>
-                  {(['DEFAULT', 'CN', 'JP', 'KR'] as PresetRegion[]).map((region) => (
+                  {(['DEFAULT', 'CN', 'JP', 'KR', 'US', 'TW', 'UK'] as PresetRegion[]).map((region) => (
                     <TouchableOpacity
                       key={region}
                       style={[
