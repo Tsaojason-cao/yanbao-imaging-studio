@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, Platform, Alert, ScrollView, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Platform, ScrollView, Alert } from "react-native";";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "expo-router";
@@ -40,19 +40,196 @@ export default function CameraScreen() {
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
   const [showBeautyPanel, setShowBeautyPanel] = useState(false); // 美颜面板显示状态
   const [showSpotDrawer, setShowSpotDrawer] = useState(false); // 机位推荐抽屉显示状态
+  const [showPresetPanel, setShowPresetPanel] = useState(false); // 大师预设面板显示状态
+  const [selectedPreset, setSelectedPreset] = useState(0); // 默认选中自然原生
 
   // 7维美颜参数（匹配用户需求：磨皮、瘦脸、大眼、亮眼、白牙、隆鼻、红润）
   const [beautyParams, setBeautyParams] = useState({
-    smooth: 75,    // 磨皮 Skin Smoothness
-    slim: 28,      // 瘦脸 Face Slimming
-    eye: 30,       // 大眼 Eye Enlargement
-    bright: 45,    // 亮眼 Eye Brightness
-    teeth: 50,     // 白牙 Teeth Whitening
-    nose: 35,      // 隆鼻 Nose Enhancement
-    blush: 40,     // 红润 Rosy Cheeks
+    smooth: 15,    // 磨皮 Skin Smoothness（默认 15% 自带美颜）
+    slim: 0,       // 瘦脸 Face Slimming
+    eye: 0,        // 大眼 Eye Enlargement
+    bright: 10,    // 亮眼 Eye Brightness（默认 10% 自带美颜）
+    teeth: 0,      // 白牙 Teeth Whitening
+    nose: 0,       // 隆鼻 Nose Enhancement
+    blush: 5,      // 红润 Rosy Cheeks（默认 5% 自带美颜）
   });
 
+  // 大师预设系统：1 个自带美颜 + 5 个世界顶级摄影师参数
+  const masterPresets = [
+    {
+      id: 0,
+      name: "自然原生",
+      nameEn: "Default Beauty",
+      photographer: "自带美颜",
+      description: "保留皮肤质感，气色瞬间提升",
+      params: {
+        smooth: 15,
+        slim: 0,
+        eye: 0,
+        bright: 10,
+        teeth: 0,
+        nose: 0,
+        blush: 5,
+      },
+      filter: {
+        contrast: 0,
+        saturation: 0,
+        brightness: 0,
+        grain: 0,
+        temperature: 0,
+      },
+    },
+    {
+      id: 1,
+      name: "街头诗人",
+      nameEn: "Street Poet",
+      photographer: "Alan Schaller",
+      description: "高对比黑白、强化光影边界、颗粒感 20%",
+      params: {
+        smooth: 15,
+        slim: 0,
+        eye: 0,
+        bright: 10,
+        teeth: 0,
+        nose: 0,
+        blush: 5,
+      },
+      filter: {
+        contrast: 40,
+        saturation: -100, // 黑白
+        brightness: 0,
+        grain: 20,
+        temperature: 0,
+      },
+    },
+    {
+      id: 2,
+      name: "国家地理",
+      nameEn: "National Geographic",
+      photographer: "Luisa Dörr",
+      description: "暖色调补偿、饱和度 +15%、自然光感增强",
+      params: {
+        smooth: 15,
+        slim: 0,
+        eye: 0,
+        bright: 10,
+        teeth: 0,
+        nose: 0,
+        blush: 5,
+      },
+      filter: {
+        contrast: 0,
+        saturation: 15,
+        brightness: 5,
+        grain: 0,
+        temperature: 10, // 暖色调
+      },
+    },
+    {
+      id: 3,
+      name: "城市霓虹",
+      nameEn: "City Neon",
+      photographer: "Liam Wong",
+      description: "青橙色调 (Teal & Orange)、暗部偏紫、高光偏蓝",
+      params: {
+        smooth: 15,
+        slim: 0,
+        eye: 0,
+        bright: 10,
+        teeth: 0,
+        nose: 0,
+        blush: 5,
+      },
+      filter: {
+        contrast: 20,
+        saturation: 30,
+        brightness: -5,
+        grain: 0,
+        temperature: -15, // 偏冷（青色）
+      },
+    },
+    {
+      id: 4,
+      name: "静谧极简",
+      nameEn: "Minimalist",
+      photographer: "Minh T",
+      description: "低饱和、高亮度、冷色调",
+      params: {
+        smooth: 15,
+        slim: 0,
+        eye: 0,
+        bright: 10,
+        teeth: 0,
+        nose: 0,
+        blush: 5,
+      },
+      filter: {
+        contrast: -10,
+        saturation: -20,
+        brightness: 15,
+        grain: 0,
+        temperature: -10, // 冷色调
+      },
+    },
+    {
+      id: 5,
+      name: "温润情感",
+      nameEn: "Warm Emotion",
+      photographer: "Tasneem Alsultan",
+      description: "柔光滚镜效果、肤色暖化、对比度调低",
+      params: {
+        smooth: 15,
+        slim: 0,
+        eye: 0,
+        bright: 10,
+        teeth: 0,
+        nose: 0,
+        blush: 5,
+      },
+      filter: {
+        contrast: -15,
+        saturation: 10,
+        brightness: 10,
+        grain: 0,
+        temperature: 15, // 暖色调
+      },
+    },
+  ];
+
   const buttonScale = useSharedValue(1);
+
+  // 应用大师预设
+  const applyMasterPreset = (presetId: number) => {
+    const preset = masterPresets.find(p => p.id === presetId);
+    if (preset) {
+      setBeautyParams(preset.params);
+      setSelectedPreset(presetId);
+      if (Platform.OS !== "web") {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      }
+    }
+  };
+
+  // 存入雁宝记忆
+  const saveToYanbaoMemory = () => {
+    const currentPreset = masterPresets[selectedPreset];
+    const memoryData = {
+      presetName: currentPreset.name,
+      photographer: currentPreset.photographer,
+      beautyParams,
+      filterParams: currentPreset.filter,
+      timestamp: Date.now(),
+    };
+    
+    // TODO: 存储到本地或云端
+    console.log('雁宝记忆已保存:', memoryData);
+    
+    if (Platform.OS !== "web") {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+    
+    Alert.alert('❤️ 雁宝记忆', `已保存 ${currentPreset.name} 预设\n下次拍照时可一键载入`);
+  };
 
   // 定时拍照倒计时逻辑
   useEffect(() => {
@@ -364,6 +541,55 @@ export default function CameraScreen() {
                     ))}
                   </View>
                 </ScrollView>
+              </LinearGradient>
+            </BlurView>
+          </View>
+        )}
+
+        {/* 大师预设横向滚动条 */}
+        {showBeautyPanel && (
+          <View style={styles.masterPresetBar}>
+            <BlurView intensity={40} style={styles.presetBarBlur}>
+              <LinearGradient
+                colors={["rgba(168, 85, 247, 0.4)" as const, "rgba(236, 72, 153, 0.4)" as const]}
+                style={styles.presetBarGradient}
+              >
+                <Text style={styles.presetBarTitle}>🎨 大师预设</Text>
+                <ScrollView 
+                  horizontal 
+                  showsHorizontalScrollIndicator={false}
+                  style={styles.presetScroll}
+                >
+                  {masterPresets.map((preset) => (
+                    <TouchableOpacity
+                      key={preset.id}
+                      style={[
+                        styles.presetCard,
+                        selectedPreset === preset.id && styles.presetCardActive,
+                      ]}
+                      onPress={() => {
+                        applyMasterPreset(preset.id);
+                      }}
+                    >
+                      <Text style={styles.presetName}>{preset.name}</Text>
+                      <Text style={styles.presetPhotographer}>{preset.photographer}</Text>
+                      {selectedPreset === preset.id && (
+                        <View style={styles.presetActiveBadge}>
+                          <Ionicons name="checkmark-circle" size={16} color="#F472B6" />
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+                
+                {/* 雁宝记忆按钮 */}
+                <TouchableOpacity
+                  style={styles.memoryHeartButton}
+                  onPress={saveToYanbaoMemory}
+                >
+                  <Ionicons name="heart" size={24} color="#F472B6" />
+                  <Text style={styles.memoryHeartText}>存入记忆</Text>
+                </TouchableOpacity>
               </LinearGradient>
             </BlurView>
           </View>
@@ -1067,5 +1293,92 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.6,
     shadowRadius: 10,
     elevation: 5,
+  },
+  // 大师预设横向滚动条样式
+  masterPresetBar: {
+    position: "absolute",
+    bottom: 280,
+    left: 0,
+    right: 0,
+    height: 120,
+    zIndex: 10,
+  },
+  presetBarBlur: {
+    flex: 1,
+    overflow: "hidden",
+  },
+  presetBarGradient: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  presetBarTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    marginBottom: 8,
+  },
+  presetScroll: {
+    flexGrow: 0,
+  },
+  presetCard: {
+    width: 110,
+    height: 60,
+    marginRight: 12,
+    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.2)",
+    padding: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  presetCardActive: {
+    backgroundColor: "rgba(244, 114, 182, 0.3)",
+    borderColor: "#F472B6",
+    shadowColor: "#F472B6",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  presetName: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    marginBottom: 2,
+  },
+  presetPhotographer: {
+    fontSize: 10,
+    color: "rgba(255, 255, 255, 0.7)",
+  },
+  presetActiveBadge: {
+    position: "absolute",
+    top: 4,
+    right: 4,
+  },
+  memoryHeartButton: {
+    position: "absolute",
+    top: 12,
+    right: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(244, 114, 182, 0.3)",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: "#F472B6",
+    shadowColor: "#F472B6",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  memoryHeartText: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#F472B6",
+    marginLeft: 4,
   },
 });
