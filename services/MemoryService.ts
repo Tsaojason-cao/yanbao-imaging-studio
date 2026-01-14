@@ -1,18 +1,36 @@
-// 雁宝记忆数据存储服务
+// 雁宝记忆数据存储服务 v2.4.0
 // 实现跨模块联动：相机存储 → 相册管理 → 编辑器套用
+// 支持 AsyncStorage 持久化 + 12 维美颜引擎
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const STORAGE_KEY = '@yanbao_memories';
 
 export interface YanbaoMemory {
   id: string;
   name: string;
   thumbnail: string;
-  createdAt: Date;
-  // 相机参数
-  cameraParams: {
-    beauty: number;      // 美颜 0-100
-    whitening: number;   // 美白 0-100
-    eyeEnlarge: number;  // 大眼 0-100
-    similarity: number;  // 相似度 0-100
+  createdAt: string;  // 改为 string 以便 JSON 序列化
+  
+  // 12 维美颜参数（v2.3.0 升级）
+  beautyParams: {
+    // 原有 7 维
+    smooth: number;      // 磨皮 (0-100)
+    slim: number;        // 瘦脸 (0-100)
+    eye: number;         // 大眼 (0-100)
+    bright: number;      // 亮眼 (0-100)
+    teeth: number;       // 白牙 (0-100)
+    nose: number;        // 隆鼻 (0-100)
+    blush: number;       // 红润 (0-100)
+    
+    // v2.3.0 新增 5 维
+    sculpting3D: number;          // 骨相立体 (0-100)
+    textureRetention: number;     // 原生膚質保护 (0-100)
+    teethWhiteningPro: number;    // 牙齿美白增强版 (0-100)
+    darkCircleRemoval: number;    // 黑眼圈淡化 (0-100)
+    hairlineAdjustment: number;   // 发际线修饰 (0-100)
   };
+  
   // 编辑参数
   editParams: {
     exposure: number;    // 曝光 -100 to 100
@@ -21,6 +39,7 @@ export interface YanbaoMemory {
     rotation: number;    // 旋转角度 -180 to 180
     cropRatio: string;   // 裁剪比例 "9:16" | "1:1" | "4:3" | "16:9" | "free"
   };
+  
   // 风格参数
   styleParams: {
     filterName: string;  // 滤镜名称
@@ -30,20 +49,49 @@ export interface YanbaoMemory {
 
 class MemoryServiceClass {
   private memories: YanbaoMemory[] = [];
+  private isInitialized: boolean = false;
 
-  // 初始化默认记忆
-  constructor() {
-    this.memories = [
+  // 初始化：从 AsyncStorage 加载数据
+  async initialize(): Promise<void> {
+    if (this.isInitialized) return;
+    
+    try {
+      const stored = await AsyncStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        this.memories = JSON.parse(stored);
+      } else {
+        // 首次使用，加载默认记忆
+        this.memories = this.getDefaultMemories();
+        await this.persistToStorage();
+      }
+      this.isInitialized = true;
+    } catch (error) {
+      console.error('Failed to load memories from AsyncStorage:', error);
+      this.memories = this.getDefaultMemories();
+    }
+  }
+
+  // 获取默认记忆
+  private getDefaultMemories(): YanbaoMemory[] {
+    return [
       {
         id: '1',
         name: '北京冬日暖阳',
         thumbnail: '🌅',
-        createdAt: new Date('2026-01-10'),
-        cameraParams: {
-          beauty: 60,
-          whitening: 40,
-          eyeEnlarge: 30,
-          similarity: 95,
+        createdAt: new Date('2026-01-10').toISOString(),
+        beautyParams: {
+          smooth: 22,
+          slim: 12,
+          eye: 8,
+          bright: 15,
+          teeth: 10,
+          nose: 5,
+          blush: 12,
+          sculpting3D: 0,
+          textureRetention: 30,
+          teethWhiteningPro: 0,
+          darkCircleRemoval: 0,
+          hairlineAdjustment: 0,
         },
         editParams: {
           exposure: 10,
@@ -61,12 +109,20 @@ class MemoryServiceClass {
         id: '2',
         name: '杭州复古咖啡馆',
         thumbnail: '☕',
-        createdAt: new Date('2026-01-08'),
-        cameraParams: {
-          beauty: 50,
-          whitening: 30,
-          eyeEnlarge: 20,
-          similarity: 88,
+        createdAt: new Date('2026-01-08').toISOString(),
+        beautyParams: {
+          smooth: 18,
+          slim: 10,
+          eye: 5,
+          bright: 12,
+          teeth: 8,
+          nose: 3,
+          blush: 10,
+          sculpting3D: 0,
+          textureRetention: 50,
+          teethWhiteningPro: 0,
+          darkCircleRemoval: 0,
+          hairlineAdjustment: 0,
         },
         editParams: {
           exposure: -5,
@@ -84,12 +140,20 @@ class MemoryServiceClass {
         id: '3',
         name: '库洛米甜酷风',
         thumbnail: '💜',
-        createdAt: new Date('2026-01-05'),
-        cameraParams: {
-          beauty: 70,
-          whitening: 50,
-          eyeEnlarge: 40,
-          similarity: 92,
+        createdAt: new Date('2026-01-05').toISOString(),
+        beautyParams: {
+          smooth: 30,
+          slim: 15,
+          eye: 12,
+          bright: 20,
+          teeth: 15,
+          nose: 8,
+          blush: 18,
+          sculpting3D: 25,
+          textureRetention: 20,
+          teethWhiteningPro: 20,
+          darkCircleRemoval: 30,
+          hairlineAdjustment: 0,
         },
         editParams: {
           exposure: 5,
@@ -106,45 +170,73 @@ class MemoryServiceClass {
     ];
   }
 
+  // 持久化到 AsyncStorage
+  private async persistToStorage(): Promise<void> {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(this.memories));
+    } catch (error) {
+      console.error('Failed to persist memories to AsyncStorage:', error);
+    }
+  }
+
   // 获取所有记忆
-  getAllMemories(): YanbaoMemory[] {
+  async getAllMemories(): Promise<YanbaoMemory[]> {
+    await this.initialize();
     return this.memories;
   }
 
   // 根据 ID 获取记忆
-  getMemoryById(id: string): YanbaoMemory | undefined {
+  async getMemoryById(id: string): Promise<YanbaoMemory | undefined> {
+    await this.initialize();
     return this.memories.find(m => m.id === id);
   }
 
   // 保存新记忆（相机存储）
-  saveMemory(memory: Omit<YanbaoMemory, 'id' | 'createdAt'>): YanbaoMemory {
+  async saveMemory(memory: Omit<YanbaoMemory, 'id' | 'createdAt'>): Promise<YanbaoMemory> {
+    await this.initialize();
+    
     const newMemory: YanbaoMemory = {
       ...memory,
       id: Date.now().toString(),
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     };
+    
     this.memories.unshift(newMemory);
+    await this.persistToStorage();
+    
     return newMemory;
   }
 
   // 删除记忆
-  deleteMemory(id: string): boolean {
+  async deleteMemory(id: string): Promise<boolean> {
+    await this.initialize();
+    
     const index = this.memories.findIndex(m => m.id === id);
     if (index !== -1) {
       this.memories.splice(index, 1);
+      await this.persistToStorage();
       return true;
     }
     return false;
   }
 
   // 更新记忆
-  updateMemory(id: string, updates: Partial<YanbaoMemory>): YanbaoMemory | undefined {
-    const memory = this.getMemoryById(id);
+  async updateMemory(id: string, updates: Partial<YanbaoMemory>): Promise<YanbaoMemory | undefined> {
+    await this.initialize();
+    
+    const memory = this.memories.find(m => m.id === id);
     if (memory) {
       Object.assign(memory, updates);
+      await this.persistToStorage();
       return memory;
     }
     return undefined;
+  }
+
+  // 清空所有记忆（调试用）
+  async clearAllMemories(): Promise<void> {
+    this.memories = [];
+    await AsyncStorage.removeItem(STORAGE_KEY);
   }
 }
 

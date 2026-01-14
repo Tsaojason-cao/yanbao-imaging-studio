@@ -428,6 +428,7 @@ export const PRESET_SUGIMOTO_HIROSHI: MasterPreset = {
     hueShift: 0,
     sharpness: 15,
     fade: 10,
+    grayscale: 1.0,  // 启用黑白模式
   },
   cameraParams: {
     iso: 50,
