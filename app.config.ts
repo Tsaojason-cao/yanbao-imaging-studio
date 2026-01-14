@@ -148,7 +148,7 @@ const config: ExpoConfig = {
           usesCleartextTraffic: false, // 禁止明文HTTP流量，提高安全性
           minSdkVersion: 24, // Android 7.0+
           targetSdkVersion: 34, // Android 14 (修复 SDK 35 兼容性问题)
-          compileSdkVersion: 34,
+          compileSdkVersion: 35,
         },
       },
     ]
