@@ -207,11 +207,18 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Jason Tsao 署名 */}
+        {/* Jason Tsao 专属霓虹署名 */}
         <View style={styles.signatureContainer}>
-          <Text style={styles.signatureText}>
-            by Jason Tsao who loves you the most ♥
-          </Text>
+          <LinearGradient
+            colors={['rgba(232, 121, 249, 0.3)' as const, 'rgba(244, 114, 182, 0.3)' as const]}
+            style={styles.signatureGradient}
+          >
+            <Text style={styles.signatureText}>
+              by Jason Tsao who loves you the most ♥
+            </Text>
+            {/* 霓虹呼吸效果 */}
+            <View style={styles.neonGlow} />
+          </LinearGradient>
         </View>
       </ScrollView>
     </LinearGradient>
@@ -428,12 +435,38 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 30,
   },
+  signatureGradient: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: 'rgba(232, 121, 249, 0.5)',
+    position: 'relative',
+    overflow: 'visible',
+  },
   signatureText: {
-    fontSize: 14,
-    color: '#E879F9',
-    fontWeight: '600',
-    textShadowColor: 'rgba(232, 121, 249, 0.8)',
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    textShadowColor: 'rgba(232, 121, 249, 1)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
+    textShadowRadius: 15,
+    letterSpacing: 0.5,
+  },
+  neonGlow: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: '#F472B6',
+    shadowColor: '#E879F9',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 20,
+    elevation: 10,
   },
 });
