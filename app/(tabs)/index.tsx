@@ -309,6 +309,11 @@ export default function HomeScreen() {
           </View>
       </View>
 
+      {/* 署名 */}
+      <View style={styles.signature}>
+        <Text style={styles.signatureText}>by Jason Tsao who loves you the most</Text>
+      </View>
+
       {/* 库洛米浮动助手 */}
       <Animated.View style={[styles.kuromiAssistant, kuromiAnimatedStyle]}>
         <Pressable onPress={handleKuromiPress}>
@@ -794,5 +799,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: "#FFFFFF",
+  },
+  // 署名
+  signature: {
+    position: "absolute",
+    bottom: 100,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  signatureText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "rgba(232, 121, 249, 0.8)",
+    fontStyle: "italic",
+    textAlign: "center",
+    textShadowColor: "rgba(232, 121, 249, 0.3)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
   },
 });

@@ -244,6 +244,11 @@ export default function InspirationScreen() {
           </View>
         )}
       </ScrollView>
+      
+      {/* 署名 */}
+      <View style={styles.signature}>
+        <Text style={styles.signatureText}>by Jason Tsao who loves you the most ♥</Text>
+      </View>
     </SafeAreaView>
   );
 }
@@ -387,5 +392,22 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 14,
     color: "#9CA3AF",
+  },
+  // 署名
+  signature: {
+    position: "absolute",
+    bottom: 20,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  signatureText: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: "rgba(232, 121, 249, 0.7)",
+    fontStyle: "italic",
+    textAlign: "center",
   },
 });
