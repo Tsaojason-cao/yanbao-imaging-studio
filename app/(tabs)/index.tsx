@@ -140,7 +140,7 @@ export default function HomeScreen() {
             <View style={styles.statsGrid}>
               <View style={styles.statBox}>
                 <View style={[styles.statIconContainer, { backgroundColor: "rgba(139, 92, 246, 0.2)" }]}>
-                  <Ionicons name="camera" size={32} color="#E879F9" />
+                  <Ionicons name="camera" size={32} color="#A78BFA" />
                 </View>
                 <Text style={styles.statValue}>12</Text>
                 <Text style={styles.statLabel}>已拍摄</Text>
@@ -210,7 +210,7 @@ export default function HomeScreen() {
             <View style={styles.aiGrid}>
               <Pressable style={styles.aiFeature}>
                 <View style={[styles.aiIcon, { backgroundColor: "rgba(139, 92, 246, 0.2)" }]}>
-                  <MaterialCommunityIcons name="auto-fix" size={28} color="#E879F9" />
+                  <MaterialCommunityIcons name="auto-fix" size={28} color="#A78BFA" />
                 </View>
                 <Text style={styles.aiLabel}>一键美化</Text>
               </Pressable>
@@ -242,7 +242,7 @@ export default function HomeScreen() {
   };
 
   const quickMenuItems = [
-    { icon: "camera", label: "相机", route: "/(tabs)/camera", color: "#E879F9" },
+    { icon: "camera", label: "相机", route: "/(tabs)/camera", color: "#A78BFA" },
     { icon: "location", label: "机位", action: "spots", color: "#60A5FA" },
     { icon: "create", label: "编辑", route: "/(tabs)/edit", color: "#F472B6" },
     { icon: "images", label: "相册", route: "/(tabs)/gallery", color: "#34D399" },
@@ -258,13 +258,13 @@ export default function HomeScreen() {
             <SkiaLinearGradient
               start={vec(0, 0)}
               end={vec(SCREEN_WIDTH, SCREEN_HEIGHT)}
-              colors={["#2d1b4e", "#6A0DAD", "#2d1b4e"]}
+              colors={["#1a0a2e", "#2d1b4e", "#1a0a2e"]}
             />
           </Rect>
         </Canvas>
       ) : (
         <LinearGradient
-          colors={["#2d1b4e", "#6A0DAD", "#2d1b4e"]}
+          colors={["#1a0a2e", "#2d1b4e", "#1a0a2e"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={StyleSheet.absoluteFill}
@@ -274,7 +274,7 @@ export default function HomeScreen() {
       {/* 流光效果层 */}
       <Animated.View style={[StyleSheet.absoluteFill, { opacity: 0.3 }]}>
         <LinearGradient
-          colors={["transparent", "rgba(232, 121, 249, 0.4)", "transparent"]}
+          colors={["transparent", "rgba(167, 139, 250, 0.3)", "transparent"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={StyleSheet.absoluteFill}
@@ -285,6 +285,7 @@ export default function HomeScreen() {
       <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
         <Text style={styles.appTitle}>YanBao AI</Text>
         <Text style={styles.appSubtitle}>流体美学 · 私人影像工作室</Text>
+        <Text style={styles.signature}>by Jason Tsao who loves you the most ♥</Text>
       </View>
 
       {/* 固定显示统计卡片 */}
@@ -307,11 +308,6 @@ export default function HomeScreen() {
             </View>
 
           </View>
-      </View>
-
-      {/* 署名 */}
-      <View style={styles.signature}>
-        <Text style={styles.signatureText}>by Jason Tsao who loves you the most</Text>
       </View>
 
       {/* 库洛米浮动助手 */}
@@ -402,7 +398,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2d1b4e",
+    backgroundColor: "#1a0a2e",
   },
   // 顶部标题
   header: {
@@ -425,6 +421,16 @@ const styles = StyleSheet.create({
     marginTop: 4,
     letterSpacing: 2,
   },
+  signature: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: "rgba(232, 121, 249, 0.8)",
+    marginTop: 8,
+    letterSpacing: 1,
+    textShadowColor: "rgba(232, 121, 249, 0.6)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
+  },
   // 卡片容器
   cardsContainer: {
     flex: 1,
@@ -441,18 +447,10 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 32,
     overflow: "hidden",
-    borderWidth: 3,
-    borderColor: "rgba(232, 121, 249, 0.8)",
-    shadowColor: "#E879F9",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 30,
-    elevation: 20,
-  },
-    shadowOpacity: 0.6,
-    shadowRadius: 30,
-    elevation: 20,
-  },
+    borderWidth: 1,
+    borderColor: "rgba(167, 139, 250, 0.3)",
+    shadowColor: "#A78BFA",
+    shadowOffset: { width: 0, height: 20 },
     shadowOpacity: 0.4,
     shadowRadius: 40,
     elevation: 20,
@@ -471,7 +469,6 @@ const styles = StyleSheet.create({
   cardGradient: {
     padding: 32,
     minHeight: 400,
-    backgroundColor: "rgba(45, 27, 78, 0.95)",
   },
   cardContent: {
     flex: 1,
@@ -481,12 +478,8 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "#FFFFFF",
     marginBottom: 24,
-    textShadowColor: "rgba(232, 121, 249, 0.5)",
+    textShadowColor: "rgba(167, 139, 250, 0.5)",
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
-  },
-    textShadowRadius: 10,
-  },
     textShadowRadius: 10,
   },
   // 统计卡片
@@ -505,16 +498,8 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#E879F9",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    elevation: 10,
-  },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    elevation: 10,
-  },
+    shadowColor: "#A78BFA",
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 8,
@@ -630,7 +615,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     backgroundColor: "rgba(167, 139, 250, 0.3)",
-    shadowColor: "#E879F9",
+    shadowColor: "#A78BFA",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 30,
@@ -767,7 +752,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 1,
     borderColor: "rgba(167, 139, 250, 0.3)",
-    shadowColor: "#E879F9",
+    shadowColor: "#A78BFA",
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.4,
     shadowRadius: 24,
@@ -799,25 +784,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: "#FFFFFF",
-  },
-  // 署名
-  signature: {
-    position: "absolute",
-    bottom: 100,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
-  },
-  signatureText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "rgba(232, 121, 249, 0.8)",
-    fontStyle: "italic",
-    textAlign: "center",
-    textShadowColor: "rgba(232, 121, 249, 0.3)",
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 8,
   },
 });
