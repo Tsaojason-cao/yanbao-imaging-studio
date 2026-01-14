@@ -21,13 +21,14 @@ export default function TabLayout() {
           paddingTop: 10,
           paddingBottom: bottomPadding,
           height: tabBarHeight,
-          backgroundColor: "#FFFFFF",
-          borderTopLeftRadius: 24,
-          borderTopRightRadius: 24,
-          borderTopWidth: 0,
-          shadowColor: "#000",
+          backgroundColor: "#1A0B2E",
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+          borderTopWidth: 2,
+          borderTopColor: "#E879F9",
+          shadowColor: "#E879F9",
           shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.1,
+          shadowOpacity: 0.3,
           shadowRadius: 8,
           elevation: 8,
         },
@@ -86,13 +87,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="lightbulb.fill" color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="style"
-        options={{
-          title: "风格",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paintpalette.fill" color={color} />,
-        }}
-      />
+
       <Tabs.Screen
         name="footprint"
         options={{
