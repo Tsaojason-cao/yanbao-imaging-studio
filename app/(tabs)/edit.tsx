@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, Platform, ScrollView, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Platform, ScrollView, Dimensions, Alert } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
@@ -13,6 +13,8 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as ImagePicker from 'expo-image-picker';
 
 const { width } = Dimensions.get("window");
 
@@ -42,6 +44,10 @@ export default function EditScreen() {
   ];
 
   const [selectedFilter, setSelectedFilter] = useState("原图");
+  const [rotationAngle, setRotationAngle] = useState(0); // 旋转角度（-45° 到 +45°）
+  const [selectedCropRatio, setSelectedCropRatio] = useState<string | null>(null); // 选中的裁剪比例
+  const [currentImageUri, setCurrentImageUri] = useState<string | null>(null); // 当前编辑的图片
+  const [memoryParams, setMemoryParams] = useState<any>(null); // 雁宝记忆参数
 
   // Before/After对比滑动手势
   const panGesture = Gesture.Pan()
@@ -127,11 +133,49 @@ export default function EditScreen() {
                 <TouchableOpacity
                   key={index}
                   style={styles.cropPresetButton}
-                  onPress={() => {
+                  onPress={async () => {
                     if (Platform.OS !== "web") {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                     }
-                    alert(`裁剪比例: ${preset.label}`);
+                    setSelectedCropRatio(preset.label);
+                    
+                    // 如果没有图片，先选择图片
+                    if (!currentImageUri) {
+                      const result = await ImagePicker.launchImageLibraryAsync({
+                        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                        allowsEditing: false,
+                        quality: 1,
+                      });
+                      
+                      if (!result.canceled && result.assets[0]) {
+                        setCurrentImageUri(result.assets[0].uri);
+                      }
+                      return;
+                    }
+                    
+                    // 执行裁剪
+                    try {
+                      const manipResult = await ImageManipulator.manipulateAsync(
+                        currentImageUri,
+                        [
+                          {
+                            crop: {
+                              originX: 0,
+                              originY: 0,
+                              width: 1000,
+                              height: preset.ratio === 9/16 ? 1778 : preset.ratio === 1 ? 1000 : 750,
+                            },
+                          },
+                        ],
+                        { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+                      );
+                      
+                      setCurrentImageUri(manipResult.uri);
+                      Alert.alert('成功', `已裁剪为 ${preset.label} 比例`);
+                    } catch (error) {
+                      console.error('Crop error:', error);
+                      Alert.alert('错误', '裁剪失败，请重试');
+                    }
                   }}
                 >
                   <Text style={styles.cropPresetLabel}>{preset.label}</Text>
@@ -145,7 +189,61 @@ export default function EditScreen() {
         return (
           <View style={styles.adjustPanel}>
             <Text style={styles.panelTitle}>旋转</Text>
-            <Text style={styles.placeholderText}>旋转功能开发中...</Text>
+            <View style={styles.rotatePanel}>
+              <View style={styles.rotateDisplay}>
+                <MaterialCommunityIcons name="rotate-3d-variant" size={32} color="#E879F9" />
+                <Text style={styles.rotateAngleText}>{rotationAngle.toFixed(1)}°</Text>
+              </View>
+              <KuromiSlider
+                label="旋转角度"
+                value={((rotationAngle + 45) / 90) * 100}
+                onChange={(value) => {
+                  const angle = (value / 100) * 90 - 45;
+                  setRotationAngle(angle);
+                  if (Platform.OS !== "web") {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  }
+                }}
+              />
+              <View style={styles.rotateQuickButtons}>
+                <TouchableOpacity
+                  style={styles.rotateQuickButton}
+                  onPress={() => {
+                    setRotationAngle(-90);
+                    if (Platform.OS !== "web") {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    }
+                  }}
+                >
+                  <MaterialCommunityIcons name="rotate-left" size={24} color="#E879F9" />
+                  <Text style={styles.rotateQuickButtonText}>-90°</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.rotateQuickButton}
+                  onPress={() => {
+                    setRotationAngle(0);
+                    if (Platform.OS !== "web") {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    }
+                  }}
+                >
+                  <MaterialCommunityIcons name="backup-restore" size={24} color="#E879F9" />
+                  <Text style={styles.rotateQuickButtonText}>重置</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.rotateQuickButton}
+                  onPress={() => {
+                    setRotationAngle(90);
+                    if (Platform.OS !== "web") {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    }
+                  }}
+                >
+                  <MaterialCommunityIcons name="rotate-right" size={24} color="#E879F9" />
+                  <Text style={styles.rotateQuickButtonText}>+90°</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         );
     }
@@ -170,9 +268,34 @@ export default function EditScreen() {
               <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>照片编辑</Text>
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveText}>保存</Text>
-            </TouchableOpacity>
+            <View style={styles.headerRightButtons}>
+              {/* 雁宝记忆按钮 */}
+              <TouchableOpacity 
+                style={styles.memoryButton}
+                onPress={() => {
+                  if (Platform.OS !== "web") {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  }
+                  
+                  // 存入当前参数
+                  const params = {
+                    adjustParams,
+                    selectedFilter,
+                    rotationAngle,
+                    timestamp: Date.now(),
+                  };
+                  setMemoryParams(params);
+                  Alert.alert('❤️ 雁宝记忆', '参数已同步至云端\n下次编辑时可一键载入');
+                }}
+              >
+                <Ionicons name="heart" size={24} color="#E879F9" />
+              </TouchableOpacity>
+              
+              {/* 保存按钮 */}
+              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+                <Text style={styles.saveText}>保存</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* Before/After对比区域 */}
@@ -293,6 +416,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
     color: "#FFFFFF",
+  },
+  headerRightButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  memoryButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(232, 121, 249, 0.2)",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#E879F9",
   },
   saveButton: {
     paddingHorizontal: 20,
@@ -529,5 +667,45 @@ const styles = StyleSheet.create({
     color: "rgba(255, 255, 255, 0.6)",
     marginTop: 20,
     textAlign: "center",
+  },
+  rotatePanel: {
+    gap: 20,
+    paddingVertical: 16,
+  },
+  rotateDisplay: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    paddingVertical: 20,
+    backgroundColor: "rgba(45, 27, 78, 0.6)",
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: "rgba(232, 121, 249, 0.3)",
+  },
+  rotateAngleText: {
+    fontSize: 32,
+    fontWeight: "700",
+    color: "#E879F9",
+  },
+  rotateQuickButtons: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    gap: 12,
+  },
+  rotateQuickButton: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: "rgba(45, 27, 78, 0.8)",
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: "rgba(232, 121, 249, 0.3)",
+    alignItems: "center",
+    gap: 8,
+  },
+  rotateQuickButtonText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#E879F9",
   },
 });

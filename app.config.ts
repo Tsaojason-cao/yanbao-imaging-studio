@@ -25,7 +25,7 @@ const env = {
 const config: ExpoConfig = {
   name: env.appName,
   slug: env.appSlug,
-  version: "2.1.1",
+  version: "2.2.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: env.scheme,
@@ -146,8 +146,8 @@ const config: ExpoConfig = {
           // Ultimate Edition: 启用R8深度混淆
           usesCleartextTraffic: false, // 禁止明文HTTP流量，提高安全性
           minSdkVersion: 24, // Android 7.0+
-          targetSdkVersion: 35, // Android 15
-          compileSdkVersion: 35,
+          targetSdkVersion: 34, // Android 14 (修复 SDK 35 兼容性问题)
+          compileSdkVersion: 34,
         },
       },
     ]

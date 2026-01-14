@@ -41,15 +41,15 @@ export default function CameraScreen() {
   const [showBeautyPanel, setShowBeautyPanel] = useState(false); // 美颜面板显示状态
   const [showSpotDrawer, setShowSpotDrawer] = useState(false); // 机位推荐抽屉显示状态
 
-  // 7维美颜参数
+  // 7维美颜参数（匹配用户需求：磨皮、瘦脸、大眼、亮眼、白牙、隆鼻、红润）
   const [beautyParams, setBeautyParams] = useState({
-    skin: 45,      // 肤质
-    light: 38,     // 光影
-    bone: 25,      // 骨相
-    color: 50,     // 色彩
-    whitening: 42, // 美白
-    eye: 30,       // 大眼
-    face: 28,      // 瘦脸
+    smooth: 75,    // 磨皮 Skin Smoothness
+    slim: 28,      // 瘦脸 Face Slimming
+    eye: 30,       // 大眼 Eye Enlargement
+    bright: 45,    // 亮眼 Eye Brightness
+    teeth: 50,     // 白牙 Teeth Whitening
+    nose: 35,      // 隆鼻 Nose Enhancement
+    blush: 40,     // 红润 Rosy Cheeks
   });
 
   const buttonScale = useSharedValue(1);
@@ -379,19 +379,25 @@ export default function CameraScreen() {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
-              {/* 7维美颜滑块 */}
+              {/* 7维美颜滑块（磨皮、瘦脸、大眼、亮眼、白牙、隆鼻、红润） */}
               <View style={styles.beautySliders}>
                 {[
-                  { key: "skin", label: "肤质", value: beautyParams.skin },
-                  { key: "light", label: "光影", value: beautyParams.light },
-                  { key: "bone", label: "骨相", value: beautyParams.bone },
-                  { key: "color", label: "色彩", value: beautyParams.color },
-                  { key: "whitening", label: "美白", value: beautyParams.whitening },
-                  { key: "eye", label: "大眼", value: beautyParams.eye },
-                  { key: "face", label: "瘦脸", value: beautyParams.face },
+                  { key: "smooth", label: "磨皮", sublabel: "Skin Smoothness", value: beautyParams.smooth, icon: "✨" },
+                  { key: "slim", label: "瘦脸", sublabel: "Face Slimming", value: beautyParams.slim, icon: "👆" },
+                  { key: "eye", label: "大眼", sublabel: "Eye Enlargement", value: beautyParams.eye, icon: "👁️" },
+                  { key: "bright", label: "亮眼", sublabel: "Eye Brightness", value: beautyParams.bright, icon: "👀" },
+                  { key: "teeth", label: "白牙", sublabel: "Teeth Whitening", value: beautyParams.teeth, icon: "🦷" },
+                  { key: "nose", label: "隆鼻", sublabel: "Nose Enhancement", value: beautyParams.nose, icon: "👃" },
+                  { key: "blush", label: "红润", sublabel: "Rosy Cheeks", value: beautyParams.blush, icon: "🌹" },
                 ].map((param) => (
                   <View key={param.key} style={styles.sliderRow}>
-                    <Text style={styles.sliderLabel}>{param.label}</Text>
+                    <View style={styles.sliderLabelContainer}>
+                      <Text style={styles.sliderIcon}>{param.icon}</Text>
+                      <View>
+                        <Text style={styles.sliderLabel}>{param.label}</Text>
+                        <Text style={styles.sliderSublabel}>{param.sublabel}</Text>
+                      </View>
+                    </View>
                     <View style={styles.sliderTrack}>
                       <View
                         style={[
@@ -706,12 +712,27 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+    marginBottom: 12,
+  },
+  sliderLabelContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    width: 140,
+  },
+  sliderIcon: {
+    fontSize: 20,
   },
   sliderLabel: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "700",
     color: "#FFFFFF",
-    width: 50,
+  },
+  sliderSublabel: {
+    fontSize: 10,
+    fontWeight: "400",
+    color: "rgba(255, 255, 255, 0.6)",
+    marginTop: 2,
   },
   sliderTrack: {
     flex: 1,
