@@ -1,5 +1,14 @@
 # yanbao AI 原生美颜模块架构文档
 
+> **⚠️ 实现状态说明**：本文档描述的是 **目标架构设计**，当前项目为 Expo Managed Workflow，**尚未实现原生模块**。
+> 
+> **当前状态**：
+> - ✅ TypeScript 接口层已完成（`lib/YanbaoBeautyBridge.ts`）
+> - ❌ iOS 原生模块未实现（需执行 `npx expo prebuild`）
+> - ❌ Android 原生模块未实现（需执行 `npx expo prebuild`）
+> 
+> **下一步**：执行 `npx expo prebuild` 生成 `ios/` 和 `android/` 目录，然后按照本文档的指导集成原生代码。
+
 ## 📋 概述
 
 本文档详细说明如何在 React Native + Expo 项目中实现实时美颜和滤镜渲染系统。

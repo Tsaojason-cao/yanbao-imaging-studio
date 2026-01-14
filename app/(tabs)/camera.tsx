@@ -74,6 +74,43 @@ export default function CameraScreen() {
     }
   };
 
+  // 加载雁宝记忆
+  const loadYanbaoMemory = async () => {
+    try {
+      const memory = await YanbaoMemoryService.getLatestMemory();
+      
+      if (!memory) {
+        Alert.alert('💔 雁宝记忆', '还没有保存过记忆哦，先调整一个喜欢的风格吧～');
+        return;
+      }
+      
+      console.log(`💜 正在加载雁宝记忆: ${memory.presetName}`);
+      
+      // 应用美颜参数
+      setBeautyParams(memory.beautyParams);
+      
+      // 查找对应的预设索引
+      const presetIndex = masterPresets.findIndex(
+        preset => preset.name === memory.presetName && preset.photographer === memory.photographer
+      );
+      
+      if (presetIndex !== -1) {
+        setSelectedPreset(presetIndex);
+      }
+      
+      console.log('✅ 雁宝记忆已加载:', memory.beautyParams);
+      
+      if (Platform.OS !== "web") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+      
+      Alert.alert('❤️ 雁宝记忆', `已加载 ${memory.presetName} 预设\n欢迎回来！`);
+    } catch (error) {
+      console.error('❌ 加载雁宝记忆失败:', error);
+      Alert.alert('❌ 错误', '加载失败，请重试');
+    }
+  };
+
   // 存入雁宝记忆
   const saveToYanbaoMemory = async () => {
     try {
@@ -504,13 +541,23 @@ export default function CameraScreen() {
                 </ScrollView>
                 
                 {/* 雁宝记忆按钮 */}
-                <TouchableOpacity
-                  style={styles.memoryHeartButton}
-                  onPress={saveToYanbaoMemory}
-                >
-                  <Ionicons name="heart" size={24} color="#F472B6" />
-                  <Text style={styles.memoryHeartText}>存入记忆</Text>
-                </TouchableOpacity>
+                <View style={styles.memoryButtonsContainer}>
+                  <TouchableOpacity
+                    style={styles.memoryHeartButton}
+                    onPress={loadYanbaoMemory}
+                  >
+                    <Ionicons name="heart-outline" size={24} color="#A78BFA" />
+                    <Text style={styles.memoryHeartText}>加载记忆</Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    style={styles.memoryHeartButton}
+                    onPress={saveToYanbaoMemory}
+                  >
+                    <Ionicons name="heart" size={24} color="#F472B6" />
+                    <Text style={styles.memoryHeartText}>存入记忆</Text>
+                  </TouchableOpacity>
+                </View>
               </LinearGradient>
             </BlurView>
           </View>
@@ -530,19 +577,19 @@ export default function CameraScreen() {
               <View style={styles.beautySliders}>
                 {[
                   // 原有 7 维
-                  { key: "smooth", label: "磨皮", sublabel: "Skin Smoothness", value: beautyParams.smooth, icon: "✨" },
-                  { key: "slim", label: "瘦脸", sublabel: "Face Slimming", value: beautyParams.slim, icon: "👆" },
-                  { key: "eye", label: "大眼", sublabel: "Eye Enlargement", value: beautyParams.eye, icon: "👁️" },
-                  { key: "bright", label: "亮眼", sublabel: "Eye Brightness", value: beautyParams.bright, icon: "👀" },
-                  { key: "teeth", label: "白牙", sublabel: "Teeth Whitening", value: beautyParams.teeth, icon: "🦷" },
-                  { key: "nose", label: "隆鼻", sublabel: "Nose Enhancement", value: beautyParams.nose, icon: "👃" },
-                  { key: "blush", label: "红润", sublabel: "Rosy Cheeks", value: beautyParams.blush, icon: "🌹" },
+                  { key: "smooth", label: "磨皮", sublabel: "皮肤平滑度", value: beautyParams.smooth, icon: "✨" },
+                  { key: "slim", label: "瘦脸", sublabel: "面部塑形", value: beautyParams.slim, icon: "👆" },
+                  { key: "eye", label: "大眼", sublabel: "眼部放大", value: beautyParams.eye, icon: "👁️" },
+                  { key: "bright", label: "亮眼", sublabel: "眼部提亮", value: beautyParams.bright, icon: "👀" },
+                  { key: "teeth", label: "白牙", sublabel: "牙齿美白", value: beautyParams.teeth, icon: "🦷" },
+                  { key: "nose", label: "隆鼻", sublabel: "鼻梁增强", value: beautyParams.nose, icon: "👃" },
+                  { key: "blush", label: "红润", sublabel: "面部红润", value: beautyParams.blush, icon: "🌹" },
                   // v2.3.0 新增 5 维
-                  { key: "sculpting3D", label: "骨相立体", sublabel: "3D Sculpting", value: beautyParams.sculpting3D, icon: "💎" },
-                  { key: "textureRetention", label: "膚质保护", sublabel: "Texture Retention", value: beautyParams.textureRetention, icon: "🌿" },
-                  { key: "teethWhiteningPro", label: "牙齿美白", sublabel: "Teeth Whitening Pro", value: beautyParams.teethWhiteningPro, icon: "✨" },
-                  { key: "darkCircleRemoval", label: "黑眼圈淡化", sublabel: "Dark Circle Removal", value: beautyParams.darkCircleRemoval, icon: "👁️" },
-                  { key: "hairlineAdjustment", label: "发际线修饰", sublabel: "Hairline Adjustment", value: beautyParams.hairlineAdjustment, icon: "💇" },
+                  { key: "sculpting3D", label: "骨相立体", sublabel: "立体塑形", value: beautyParams.sculpting3D, icon: "💎" },
+                  { key: "textureRetention", label: "膚质保护", sublabel: "纹理保留", value: beautyParams.textureRetention, icon: "🌿" },
+                  { key: "teethWhiteningPro", label: "牙齿美白", sublabel: "专业美白", value: beautyParams.teethWhiteningPro, icon: "✨" },
+                  { key: "darkCircleRemoval", label: "黑眼圈淡化", sublabel: "眼周淡化", value: beautyParams.darkCircleRemoval, icon: "👁️" },
+                  { key: "hairlineAdjustment", label: "发际线修饰", sublabel: "发际线调整", value: beautyParams.hairlineAdjustment, icon: "💇" },
                 ].map((param) => (
                   <View key={param.key} style={styles.sliderRow}>
                     <View style={styles.sliderLabelContainer}>
@@ -1316,10 +1363,14 @@ const styles = StyleSheet.create({
     top: 4,
     right: 4,
   },
-  memoryHeartButton: {
+  memoryButtonsContainer: {
     position: "absolute",
     top: 12,
     right: 16,
+    flexDirection: "row",
+    gap: 8,
+  },
+  memoryHeartButton: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(244, 114, 182, 0.3)",

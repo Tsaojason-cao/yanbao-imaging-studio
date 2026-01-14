@@ -37,7 +37,7 @@ export class WatermarkService {
       });
 
       const city = address.city || address.region || 'Unknown';
-      const watermarkText = `Designed for YanBao @ ${city}`;
+      const watermarkText = `Designed for YanBao @ ${city} | by Jason Tsao`;
 
       return {
         text: watermarkText,
@@ -54,7 +54,7 @@ export class WatermarkService {
 
   private getDefaultWatermark(): WatermarkConfig {
     return {
-      text: 'Designed for YanBao',
+      text: 'Designed for YanBao | by Jason Tsao who loves you the most',
       position: 'bottom-right',
       fontSize: 14,
       color: '#E879F9',

@@ -144,6 +144,55 @@ export const DEFAULT_BEAUTY_PRESET: MasterPreset = {
   difficulty: 'easy',
 };
 
+/**
+ * 预设 0.5：雁宝经典（Yanbao Classic）
+ * 原生模块设计，看起来像原相机直出，但细节已经过滤
+ */
+export const PRESET_YANBAO_CLASSIC: MasterPreset = {
+  id: 'preset_0_5_yanbao_classic',
+  name: '雁宝经典',
+  photographer: 'yanbao AI',
+  region: 'DEFAULT',
+  description: '原生相机质感，保留皮肤纹理（毛孔），仅淡化暗沉与痘印，微调下颌线，提升神采',
+  beautyParams: {
+    smooth: 22,   // 磨皮 22% - 保留皮肤纹理（毛孔），仅淡化暗沉与痘印
+    slim: 12,     // 瘦脸 12% - 针对下颌线进行微调，拒绝「蛇精脸」，保持原生骨相
+    eye: 8,       // 大眼 8% - 轻微提升神采，模拟广角镜头下的中心汇聚感
+    bright: 15,   // 亮眼 15% - 增加瞳孔高光，让眼神看起来更清澈
+    teeth: 10,    // 白牙 10% - 自然去黄，不产生假白感
+    nose: 5,      // 隆鼻 5% - 仅在山根处增加微弱阴影，提升五官立体度
+    blush: 12,    // 红润 12% - 提升肤色饱和度，模拟运动后的健康血色
+    // v2.3.0 新增 5 维
+    sculpting3D: 0,
+    textureRetention: 30,  // 30% 纹理保留，确保皮肤真实感
+    teethWhiteningPro: 0,
+    darkCircleRemoval: 0,
+    hairlineAdjustment: 0,
+  },
+  filterParams: {
+    contrast: 0,
+    saturation: 0,
+    brightness: 0,
+    grain: 0,
+    temperature: 0,
+    highlightSuppression: 0,
+    shadowCompensation: 0,
+    vignette: 0,
+    hueShift: 0,
+    sharpness: 0,
+    fade: 0,
+  },
+  cameraParams: {
+    iso: 100,
+    shutter: '1/125',
+    aperture: 'f/2.8',
+    whiteBalance: 'auto',
+    exposureCompensation: '0.0 EV',
+  },
+  tags: ['日常', '自然', '通用', '经典', '原生'],
+  difficulty: 'easy',
+};
+
 // ============================================
 // 🇨🇳 中国摄影师预设（5位）
 // ============================================
@@ -883,6 +932,7 @@ export const PRESET_KOO_BOHN_CHANG: MasterPreset = {
 
 export const MASTER_PRESETS: MasterPreset[] = [
   DEFAULT_BEAUTY_PRESET,
+  PRESET_YANBAO_CLASSIC,  // 雁宝经典
   // 🇨🇳 中国（5位）
   PRESET_XIAO_QUAN,
   PRESET_SUN_JUN,
