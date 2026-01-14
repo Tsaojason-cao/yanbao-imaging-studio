@@ -12,7 +12,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import * as MediaLibrary from "expo-media-library";
-import { MASTER_PRESETS, MasterPreset } from "@/constants/presets";
+import { MASTER_PRESETS, MasterPreset, PresetRegion, getPresetsByRegion, getRegionDisplayName } from "@/constants/presets";
 import { YanbaoMemoryService, StatsService } from "@/services/database";
 import Animated, {
   useSharedValue,
@@ -44,6 +44,7 @@ export default function CameraScreen() {
   const [showSpotDrawer, setShowSpotDrawer] = useState(false); // 机位推荐抽屉显示状态
   const [showPresetPanel, setShowPresetPanel] = useState(false); // 大师预设面板显示状态
   const [selectedPreset, setSelectedPreset] = useState(0); // 默认选中自然原生
+  const [selectedRegion, setSelectedRegion] = useState<PresetRegion>('DEFAULT'); // 默认选中地区
 
   // 7维美颜参数：默认开启「自然原生」预设（自然无痕版本）
   const [beautyParams, setBeautyParams] = useState(MASTER_PRESETS[0].beautyParams);
@@ -435,25 +436,55 @@ export default function CameraScreen() {
                 style={styles.presetBarGradient}
               >
                 <Text style={styles.presetBarTitle}>🎨 大师预设</Text>
+                
+                {/* 地区分类标签 */}
+                <View style={styles.regionTabs}>
+                  {(['DEFAULT', 'CN', 'JP', 'KR'] as PresetRegion[]).map((region) => (
+                    <TouchableOpacity
+                      key={region}
+                      style={[
+                        styles.regionTab,
+                        selectedRegion === region && styles.regionTabActive,
+                      ]}
+                      onPress={() => {
+                        setSelectedRegion(region);
+                        if (Platform.OS !== "web") {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        }
+                      }}
+                    >
+                      <Text style={[
+                        styles.regionTabText,
+                        selectedRegion === region && styles.regionTabTextActive,
+                      ]}>
+                        {getRegionDisplayName(region)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                
                 <ScrollView 
                   horizontal 
                   showsHorizontalScrollIndicator={false}
                   style={styles.presetScroll}
                 >
-                  {masterPresets.map((preset) => (
+                  {masterPresets.filter(p => selectedRegion === 'DEFAULT' ? true : p.region === selectedRegion).map((preset) => (
                     <TouchableOpacity
                       key={preset.id}
                       style={[
                         styles.presetCard,
-                        selectedPreset === preset.id && styles.presetCardActive,
+                        selectedPreset === masterPresets.findIndex(p => p.id === preset.id) && styles.presetCardActive,
                       ]}
                       onPress={() => {
-                        applyMasterPreset(preset.id);
+                        const presetIndex = masterPresets.findIndex(p => p.id === preset.id);
+                        if (presetIndex !== -1) {
+                          applyMasterPreset(presetIndex);
+                        }
                       }}
                     >
                       <Text style={styles.presetName}>{preset.name}</Text>
                       <Text style={styles.presetPhotographer}>{preset.photographer}</Text>
-                      {selectedPreset === preset.id && (
+                      {selectedPreset === masterPresets.findIndex(p => p.id === preset.id) && (
                         <View style={styles.presetActiveBadge}>
                           <Ionicons name="checkmark-circle" size={16} color="#F472B6" />
                         </View>
@@ -1197,6 +1228,37 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#FFFFFF",
     marginBottom: 8,
+  },
+  regionTabs: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 12,
+  },
+  regionTab: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.2)",
+  },
+  regionTabActive: {
+    backgroundColor: "rgba(244, 114, 182, 0.3)",
+    borderColor: "#F472B6",
+    shadowColor: "#F472B6",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  regionTabText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "rgba(255, 255, 255, 0.7)",
+  },
+  regionTabTextActive: {
+    color: "#F472B6",
+    fontWeight: "bold",
   },
   presetScroll: {
     flexGrow: 0,

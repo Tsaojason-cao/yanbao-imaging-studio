@@ -15,6 +15,8 @@ import Animated, {
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
+import * as Sharing from 'expo-sharing';
+import * as MediaLibrary from 'expo-media-library';
 
 const { width } = Dimensions.get("window");
 
@@ -63,11 +65,61 @@ export default function EditScreen() {
     width: comparePosition.value * width,
   }));
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (Platform.OS !== "web") {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
-    alert("照片已保存");
+    
+    try {
+      if (!currentImageUri) {
+        alert("请先选择一张图片");
+        return;
+      }
+
+      // 请求相册权限
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== 'granted') {
+        alert("需要相册权限才能保存照片");
+        return;
+      }
+
+      // 保存到相册
+      await MediaLibrary.saveToLibraryAsync(currentImageUri);
+      alert("照片已保存到相册");
+    } catch (error) {
+      console.error('保存失败:', error);
+      alert("保存失败，请重试");
+    }
+  };
+
+  const handleShare = async () => {
+    if (Platform.OS !== "web") {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+    
+    try {
+      if (!currentImageUri) {
+        alert("请先选择一张图片");
+        return;
+      }
+
+      // 检查分享功能是否可用
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (!isAvailable) {
+        alert("当前设备不支持分享功能");
+        return;
+      }
+
+      // 唤起原生分享面板
+      await Sharing.shareAsync(currentImageUri, {
+        mimeType: 'image/jpeg',
+        dialogTitle: '分享照片',
+        UTI: 'public.jpeg'
+      });
+    } catch (error) {
+      console.error('分享失败:', error);
+      alert("分享失败，请重试");
+    }
   };
 
   const renderFunctionContent = () => {
@@ -316,7 +368,14 @@ export default function EditScreen() {
               
               {/* 保存按钮 */}
               <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+                <Ionicons name="save-outline" size={20} color="#FFFFFF" />
                 <Text style={styles.saveText}>保存</Text>
+              </TouchableOpacity>
+              
+              {/* 分享按钮 */}
+              <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+                <Ionicons name="share-social-outline" size={20} color="#FFFFFF" />
+                <Text style={styles.shareText}>分享</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -456,12 +515,29 @@ const styles = StyleSheet.create({
     borderColor: "#E879F9",
   },
   saveButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
     backgroundColor: "#F472B6",
   },
   saveText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  shareButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: "#A855F7",
+  },
+  shareText: {
     fontSize: 16,
     fontWeight: "600",
     color: "#FFFFFF",
