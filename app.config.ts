@@ -31,6 +31,7 @@ const config: ExpoConfig = {
   scheme: env.scheme,
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
+  jsEngine: "hermes",
   extra: {
     eas: {
       projectId: "009c619b-efd9-4ad3-b2f7-661fe9b76b58",
@@ -152,6 +153,9 @@ const config: ExpoConfig = {
           minSdkVersion: 24, // Android 7.0+
           targetSdkVersion: 34, // Android 14 (修复 SDK 35 兼容性问题)
           compileSdkVersion: 35,
+        },
+        ios: {
+          jsEngine: "hermes",
         },
       },
     ]
