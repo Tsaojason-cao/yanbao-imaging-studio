@@ -58,10 +58,13 @@ export default function Features() {
     <section id="features" className="py-24 relative overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-pink-500 to-purple-500">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary via-pink-500 to-purple-500">
             七大核心模块
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl font-serif italic text-pink-400/90 mb-4 tracking-wide">
+            —— 私人影像工作室 ——
+          </p>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             每一个像素都经过精心打磨，只为呈现最完美的影像体验
           </p>
         </div>

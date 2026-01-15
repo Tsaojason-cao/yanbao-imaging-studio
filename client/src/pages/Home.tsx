@@ -54,9 +54,9 @@ export default function Home() {
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
-              <span className="block text-white">为爱而生的</span>
+              <span className="block text-white">你眼中的美，</span>
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-pink-500 to-purple-500">
-                AI 影像工作室
+                从此有了最温柔的注脚
               </span>
             </h1>
             
