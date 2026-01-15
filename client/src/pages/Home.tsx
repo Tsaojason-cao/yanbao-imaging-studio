@@ -2,6 +2,8 @@ import Features from "@/components/Features";
 import ParameterViz from "@/components/ParameterViz";
 import LoveStory from "@/components/LoveStory";
 import Testimonials from "@/components/Testimonials";
+import CompetitorAnalysis from "@/components/CompetitorAnalysis";
+import InteractiveDemo from "@/components/InteractiveDemo";
 import WhitePaper from "@/components/WhitePaper";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -119,6 +121,12 @@ export default function Home() {
 
       {/* White Paper */}
       <WhitePaper />
+
+      {/* Competitor Analysis */}
+      <CompetitorAnalysis />
+
+      {/* Interactive Demo */}
+      <InteractiveDemo />
 
       {/* Testimonials */}
       <Testimonials />
