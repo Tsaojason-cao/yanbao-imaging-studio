@@ -6,27 +6,48 @@ import CompetitorAnalysis from "@/components/CompetitorAnalysis";
 import InteractiveDemo from "@/components/InteractiveDemo";
 import WhitePaper from "@/components/WhitePaper";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { Download, Heart, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Download, Heart, Sparkles, ChevronDown } from "lucide-react";
+import { useState, useRef } from "react";
 
 export default function Home() {
+  const [isRevealed, setIsRevealed] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const handleReveal = () => {
+    setIsRevealed(true);
+    setTimeout(() => {
+      contentRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  };
+
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden font-sans selection:bg-primary selection:text-primary-foreground">
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-pink-500/30">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-white/10">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Yanbao AI Logo" className="w-10 h-10 rounded-xl shadow-lg shadow-primary/20" />
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-pink-500">
+            <img src="/logo.png" alt="Yanbao AI Logo" className="w-10 h-10 rounded-xl shadow-lg shadow-pink-500/20" />
+            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500">
               YanBao AI
             </span>
           </div>
+          
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-            <a href="#features" className="hover:text-primary transition-colors">功能</a>
-            <a href="#showcase" className="hover:text-primary transition-colors">展示</a>
-            <a href="#story" className="hover:text-primary transition-colors">故事</a>
+            {isRevealed && (
+              <>
+                <a href="#story" className="hover:text-primary transition-colors text-pink-400">深情告白</a>
+                <a href="#features" className="hover:text-primary transition-colors">功能</a>
+                <a href="#demo" className="hover:text-primary transition-colors">展示</a>
+              </>
+            )}
           </div>
-          <Button className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 rounded-full px-6">
+
+          <Button 
+            variant="default" 
+            className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 rounded-full px-6 shadow-lg shadow-primary/25"
+            onClick={() => window.open('#download', '_blank')}
+          >
             <Download className="w-4 h-4 mr-2" />
             下载 App
           </Button>
@@ -60,79 +81,107 @@ export default function Home() {
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
-              融合 31 位大师影调与 12 维美颜参数，专为 Yanbao 打造的极致摄影体验。
-              不仅仅是相机，更是深情的注视。
-            </p>
+            {!isRevealed && (
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-lg md:text-xl text-muted-foreground max-w-2xl"
+              >
+                点击下方视频，开启属于你的故事
+              </motion.p>
+            )}
           </motion.div>
 
-          {/* Video Showcase - C Position */}
+          {/* Hero Video Container - Trigger */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative w-full max-w-4xl aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-primary/20 border border-white/10 mt-8 group"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ 
+              opacity: 1, 
+              scale: 1,
+              boxShadow: isRevealed ? "0 0 0 0 transparent" : "0 25px 50px -12px rgba(168, 85, 247, 0.25)"
+            }}
+            whileHover={{ 
+              scale: 1.02,
+              boxShadow: "0 35px 60px -15px rgba(236, 72, 153, 0.3)"
+            }}
+            transition={{ duration: 0.5 }}
+            onClick={handleReveal}
+            className={`relative w-full max-w-4xl aspect-video rounded-2xl overflow-hidden border border-white/10 group cursor-pointer transition-all duration-500 ${isRevealed ? 'ring-0' : 'ring-4 ring-pink-500/20'}`}
           >
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent z-10 pointer-events-none" />
-            <video 
-              src="/hero_video.mp4" 
-              autoPlay 
-              loop 
-              muted 
+            <div className={`absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-500 z-20 flex items-center justify-center ${isRevealed ? 'hidden' : 'flex'}`}>
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="bg-white/10 backdrop-blur-md px-8 py-4 rounded-full border border-white/20 flex items-center gap-3"
+              >
+                <Heart className="w-6 h-6 text-pink-500 fill-pink-500 animate-pulse" />
+                <span className="text-white font-medium text-lg">点击开启深情告白</span>
+              </motion.div>
+            </div>
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
+            <video
+              autoPlay
+              loop
+              muted
               playsInline
               className="w-full h-full object-cover"
-            />
+            >
+              <source src="/hero_video.mp4" type="video/mp4" />
+            </video>
             
             {/* Overlay Content */}
-            <div className="absolute bottom-0 left-0 right-0 p-8 z-20 flex justify-between items-end">
-              <div className="text-left">
-                <h3 className="text-2xl font-bold text-white mb-2">库洛米主题界面</h3>
-                <p className="text-white/80">沉浸式暗黑少女风体验</p>
-              </div>
-              <div className="flex gap-4">
-                 {/* Controls placeholder */}
-              </div>
+            <div className="absolute bottom-0 left-0 right-0 p-8 z-20 text-left pointer-events-none">
+              <h3 className="text-2xl font-bold text-white mb-2">雁宝 AI 私人影像工作室</h3>
+              <p className="text-white/80">记录每一个心动瞬间</p>
             </div>
           </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 mt-8"
-          >
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 h-14 text-lg rounded-full shadow-lg shadow-primary/25">
-              <Download className="w-5 h-5 mr-2" />
-              立即下载 Android 版
-            </Button>
-            <Button size="lg" variant="outline" className="border-white/20 hover:bg-white/5 text-white px-8 h-14 text-lg rounded-full">
-              <Heart className="w-5 h-5 mr-2 text-pink-500" />
-              阅读深情告白
-            </Button>
-          </motion.div>
         </div>
+        
+        {!isRevealed && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, y: [0, 10, 0] }}
+            transition={{ delay: 2, duration: 2, repeat: Infinity }}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 text-muted-foreground"
+          >
+            <ChevronDown className="w-8 h-8" />
+          </motion.div>
+        )}
       </section>
 
-      {/* Features Section */}
-      <Features />
+      {/* Revealed Content */}
+      <AnimatePresence>
+        {isRevealed && (
+          <motion.div
+            ref={contentRef}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+          >
+            {/* Love Story - First to appear */}
+            <LoveStory />
 
-      {/* Parameter Visualization */}
-      <ParameterViz />
+            {/* Features Grid */}
+            <Features />
 
-      {/* White Paper */}
-      <WhitePaper />
+            {/* Parameter Visualization */}
+            <ParameterViz />
 
-      {/* Competitor Analysis */}
-      <CompetitorAnalysis />
+            {/* White Paper */}
+            <WhitePaper />
 
-      {/* Interactive Demo */}
-      <InteractiveDemo />
+            {/* Competitor Analysis */}
+            <CompetitorAnalysis />
 
-      {/* Testimonials */}
-      <Testimonials />
+            {/* Interactive Demo */}
+            <InteractiveDemo />
 
-      {/* Love Story & Footer */}
-      <LoveStory />
+            {/* Testimonials */}
+            <Testimonials />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
