@@ -1,4 +1,4 @@
-import { ScrollView, Text, View, Pressable, Alert, Platform, Dimensions } from "react-native";
+import { ScrollView, Text, View, Pressable, Alert, Platform, Dimensions, Image } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -100,9 +100,7 @@ export default function SettingsScreen() {
                   width: 100,
                   height: 100,
                   borderRadius: 50,
-                  backgroundColor: colors.primary,
-                  alignItems: "center",
-                  justifyContent: "center",
+                  overflow: "hidden",
                   shadowColor: colors.primary,
                   shadowOffset: { width: 0, height: 8 },
                   shadowOpacity: 0.4,
@@ -111,7 +109,11 @@ export default function SettingsScreen() {
                 logoAnimatedStyle,
               ]}
             >
-              <Text style={{ fontSize: 40 }}>✨</Text>
+              <Image
+                source={require("@/assets/images/yanbao-avatar.jpg")}
+                style={{ width: 100, height: 100 }}
+                resizeMode="cover"
+              />
             </Animated.View>
           </Pressable>
 
