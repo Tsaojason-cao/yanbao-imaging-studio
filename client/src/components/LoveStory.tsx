@@ -111,11 +111,7 @@ export default function LoveStory() {
               </p>
             </div>
 
-            <div className="mt-24 font-serif text-muted-foreground/60 text-sm tracking-widest uppercase">
-              <p>Dedicated to Yanbao</p>
-              <p className="mt-2">by Jason Tsao who loves you the most</p>
-              <p className="mt-2">2025.08.24</p>
-            </div>
+
           </div>
         </motion.div>
       </div>

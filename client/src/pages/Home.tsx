@@ -1,6 +1,7 @@
 import Features from "@/components/Features";
 import ParameterViz from "@/components/ParameterViz";
 import LoveStory from "@/components/LoveStory";
+import Footer from "@/components/Footer";
 import Testimonials from "@/components/Testimonials";
 import CompetitorAnalysis from "@/components/CompetitorAnalysis";
 import InteractiveDemo from "@/components/InteractiveDemo";
@@ -179,6 +180,9 @@ export default function Home() {
 
             {/* Testimonials */}
             <Testimonials />
+
+            {/* Footer */}
+            <Footer />
           </motion.div>
         )}
       </AnimatePresence>
