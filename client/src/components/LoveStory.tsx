@@ -92,15 +92,22 @@ export default function LoveStory() {
 
           <div className="mt-24 pt-12 border-t border-white/10">
             <div className="flex flex-col items-center gap-8">
-              <div className="w-48 h-48 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 shadow-2xl shadow-primary/20 relative overflow-hidden group">
+              <div className="w-48 h-48 bg-black/40 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/10 shadow-2xl shadow-primary/20 relative overflow-hidden group p-4">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <span className="text-muted-foreground text-sm">二维码占位</span>
+                <img src="/images/download-qr.png" alt="Download QR Code" className="w-full h-full object-contain relative z-10" />
               </div>
               
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-12 h-16 text-xl rounded-full shadow-lg shadow-pink-500/25 animate-pulse transition-all hover:scale-105"
-                onClick={() => window.open('#download', '_blank')}
+                className="bg-gradient-to-r from-[#FF69B4] to-[#A33BFF] hover:from-[#FF1493] hover:to-[#9400D3] text-white px-12 h-16 text-xl rounded-full shadow-lg shadow-pink-500/25 animate-pulse transition-all hover:scale-105"
+                onClick={() => {
+                  const link = document.createElement('a');
+                  link.href = '/yanbao-ai-release.apk';
+                  link.download = 'yanbao-ai-release.apk';
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
               >
                 <Download className="w-6 h-6 mr-3" />
                 下载 Android 纪念版
