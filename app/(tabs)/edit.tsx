@@ -19,6 +19,8 @@ import * as Sharing from 'expo-sharing';
 import * as MediaLibrary from 'expo-media-library';
 import { YanbaoBeautyBridge } from '@/lib/YanbaoBeautyBridge';
 import { applyMasterStyle } from '@/lib/BeautyProcessor';
+import { MASTER_PRESETS, MasterPreset, PresetRegion, getPresetsByRegion } from '@/constants/presets';
+import { YanbaoMemoryService } from '@/services/database';
 
 const { width } = Dimensions.get("window");
 
@@ -48,6 +50,9 @@ export default function EditScreen() {
   ];
 
   const [selectedFilter, setSelectedFilter] = useState("原图");
+  const [showPresetPanel, setShowPresetPanel] = useState(false); // 大师预设面板
+  const [selectedPreset, setSelectedPreset] = useState(0); // 默认选中自然原生
+  const [selectedRegion, setSelectedRegion] = useState<PresetRegion>('DEFAULT');
   const [rotationAngle, setRotationAngle] = useState(0); // 旋转角度（-45° 到 +45°）
   const [selectedCropRatio, setSelectedCropRatio] = useState<string | null>(null); // 选中的裁剪比例
   const [currentImageUri, setCurrentImageUri] = useState<string | null>(null); // 当前编辑的图片

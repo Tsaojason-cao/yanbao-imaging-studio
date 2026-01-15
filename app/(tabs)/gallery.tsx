@@ -675,45 +675,33 @@ export default function GalleryScreen() {
         {/* 雁宝记忆按钮 */}
         <Pressable
           style={({ pressed }) => [
-            styles.memoryFloatingButton,
+            {
+              position: 'absolute',
+              bottom: 24,
+              right: 24,
+              width: 64,
+              height: 64,
+              borderRadius: 32,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 8,
+            },
             pressed && { opacity: 0.8, transform: [{ scale: 0.95 }] },
           ]}
           onPress={() => {
             if (Platform.OS !== "web") {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             }
-            router.push("/(tabs)/inspiration");
+            router.push("/memory-manager");
           }}
         >
           <LinearGradient
             colors={["#F472B6", "#EC4899"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={styles.memoryButtonGradient}
-          >
-            <Ionicons name="heart" size={28} color="#FFFFFF" />
-          </LinearGradient>
-        </Pressable>
-
-      
-        {/* 雁宝记忆按钮 */}
-        <Pressable
-          style={({ pressed }) => [
-            styles.memoryFloatingButton,
-            pressed && { opacity: 0.8, transform: [{ scale: 0.95 }] },
-          ]}
-          onPress={() => {
-            if (Platform.OS !== "web") {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            }
-            router.push("/(tabs)/inspiration");
-          }}
-        >
-          <LinearGradient
-            colors={["#F472B6", "#EC4899"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.memoryButtonGradient}
+            style={{ width: '100%', height: '100%', borderRadius: 32, justifyContent: 'center', alignItems: 'center' }}
           >
             <Ionicons name="heart" size={28} color="#FFFFFF" />
           </LinearGradient>
