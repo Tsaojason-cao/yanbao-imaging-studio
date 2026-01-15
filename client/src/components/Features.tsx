@@ -45,10 +45,10 @@ const features = [
     colSpan: "md:col-span-1",
   },
   {
-    id: "splash",
-    title: "启动页",
-    desc: "每一次打开都是心动的开始",
-    image: "/images/screenshots/05_Settings_KuromiQueen.png", // Using a placeholder for splash if not exact
+    id: "stats",
+    title: "数据统计",
+    desc: "记录你的每一次创作与成长",
+    image: "/images/screenshots/05_Stats.png",
     colSpan: "md:col-span-1",
   },
 ];
