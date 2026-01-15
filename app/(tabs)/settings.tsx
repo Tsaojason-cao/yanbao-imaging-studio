@@ -185,10 +185,12 @@ export default function SettingsScreen() {
                     height: 100,
                     borderRadius: 50,
                     overflow: "hidden",
-                    shadowColor: colors.primary,
-                    shadowOffset: { width: 0, height: 8 },
-                    shadowOpacity: 0.4,
-                    shadowRadius: 16,
+                    borderWidth: 3,
+                    borderColor: "#a155e7",
+                    shadowColor: "#a155e7",
+                    shadowOffset: { width: 0, height: 0 },
+                    shadowOpacity: 0.8,
+                    shadowRadius: 20,
                   },
                   logoAnimatedStyle,
                 ]}
@@ -197,7 +199,7 @@ export default function SettingsScreen() {
                   source={
                     userAvatar
                       ? { uri: userAvatar }
-                      : require("@/assets/images/yanbao-avatar.jpg")
+                      : require("@/assets/images/kuromi/kuromi-avatar.jpg")
                   }
                   style={{ width: 100, height: 100 }}
                   resizeMode="cover"
@@ -216,7 +218,7 @@ export default function SettingsScreen() {
                 width: 32,
                 height: 32,
                 borderRadius: 16,
-                backgroundColor: colors.primary,
+                backgroundColor: "#e04f8f",
                 justifyContent: "center",
                 alignItems: "center",
                 borderWidth: 3,
