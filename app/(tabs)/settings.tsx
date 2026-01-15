@@ -6,7 +6,7 @@ import Animated, {
   withSpring,
   withDelay,
 } from "react-native-reanimated";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { ScreenContainer } from "@/components/screen-container";
@@ -14,6 +14,8 @@ import { useColors } from "@/hooks/use-colors";
 import * as Haptics from "expo-haptics";
 import { handleLogoTap, getEasterEggContent } from "@/lib/easter-egg";
 import { EasterEggModal } from "@/components/easter-egg-modal";
+import * as ImagePicker from "expo-image-picker";
+import { AvatarService } from "@/services/AvatarService";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -48,6 +50,7 @@ export default function SettingsScreen() {
   const [easterEggCount, setEasterEggCount] = useState(0);
   const [showEasterEgg, setShowEasterEgg] = useState(false);
   const [showStats, setShowStats] = useState(false);
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
 
   const logoScale = useSharedValue(1);
   const heartScale = useSharedValue(0);
@@ -87,35 +90,142 @@ export default function SettingsScreen() {
     opacity: heartOpacity.value,
   }));
 
+  // 加载用户头像
+  useEffect(() => {
+    loadUserAvatar();
+  }, []);
+
+  const loadUserAvatar = async () => {
+    const avatar = await AvatarService.getAvatar();
+    setUserAvatar(avatar);
+  };
+
+  // 选择头像
+  const handleChangeAvatar = async () => {
+    try {
+      if (Platform.OS !== "web") {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      }
+
+      // 请求相册权限
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("需要权限", "请允许访问相册以选择头像");
+        return;
+      }
+
+      // 打开相册选择器
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        const uri = result.assets[0].uri;
+        await AvatarService.saveAvatar(uri);
+        setUserAvatar(uri);
+        
+        if (Platform.OS !== "web") {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
+        Alert.alert("成功", "头像已更新");
+      }
+    } catch (error) {
+      console.error("选择头像失败:", error);
+      Alert.alert("错误", "选择头像失败，请重试");
+    }
+  };
+
+  // 恢复默认头像
+  const handleResetAvatar = async () => {
+    try {
+      if (Platform.OS !== "web") {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      }
+
+      Alert.alert(
+        "恢复默认头像",
+        "确定要恢复默认头像吗？",
+        [
+          { text: "取消", style: "cancel" },
+          {
+            text: "确定",
+            onPress: async () => {
+              await AvatarService.deleteAvatar();
+              setUserAvatar(null);
+              
+              if (Platform.OS !== "web") {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+              }
+              Alert.alert("成功", "已恢复默认头像");
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      console.error("恢复默认头像失败:", error);
+      Alert.alert("错误", "恢复默认头像失败，请重试");
+    }
+  };
+
   // 渲染设置页面
   const renderSettings = () => (
     <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
       <View className="px-6 pt-12 pb-6">
         {/* Logo 和标题 */}
         <View className="items-center gap-4 mb-8">
-          <Pressable onPress={handleLogoPress}>
-            <Animated.View
-              style={[
-                {
-                  width: 100,
-                  height: 100,
-                  borderRadius: 50,
-                  overflow: "hidden",
-                  shadowColor: colors.primary,
-                  shadowOffset: { width: 0, height: 8 },
-                  shadowOpacity: 0.4,
-                  shadowRadius: 16,
-                },
-                logoAnimatedStyle,
-              ]}
+          <View>
+            <Pressable onPress={handleLogoPress}>
+              <Animated.View
+                style={[
+                  {
+                    width: 100,
+                    height: 100,
+                    borderRadius: 50,
+                    overflow: "hidden",
+                    shadowColor: colors.primary,
+                    shadowOffset: { width: 0, height: 8 },
+                    shadowOpacity: 0.4,
+                    shadowRadius: 16,
+                  },
+                  logoAnimatedStyle,
+                ]}
+              >
+                <Image
+                  source={
+                    userAvatar
+                      ? { uri: userAvatar }
+                      : require("@/assets/images/yanbao-avatar.jpg")
+                  }
+                  style={{ width: 100, height: 100 }}
+                  resizeMode="cover"
+                />
+              </Animated.View>
+            </Pressable>
+
+            {/* 头像编辑按钮 */}
+            <Pressable
+              onPress={handleChangeAvatar}
+              onLongPress={userAvatar ? handleResetAvatar : undefined}
+              style={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                width: 32,
+                height: 32,
+                borderRadius: 16,
+                backgroundColor: colors.primary,
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 3,
+                borderColor: colors.background,
+              }}
             >
-              <Image
-                source={require("@/assets/images/yanbao-avatar.jpg")}
-                style={{ width: 100, height: 100 }}
-                resizeMode="cover"
-              />
-            </Animated.View>
-          </Pressable>
+              <Ionicons name="camera" size={16} color="white" />
+            </Pressable>
+          </View>
 
           {/* 浪漫彩蛋爱心 */}
           {showEasterEgg && (
