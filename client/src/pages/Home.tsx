@@ -1,7 +1,7 @@
 import Features from "@/components/Features";
 import ParameterViz from "@/components/ParameterViz";
 import LoveStory from "@/components/LoveStory";
-import SignatureGenerator from "@/components/SignatureGenerator";
+
 import Footer from "@/components/Footer";
 import Testimonials from "@/components/Testimonials";
 import CompetitorAnalysis from "@/components/CompetitorAnalysis";
@@ -162,8 +162,7 @@ export default function Home() {
             transition={{ duration: 1 }}
           >
             {/* Love Story - First to appear */}
-            <SignatureGenerator />
-      <LoveStory />
+            <LoveStory />
 
             {/* Features Grid */}
             <Features />
