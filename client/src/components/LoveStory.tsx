@@ -101,12 +101,7 @@ export default function LoveStory() {
                 size="lg" 
                 className="bg-gradient-to-r from-[#FF69B4] to-[#A33BFF] hover:from-[#FF1493] hover:to-[#9400D3] text-white px-12 h-16 text-xl rounded-full shadow-lg shadow-pink-500/25 animate-pulse transition-all hover:scale-105"
                 onClick={() => {
-                  const link = document.createElement('a');
-                  link.href = '/yanbao-ai-release.apk';
-                  link.download = 'yanbao-ai-release.apk';
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
+                  window.open('https://files.manuscdn.com/user_upload_by_module/session_file/310519663291962366/jVgfLFpLeBxAcRlq.apk', '_blank');
                 }}
               >
                 <Download className="w-6 h-6 mr-3" />
