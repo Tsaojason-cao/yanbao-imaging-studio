@@ -55,7 +55,14 @@ export default function Home() {
           <Button 
             variant="default" 
             className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 rounded-full px-6 shadow-lg shadow-primary/25"
-            onClick={() => window.open('https://manus-user-upload-bucket-public.s3.us-east-1.amazonaws.com/application-02840785-076f-4447-9806-381488204680.apk', '_blank')}
+            onClick={() => {
+              const link = document.createElement('a');
+              link.href = '/yanbao-ai-release.apk';
+              link.download = 'yanbao-ai-release.apk';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }}
           >
             <Download className="w-4 h-4 mr-2" />
             下载 App

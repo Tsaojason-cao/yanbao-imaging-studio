@@ -10,72 +10,72 @@ import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slide
 const galleryItems = [
   {
     id: 1,
-    image: "/images/samples/sample-1.jpg",
-    original: "/images/samples/sample-1.jpg", // 实际项目中应为原图，此处暂用同一张模拟
+    image: "/images/samples/sample-1.webp",
+    original: "/images/samples/sample-1.webp", // 实际项目中应为原图，此处暂用同一张模拟
     master: "Aesthetic by 杉本博司",
     title: "时间的静止",
     desc: "通过长时间曝光与极简构图，捕捉超越现实的宁静感"
   },
   {
     id: 2,
-    image: "/images/samples/sample-2.jpg",
-    original: "/images/samples/sample-2.jpg",
+    image: "/images/samples/sample-2.webp",
+    original: "/images/samples/sample-2.webp",
     master: "Tone by 肖全",
     title: "时代的肖像",
     desc: "用镜头记录真实的人性与情感，黑白之间尽显张力"
   },
   {
     id: 3,
-    image: "/images/samples/sample-3.jpg",
-    original: "/images/samples/sample-3.jpg",
+    image: "/images/samples/sample-3.webp",
+    original: "/images/samples/sample-3.webp",
     master: "Color by 蜷川实花",
     title: "绚烂的梦境",
     desc: "高饱和度的色彩碰撞，营造出迷幻而华丽的视觉盛宴"
   },
   {
     id: 4,
-    image: "/images/samples/sample-4.jpg",
-    original: "/images/samples/sample-4.jpg",
+    image: "/images/samples/sample-4.webp",
+    original: "/images/samples/sample-4.webp",
     master: "Light by 滨田英明",
     title: "生活的温情",
     desc: "通透的空气感与柔和的光线，记录平凡生活中的小确幸"
   },
   {
     id: 5,
-    image: "/images/samples/sample-5.jpg",
-    original: "/images/samples/sample-5.jpg",
+    image: "/images/samples/sample-5.webp",
+    original: "/images/samples/sample-5.webp",
     master: "Mood by 王家卫",
     title: "光影的暧昧",
     desc: "独特的抽帧与色彩运用，讲述都市中流动的情绪故事"
   },
   {
     id: 6,
-    image: "/images/samples/sample-6.jpg",
-    original: "/images/samples/sample-6.jpg",
+    image: "/images/samples/sample-6.webp",
+    original: "/images/samples/sample-6.webp",
     master: "Style by 韦斯·安德森",
     title: "对称的童话",
     desc: "严谨的对称构图与复古配色，打造治愈系的视觉童话"
   },
   {
     id: 7,
-    image: "/images/samples/sample-7.jpg",
-    original: "/images/samples/sample-7.jpg",
+    image: "/images/samples/sample-7.webp",
+    original: "/images/samples/sample-7.webp",
     master: "Vision by 荒木经惟",
     title: "瞬间的真实",
     desc: "直面生与死的强烈情感，捕捉最原始的生命力"
   },
   {
     id: 8,
-    image: "/images/samples/sample-8.jpg",
-    original: "/images/samples/sample-8.jpg",
+    image: "/images/samples/sample-8.webp",
+    original: "/images/samples/sample-8.webp",
     master: "Art by 筱山纪信",
     title: "青春的悸动",
     desc: "细腻地捕捉少女的纯真与活力，定格最美好的年华"
   },
   {
     id: 9,
-    image: "/images/samples/sample-9.jpg",
-    original: "/images/samples/sample-9.jpg",
+    image: "/images/samples/sample-9.webp",
+    original: "/images/samples/sample-9.webp",
     master: "Soul by 森山大道",
     title: "街头的粗颗粒",
     desc: "高反差黑白与粗颗粒质感，展现街头摄影的野性与力量"
@@ -158,6 +158,7 @@ export default function MasterGallery() {
                     <img 
                       src={item.image} 
                       alt={item.title} 
+                      loading="lazy"
                       className="w-full h-full object-cover"
                     />
                   )}

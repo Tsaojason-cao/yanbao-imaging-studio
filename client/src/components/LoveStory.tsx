@@ -1,10 +1,74 @@
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { Download, Heart } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Download, Heart, Flower } from "lucide-react";
+import { useState, useEffect } from "react";
+
+// 粒子组件
+const Particle = ({ x, y, type, onComplete }: { x: number; y: number; type: 'heart' | 'flower'; onComplete: () => void }) => {
+  return (
+    <motion.div
+      initial={{ x, y, opacity: 1, scale: 0.5, rotate: Math.random() * 360 }}
+      animate={{ 
+        y: y + 200 + Math.random() * 100, 
+        x: x + (Math.random() - 0.5) * 100,
+        opacity: 0,
+        rotate: Math.random() * 720 
+      }}
+      transition={{ duration: 2 + Math.random() * 2, ease: "easeOut" }}
+      onAnimationComplete={onComplete}
+      className="fixed pointer-events-none z-50"
+    >
+      {type === 'heart' ? (
+        <Heart className="w-6 h-6 text-pink-500 fill-pink-500" />
+      ) : (
+        <Flower className="w-6 h-6 text-pink-300 fill-pink-200" />
+      )}
+    </motion.div>
+  );
+};
 
 export default function LoveStory() {
+  const [particles, setParticles] = useState<{ id: number; x: number; y: number; type: 'heart' | 'flower' }[]>([]);
+
+  const addParticle = (e: React.MouseEvent | MouseEvent) => {
+    const id = Date.now() + Math.random();
+    const type = Math.random() > 0.5 ? 'heart' : 'flower';
+    setParticles(prev => [...prev, { id, x: e.clientX, y: e.clientY, type }]);
+  };
+
+  const removeParticle = (id: number) => {
+    setParticles(prev => prev.filter(p => p.id !== id));
+  };
+
+  // 全局点击监听（仅在组件可见时）
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      // 检查点击是否在 LoveStory 区域内
+      const section = document.getElementById('story');
+      if (section && section.contains(e.target as Node)) {
+        addParticle(e);
+      }
+    };
+
+    window.addEventListener('click', handleClick);
+    return () => window.removeEventListener('click', handleClick);
+  }, []);
+
   return (
-    <section id="story" className="py-32 relative overflow-hidden">
+    <section id="story" className="py-32 relative overflow-hidden cursor-pointer">
+      {/* 粒子容器 */}
+      <AnimatePresence>
+        {particles.map(p => (
+          <Particle 
+            key={p.id} 
+            x={p.x} 
+            y={p.y} 
+            type={p.type} 
+            onComplete={() => removeParticle(p.id)} 
+          />
+        ))}
+      </AnimatePresence>
+
       {/* Background Heart Particles */}
       <div className="absolute inset-0 pointer-events-none">
         {[...Array(20)].map((_, i) => (
@@ -58,9 +122,12 @@ export default function LoveStory() {
                 有了 yanbao AI
               </span>
             </h2>
+            <p className="text-sm text-pink-400/60 animate-pulse mb-8">
+              ( 点击屏幕任意位置，触发浪漫特效 )
+            </p>
           </div>
 
-          <div className="prose prose-invert prose-lg mx-auto text-left space-y-8 bg-black/40 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl">
+          <div className="prose prose-invert prose-lg mx-auto text-left space-y-8 bg-black/40 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl select-none">
             <p className="text-xl text-white/90 leading-relaxed font-medium">
               2025年8月24日，一个原本打算“玩玩”的开场，却成了我余生失控的伏笔。
             </p>
@@ -100,8 +167,14 @@ export default function LoveStory() {
               <Button 
                 size="lg" 
                 className="bg-gradient-to-r from-[#FF69B4] to-[#A33BFF] hover:from-[#FF1493] hover:to-[#9400D3] text-white px-12 h-16 text-xl rounded-full shadow-lg shadow-pink-500/25 animate-pulse transition-all hover:scale-105"
-                onClick={() => {
-                  window.open('https://files.manuscdn.com/user_upload_by_module/session_file/310519663291962366/jVgfLFpLeBxAcRlq.apk', '_blank');
+                onClick={(e) => {
+                  e.stopPropagation(); // 防止触发背景特效
+                  const link = document.createElement('a');
+                  link.href = '/yanbao-ai-release.apk';
+                  link.download = 'yanbao-ai-release.apk';
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
                 }}
               >
                 <Download className="w-6 h-6 mr-3" />
