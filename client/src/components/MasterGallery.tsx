@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
+import SmartRecommender from './SmartRecommender';
 
 // 样片数据 - 包含七位大师参数
 const galleryItems = [
@@ -122,6 +123,13 @@ export default function MasterGallery() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isComparing, setIsComparing] = useState(true);
 
+  const handleRecommendation = (masterName: string) => {
+    const index = galleryItems.findIndex(item => item.master.includes(masterName));
+    if (index !== -1 && emblaApi) {
+      emblaApi.scrollTo(index);
+    }
+  };
+
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
     setSelectedIndex(emblaApi.selectedScrollSnap());
@@ -176,6 +184,11 @@ export default function MasterGallery() {
               {isComparing ? '关闭对比模式' : '开启原图对比'}
             </Button>
           </motion.div>
+        </div>
+
+        {/* 智能推荐模块 */}
+        <div className="mb-12">
+          <SmartRecommender onRecommend={handleRecommendation} />
         </div>
 
         {/* 轮播主体 */}

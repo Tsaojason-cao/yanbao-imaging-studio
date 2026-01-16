@@ -15,6 +15,9 @@ const plugins = [
   VitePWA({
     registerType: 'autoUpdate',
     includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+    workbox: {
+      maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4MB
+    },
     manifest: {
       name: 'Yanbao AI - 私人影像工作室',
       short_name: 'Yanbao AI',
