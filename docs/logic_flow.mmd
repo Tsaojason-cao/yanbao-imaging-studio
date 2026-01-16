@@ -1,0 +1,17 @@
+graph TD
+    A[用户拖动滑块] --> B[Slider.onValueChange]
+    B --> C[handleSliderChange函数]
+    C --> D[setBeautyParams更新State]
+    C --> E[beautyShaderEngine.setUniform]
+    E --> F[getUniformName获取变量名]
+    F --> G[gl.getUniformLocation获取位置]
+    G --> H[gl.uniform1f设置值]
+    H --> I[render重新渲染]
+    I --> J[GLSL Shader接收Uniform]
+    J --> K[applyPhiltrumAdjustment处理像素]
+    K --> L[texture2D采样纹理]
+    L --> M[gl_FragColor输出颜色]
+    M --> N[屏幕显示修改后的图像]
+    
+    C --> O[Haptics.impactAsync震动反馈]
+    C --> P[setCurrentAdjustment更新UI]
