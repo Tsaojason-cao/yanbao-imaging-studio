@@ -1,42 +1,36 @@
 import { motion } from "framer-motion";
-import { Check, Zap, Heart, Shield, Sparkles, Crown } from "lucide-react";
+import { Check, X, Crown, Zap, Heart, Shield, Sparkles } from "lucide-react";
 
-const advantages = [
+const comparisonData = [
   {
-    icon: <Heart className="w-6 h-6 text-pink-500" />,
-    title: "情感算法",
-    desc: "不仅仅是滤镜，更是基于「雁宝记忆」的审美沉淀。每一款影调都蕴含着对生活的热爱与感悟，让照片有了温度。",
-    highlight: "独家首创"
+    feature: "核心算法",
+    yanbao: { text: "情感计算引擎 (基于「雁宝记忆」)", highlight: true },
+    others: { text: "通用商业算法 (冷冰冰的数据堆砌)", highlight: false }
   },
   {
-    icon: <Sparkles className="w-6 h-6 text-purple-500" />,
-    title: "交互美学",
-    desc: "专属库洛米 UI 与头像快门，打破工具的冰冷感。每一次点击都是一次心动的交互，赋予摄影满满的仪式感。",
-    highlight: "极致体验"
+    feature: "大师参数",
+    yanbao: { text: "内置 31 位全球顶尖摄影大师参数矩阵", highlight: true },
+    others: { text: "普通网红滤镜 (千篇一律)", highlight: false }
   },
   {
-    icon: <Shield className="w-6 h-6 text-blue-500" />,
-    title: "技术守护",
-    desc: "Jason Tsao 跨越 22 年与 2200 公里的技术守护。用最硬核的代码，守护最柔软的梦，只为那个不爱葱姜蒜的小女孩。",
-    highlight: "深情承诺"
+    feature: "交互体验",
+    yanbao: { text: "专属库洛米 UI + 头像快门仪式感", highlight: true },
+    others: { text: "复杂参数面板 (工具属性强)", highlight: false }
   },
   {
-    icon: <Crown className="w-6 h-6 text-yellow-500" />,
-    title: "大师复刻",
-    desc: "31 位摄影大师参数全收录。从森山大道的粗颗粒到蜷川实花的绚烂色彩，一键复刻经典，让你的照片瞬间拥有大师灵魂。",
-    highlight: "专业级"
+    feature: "技术守护",
+    yanbao: { text: "Jason Tsao 跨越 22 年的技术守护", highlight: true },
+    others: { text: "标准商业客服 (按流程办事)", highlight: false }
   },
   {
-    icon: <Zap className="w-6 h-6 text-green-500" />,
-    title: "极致性能",
-    desc: "本地化 AI 引擎，毫秒级响应。无需上传云端，保护隐私的同时，享受丝滑流畅的修图体验。",
-    highlight: "快如闪电"
+    feature: "隐私安全",
+    yanbao: { text: "100% 本地运行 (无云端上传)", highlight: true },
+    others: { text: "云端处理 (存在隐私风险)", highlight: false }
   },
   {
-    icon: <Check className="w-6 h-6 text-cyan-500" />,
-    title: "持续进化",
-    desc: "不仅仅是一个 App，更是一个不断成长的生命体。随着你们的故事继续，Yanbao AI 也将不断解锁新的惊喜。",
-    highlight: "未来可期"
+    feature: "广告干扰",
+    yanbao: { text: "纯净无广 (只为摄影而生)", highlight: true },
+    others: { text: "广告弹窗多 (臃肿冗余)", highlight: false }
   }
 ];
 
@@ -63,40 +57,58 @@ export default function CompetitorAnalysis() {
               </span>
             </h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              我们不与平庸为伍，只为极致而生。在这里，你将体验到前所未有的影像魅力。
+              内置 31 位全球顶尖摄影大师参数矩阵，非滤镜式覆盖，而是基于专业影像逻辑的像素级重构。
             </p>
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {advantages.map((item, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-colors group relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 bg-gradient-to-bl from-white/10 to-transparent w-16 h-16 rounded-bl-full -mr-8 -mt-8 transition-all group-hover:scale-150" />
-              
-              <div className="flex items-start justify-between mb-6">
-                <div className="p-3 bg-black/50 rounded-xl border border-white/10 group-hover:scale-110 transition-transform duration-300">
-                  {item.icon}
+        {/* PK 表格 */}
+        <div className="max-w-5xl mx-auto bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+          {/* 表头 */}
+          <div className="grid grid-cols-12 bg-white/5 border-b border-white/10 p-6 text-lg font-bold">
+            <div className="col-span-3 text-gray-400 flex items-center">核心维度</div>
+            <div className="col-span-4 text-gray-500 flex items-center justify-center opacity-50">普通修图 App</div>
+            <div className="col-span-5 text-white flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-xl border border-pink-500/30 py-4">
+              <Crown className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-400">Yanbao AI</span>
+            </div>
+          </div>
+
+          {/* 表格内容 */}
+          <div className="divide-y divide-white/5">
+            {comparisonData.map((row, index) => (
+              <motion.div 
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="grid grid-cols-12 p-6 hover:bg-white/5 transition-colors group"
+              >
+                {/* 维度名称 */}
+                <div className="col-span-3 flex items-center font-medium text-gray-300">
+                  {row.feature}
                 </div>
-                <span className="text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-pink-500/20 to-purple-500/20 text-pink-300 border border-pink-500/30">
-                  {item.highlight}
-                </span>
-              </div>
-              
-              <h3 className="text-xl font-bold text-white mb-3 group-hover:text-pink-400 transition-colors">
-                {item.title}
-              </h3>
-              <p className="text-gray-400 leading-relaxed">
-                {item.desc}
-              </p>
-            </motion.div>
-          ))}
+
+                {/* 普通 App */}
+                <div className="col-span-4 flex items-center gap-3 text-gray-500 grayscale opacity-60 group-hover:opacity-80 transition-opacity border-r border-white/5 pr-4">
+                  <X className="w-5 h-5 text-red-500 shrink-0" />
+                  <span className="text-sm">{row.others.text}</span>
+                </div>
+
+                {/* Yanbao AI */}
+                <div className="col-span-5 flex items-center gap-3 pl-8 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-pink-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center shrink-0 border border-green-500/50">
+                    <Check className="w-4 h-4 text-green-400" />
+                  </div>
+                  <span className="text-white font-medium text-base relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300 group-hover:from-pink-200 group-hover:to-purple-200 transition-all">
+                    {row.yanbao.text}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
