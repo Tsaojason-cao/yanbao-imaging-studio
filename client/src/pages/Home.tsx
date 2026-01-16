@@ -23,12 +23,19 @@ export default function Home() {
     }, 100);
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-pink-500/30">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-white/10">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div 
+            className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={scrollToTop}
+          >
             <img src="/logo.png" alt="Yanbao AI Logo" className="w-10 h-10 rounded-xl shadow-lg shadow-pink-500/20" />
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500">
               YanBao AI
@@ -153,18 +160,23 @@ export default function Home() {
       </section>
 
       {/* Revealed Content */}
-      {/* Floating Contact Button */}
+      {/* Floating Contact Button - Kuromi Style */}
       <motion.a
         href="tel:15201260173"
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        className="fixed bottom-8 right-8 z-50 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/30 hover:bg-green-600 transition-colors cursor-pointer"
+        className="fixed bottom-8 right-8 z-50 w-20 h-20 flex items-center justify-center cursor-pointer drop-shadow-2xl filter hover:brightness-110 transition-all"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-        </svg>
+        <img 
+          src="/images/kuromi-phone.png" 
+          alt="Call Customer Service" 
+          className="w-full h-full object-contain"
+        />
+        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-bounce">
+          Call Me!
+        </div>
       </motion.a>
 
       <AnimatePresence>

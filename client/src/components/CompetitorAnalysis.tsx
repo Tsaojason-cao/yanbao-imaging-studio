@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, Swords, Zap, Heart, Shield, Palette } from "lucide-react";
+import { Check, X, Swords, Zap, Heart, Shield, Palette, Crown, Clock, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // 竞品数据配置
@@ -11,25 +11,25 @@ const competitors = [
     name: '像素蛋糕',
     color: '#FFD700', // 金色代表昂贵/专业
     icon: <Palette className="w-6 h-6" />,
-    slogan: "昂贵的工业修图",
+    slogan: "昂贵的工业流水线",
     features: [
       {
-        title: "付费模式",
-        opponent: "昂贵订阅制 / 按张收费",
-        yanbao: "完全免费 / 为爱发电",
-        icon: <Shield className="w-4 h-4" />
-      },
-      {
-        title: "审美风格",
-        opponent: "标准化影楼风，千人一面",
-        yanbao: "31位大师影调，独家定制",
+        title: "核心算法",
+        opponent: "通用商业算法，冷冰冰的数据堆砌",
+        yanbao: "情感计算引擎，基于「雁宝记忆」的审美沉淀",
         icon: <Heart className="w-4 h-4" />
       },
       {
-        title: "处理效率",
-        opponent: "需上传云端，等待排队",
-        yanbao: "本地实时计算，毫秒级响应",
-        icon: <Zap className="w-4 h-4" />
+        title: "交互体验",
+        opponent: "复杂的参数面板，工具属性强",
+        yanbao: "专属库洛米 UI 与头像快门，满满的仪式感",
+        icon: <Crown className="w-4 h-4" />
+      },
+      {
+        title: "服务承诺",
+        opponent: "商业客服，按流程办事",
+        yanbao: "Jason Tsao 跨越 22 年与 2200 公里的技术守护",
+        icon: <Clock className="w-4 h-4" />
       }
     ]
   },
@@ -38,25 +38,25 @@ const competitors = [
     name: '美图秀秀',
     color: '#FF69B4', // 粉色代表大众
     icon: <Palette className="w-6 h-6" />,
-    slogan: "臃肿的工具集合",
+    slogan: "臃肿的广告集合体",
     features: [
       {
-        title: "操作体验",
-        opponent: "功能繁杂，广告弹窗多",
-        yanbao: "极简设计，纯净无广",
+        title: "审美高度",
+        opponent: "迎合大众的网红滤镜，千篇一律",
+        yanbao: "31位大师影调，私人定制的艺术级审美",
+        icon: <Palette className="w-4 h-4" />
+      },
+      {
+        title: "使用体验",
+        opponent: "广告弹窗多，功能冗余",
+        yanbao: "纯净无广，只为摄影而生",
         icon: <Shield className="w-4 h-4" />
       },
       {
-        title: "成片效果",
-        opponent: "网红滤镜，缺乏质感",
-        yanbao: "电影级色彩，高级耐看",
+        title: "情感连接",
+        opponent: "工具人属性，用完即走",
+        yanbao: "每一次快门都是一次深情的告白",
         icon: <Heart className="w-4 h-4" />
-      },
-      {
-        title: "智能程度",
-        opponent: "手动参数多，调节复杂",
-        yanbao: "AI 一键成片，自动优化",
-        icon: <Zap className="w-4 h-4" />
       }
     ]
   },
@@ -65,23 +65,23 @@ const competitors = [
     name: '美颜相机',
     color: '#FF1493', // 深粉代表美颜
     icon: <Palette className="w-6 h-6" />,
-    slogan: "过度的磨皮滤镜",
+    slogan: "失真的过度磨皮",
     features: [
       {
-        title: "皮肤质感",
-        opponent: "过度磨皮，丢失细节",
-        yanbao: "保留毛孔纹理，真实自然",
-        icon: <Heart className="w-4 h-4" />
+        title: "真实质感",
+        opponent: "过度磨皮，丢失皮肤纹理细节",
+        yanbao: "保留真实质感，还原你眼中的美",
+        icon: <Zap className="w-4 h-4" />
       },
       {
-        title: "五官调整",
-        opponent: "蛇精脸，比例失真",
-        yanbao: "微调骨相，保留个人特色",
+        title: "个性化",
+        opponent: "标准化的蛇精脸模板",
+        yanbao: "微调骨相，保留个人特色与辨识度",
         icon: <Palette className="w-4 h-4" />
       },
       {
-        title: "隐私安全",
-        opponent: "云端处理，有泄露风险",
+        title: "安全隐私",
+        opponent: "云端处理，存在隐私泄露风险",
         yanbao: "100% 本地运行，绝对安全",
         icon: <Shield className="w-4 h-4" />
       }
@@ -104,12 +104,11 @@ export default function CompetitorAnalysis() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-              Yanbao AI 综合分析
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 leading-tight">
+              yanbao AI 综合PK：<br className="md:hidden" />私人定制的极致巅峰
             </h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              基于深度学习的情感计算引擎，重新定义影像处理范式。<br/>
-              <span className="text-white font-semibold">以数据隐私为基石，融合大师级审美与情感温度。</span>
+              不只是工具的较量，更是<span className="text-pink-500 font-semibold">爱与技术</span>的降维打击。
             </p>
           </motion.div>
         </div>
@@ -160,20 +159,20 @@ export default function CompetitorAnalysis() {
                     </div>
                     <div>
                       <h3 className="text-2xl font-bold text-white">Yanbao AI</h3>
-                      <p className="text-purple-300 text-sm">大师级私人影像工作室</p>
+                      <p className="text-purple-300 text-sm">私人定制 · 极致巅峰</p>
                     </div>
                   </div>
 
-                  <div className="space-y-6 flex-1">
+                  <div className="space-y-8 flex-1">
                     {activeCompetitor.features.map((feature, idx) => (
                       <div key={idx} className="group">
-                        <div className="flex items-center gap-2 text-purple-300 text-sm mb-1 font-medium">
+                        <div className="flex items-center gap-2 text-purple-300 text-sm mb-2 font-medium">
                           {feature.icon}
                           {feature.title}
                         </div>
-                        <div className="flex items-start gap-3 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 group-hover:bg-purple-500/20 transition-colors">
+                        <div className="flex items-start gap-3 p-4 rounded-xl bg-purple-500/10 border border-purple-500/20 group-hover:bg-purple-500/20 transition-colors shadow-lg shadow-purple-900/20">
                           <Check className="w-5 h-5 text-green-400 shrink-0 mt-0.5" />
-                          <span className="text-white font-medium">{feature.yanbao}</span>
+                          <span className="text-white font-medium leading-relaxed">{feature.yanbao}</span>
                         </div>
                       </div>
                     ))}
@@ -197,15 +196,15 @@ export default function CompetitorAnalysis() {
                     </div>
                   </div>
 
-                  <div className="space-y-6 flex-1">
+                  <div className="space-y-8 flex-1">
                     {activeCompetitor.features.map((feature, idx) => (
                       <div key={idx} className="group text-right">
-                        <div className="flex items-center gap-2 text-gray-500 text-sm mb-1 font-medium justify-end">
+                        <div className="flex items-center gap-2 text-gray-500 text-sm mb-2 font-medium justify-end">
                           {feature.title}
                           {feature.icon}
                         </div>
-                        <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5 border border-white/5 group-hover:bg-white/10 transition-colors justify-end">
-                          <span className="text-gray-400">{feature.opponent}</span>
+                        <div className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-white/5 group-hover:bg-white/10 transition-colors justify-end">
+                          <span className="text-gray-400 leading-relaxed">{feature.opponent}</span>
                           <X className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
                         </div>
                       </div>

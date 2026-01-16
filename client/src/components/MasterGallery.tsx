@@ -1,52 +1,91 @@
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Camera, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight, Camera, Sparkles, Split } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
+import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
 // 样片数据
 const galleryItems = [
   {
     id: 1,
-    image: "/images/01_Home_Hero.png",
-    master: "Style by 肖全",
-    title: "人像的灵魂",
-    desc: "捕捉眼神中的光芒，还原最真实的情感浓度"
+    image: "/images/samples/sample-1.jpg",
+    original: "/images/samples/sample-1.jpg", // 实际项目中应为原图，此处暂用同一张模拟
+    master: "Aesthetic by 杉本博司",
+    title: "时间的静止",
+    desc: "通过长时间曝光与极简构图，捕捉超越现实的宁静感"
   },
   {
     id: 2,
-    image: "/images/02_Features_Grid.png",
-    master: "Style by 蜷川实花",
-    title: "色彩的盛宴",
-    desc: "高饱和度的色彩碰撞，营造梦幻般的视觉冲击"
+    image: "/images/samples/sample-2.jpg",
+    original: "/images/samples/sample-2.jpg",
+    master: "Tone by 肖全",
+    title: "时代的肖像",
+    desc: "用镜头记录真实的人性与情感，黑白之间尽显张力"
   },
   {
     id: 3,
-    image: "/images/03_Parameter_Viz.png",
-    master: "Style by 滨田英明",
-    title: "日系的清新",
-    desc: "通透的空气感，记录生活中的小确幸"
+    image: "/images/samples/sample-3.jpg",
+    original: "/images/samples/sample-3.jpg",
+    master: "Color by 蜷川实花",
+    title: "绚烂的梦境",
+    desc: "高饱和度的色彩碰撞，营造出迷幻而华丽的视觉盛宴"
   },
   {
     id: 4,
-    image: "/images/04_Competitor_Radar.png",
-    master: "Style by 韦斯·安德森",
-    title: "对称的美学",
-    desc: "严谨的构图与复古配色，打造电影级质感"
+    image: "/images/samples/sample-4.jpg",
+    original: "/images/samples/sample-4.jpg",
+    master: "Light by 滨田英明",
+    title: "生活的温情",
+    desc: "通透的空气感与柔和的光线，记录平凡生活中的小确幸"
   },
   {
     id: 5,
-    image: "/images/05_Love_Story.png",
-    master: "Style by 王家卫",
-    title: "情绪的流动",
-    desc: "抽帧与慢门，讲述光影里的暧昧故事"
+    image: "/images/samples/sample-5.jpg",
+    original: "/images/samples/sample-5.jpg",
+    master: "Mood by 王家卫",
+    title: "光影的暧昧",
+    desc: "独特的抽帧与色彩运用，讲述都市中流动的情绪故事"
+  },
+  {
+    id: 6,
+    image: "/images/samples/sample-6.jpg",
+    original: "/images/samples/sample-6.jpg",
+    master: "Style by 韦斯·安德森",
+    title: "对称的童话",
+    desc: "严谨的对称构图与复古配色，打造治愈系的视觉童话"
+  },
+  {
+    id: 7,
+    image: "/images/samples/sample-7.jpg",
+    original: "/images/samples/sample-7.jpg",
+    master: "Vision by 荒木经惟",
+    title: "瞬间的真实",
+    desc: "直面生与死的强烈情感，捕捉最原始的生命力"
+  },
+  {
+    id: 8,
+    image: "/images/samples/sample-8.jpg",
+    original: "/images/samples/sample-8.jpg",
+    master: "Art by 筱山纪信",
+    title: "青春的悸动",
+    desc: "细腻地捕捉少女的纯真与活力，定格最美好的年华"
+  },
+  {
+    id: 9,
+    image: "/images/samples/sample-9.jpg",
+    original: "/images/samples/sample-9.jpg",
+    master: "Soul by 森山大道",
+    title: "街头的粗颗粒",
+    desc: "高反差黑白与粗颗粒质感，展现街头摄影的野性与力量"
   }
 ];
 
 export default function MasterGallery() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 4000 })]);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 5000, stopOnInteraction: true })]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isComparing, setIsComparing] = useState(false);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -71,7 +110,7 @@ export default function MasterGallery() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -87,9 +126,18 @@ export default function MasterGallery() {
                 一键复刻经典
               </span>
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
               不仅仅是滤镜，更是对光影艺术的致敬。每一款影调都经过专业摄影师的逐像素调校。
             </p>
+            
+            <Button 
+              variant="outline" 
+              onClick={() => setIsComparing(!isComparing)}
+              className={`rounded-full border-purple-500/50 hover:bg-purple-500/10 ${isComparing ? 'bg-purple-500/20 text-purple-300' : 'text-gray-400'}`}
+            >
+              <Split className="w-4 h-4 mr-2" />
+              {isComparing ? '关闭对比模式' : '开启原图对比'}
+            </Button>
           </motion.div>
         </div>
 
@@ -98,28 +146,49 @@ export default function MasterGallery() {
           <div className="overflow-hidden rounded-2xl border border-white/10 shadow-2xl bg-black/50 backdrop-blur-sm" ref={emblaRef}>
             <div className="flex">
               {galleryItems.map((item) => (
-                <div key={item.id} className="flex-[0_0_100%] min-w-0 relative aspect-[16/9] md:aspect-[21/9]">
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-700"
-                  />
+                <div key={item.id} className="flex-[0_0_100%] min-w-0 relative aspect-[4/3] md:aspect-[16/9]">
+                  {isComparing ? (
+                    <ReactCompareSlider
+                      itemOne={<ReactCompareSliderImage src={item.original} alt="Original" style={{ filter: 'grayscale(100%) opacity(0.8)' }} />}
+                      itemTwo={<ReactCompareSliderImage src={item.image} alt="Processed" />}
+                      className="w-full h-full"
+                      position={50}
+                    />
+                  ) : (
+                    <img 
+                      src={item.image} 
+                      alt={item.title} 
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                   
                   {/* 底部信息栏 */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-8 md:p-12 flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-6 md:p-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-4 pointer-events-none">
                     <div>
-                      <div className="flex items-center gap-2 text-pink-500 font-medium mb-2">
+                      <motion.div 
+                        key={selectedIndex}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="flex items-center gap-2 text-pink-500 font-medium mb-2"
+                      >
                         <Sparkles className="w-4 h-4" />
-                        <span>{item.master}</span>
-                      </div>
-                      <h3 className="text-3xl font-bold text-white mb-2">{item.title}</h3>
-                      <p className="text-gray-300 max-w-lg">{item.desc}</p>
+                        <span className="text-lg tracking-wide">{item.master}</span>
+                      </motion.div>
+                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{item.title}</h3>
+                      <p className="text-gray-300 max-w-lg text-sm md:text-base">{item.desc}</p>
                     </div>
                     <div className="hidden md:block text-right">
                       <p className="text-white/40 text-sm font-mono">YANBAO AI STUDIO</p>
                       <p className="text-white/40 text-sm font-mono">PRESET ID: 0{item.id}</p>
                     </div>
                   </div>
+                  
+                  {isComparing && (
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-md px-4 py-1 rounded-full text-xs text-white/80 pointer-events-none border border-white/10">
+                      ← 原图 (模拟) | 大师调优 →
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -129,7 +198,7 @@ export default function MasterGallery() {
           <Button
             variant="ghost"
             size="icon"
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-12 h-12 border border-white/10 backdrop-blur-md hidden md:flex"
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-12 h-12 border border-white/10 backdrop-blur-md hidden md:flex z-20"
             onClick={scrollPrev}
           >
             <ChevronLeft className="w-6 h-6" />
@@ -137,7 +206,7 @@ export default function MasterGallery() {
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-12 h-12 border border-white/10 backdrop-blur-md hidden md:flex"
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-12 h-12 border border-white/10 backdrop-blur-md hidden md:flex z-20"
             onClick={scrollNext}
           >
             <ChevronRight className="w-6 h-6" />
