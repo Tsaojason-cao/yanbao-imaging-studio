@@ -14,3 +14,9 @@ coverage/
 *.swo
 *~
 .cache/
+android/
+ios/
+.gradle/
+*.apk
+*.aab
+*.ipa
