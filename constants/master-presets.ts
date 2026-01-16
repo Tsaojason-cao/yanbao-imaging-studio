@@ -14,7 +14,7 @@
  * - sharpness: 锐度 (0 到 200)
  */
 
-import { Core22Params, DEFAULT_PARAMS } from '../lib/beauty-shader-engine';
+import { Core29Params, DEFAULT_PARAMS } from '../lib/beauty-shader-engine';
 
 /**
  * 大师预设接口
@@ -27,23 +27,23 @@ export interface MasterPreset {
   style: string;
   color: string;
   icon: string;
-  params: Partial<Core22Params>; // 使用 Partial<Core22Params> 兼容 22 维参数
+  params: Partial<Core29Params>; // 使用 Partial<Core29Params> 兼容 29 维参数
   description: string;
 }
 
 /**
  * 根据预设名称获取完整的 Core22Params
  * @param name 预设名称
- * @returns 完整的 Core22Params 对象
+ * @returns 完整的 Core29Params 对象
  */
-export function getPresetParams(name: string): Core22Params {
+export function getPresetParams(name: string): Core29Params {
   const preset = MASTER_PRESETS.find(p => p.name === name);
   if (!preset) {
     return DEFAULT_PARAMS;
   }
 
-  // 使用 Object.assign 合并默认参数和预设参数，确保所有 22 维都有值
-  return Object.assign({}, DEFAULT_PARAMS, preset.params) as Core22Params;
+  // 使用 Object.assign 合并默认参数和预设参数，确保所有 29 维都有值
+  return Object.assign({}, DEFAULT_PARAMS, preset.params) as Core29Params;
 }
 
 export const MASTER_PRESETS: MasterPreset[] = [
@@ -70,7 +70,14 @@ export const MASTER_PRESETS: MasterPreset[] = [
       faceSlim: 0,
       eyeEnlarge: 0,
       noseLength: 0,
-    } as Partial<Core22Params>,
+      // 进阶参数 (肖全风格不使用)
+      philtrumDepth: 0,
+      templeFill: 0,
+      nasolabialFolds: 0,
+      skinTexture: 0,
+      bloomIntensity: 0,
+      dehaze: 0,
+    } as Partial<Core29Params>,
     description: "中国当代人文摄影大师，擅长捕捉人物内心世界",
   },
   {
@@ -710,7 +717,18 @@ export const MASTER_PRESETS: MasterPreset[] = [
       forehead: 10,
       mouthSize: -10, // 略微收紧嘴型
       eyeDistance: -5, // 略微拉近眼距
-    } as Partial<Core22Params>,
+      // 进阶骨相
+      philtrumDepth: 30, // 增加人中深度立体感
+      templeFill: 20, // 轻微太阳穴填充
+      nasolabialFolds: 40, // 法令纹中度淡化
+      // 进阶影调与质感
+      bloomIntensity: 15, // 轻微柔光
+      dehaze: 10, // 轻微去雾
+      skinTexture: 50, // 适度保留皮肤质感
+      hslSkinHue: -5, // 肤色略微偏红
+      hslSkinSat: 110, // 肤色饱和度略高
+      hslSkinLum: 5, // 肤色亮度略高
+    } as Partial<Core29Params>,
     description: "雁宝专属审美模型，融合亚洲审美优化与清冷高级感。",
   },
 ];

@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS photo_metadata (
     location_lon REAL, -- 拍摄地点经度
     lbs_spot_id INTEGER, -- 关联的 LBS 推荐点 ID
     
-    -- 核心：存储 22 维美颜和影调参数的 JSON 字符串
+    -- 核心：存储 29 维美颜和影调参数的 JSON 字符串
     -- SQLite 推荐使用 TEXT 类型存储 JSON
     shooting_params TEXT NOT NULL, 
     
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS yanbao_memories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     memory_name TEXT NOT NULL UNIQUE, -- 记忆名称 (如：我的最爱人像)
     
-    -- 核心：存储 22 维美颜和影调参数的 JSON 字符串
+    -- 核心：存储 29 维美颜和影调参数的 JSON 字符串
     params_json TEXT NOT NULL, 
     
     created_time DATETIME DEFAULT CURRENT_TIMESTAMP
