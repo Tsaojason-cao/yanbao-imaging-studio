@@ -14,6 +14,12 @@
  * - sharpness: 锐度 (0 到 200)
  */
 
+import { Core22Params, DEFAULT_PARAMS } from '../lib/beauty-shader-engine';
+
+/**
+ * 大师预设接口
+ * 预设只覆盖部分参数，其余使用 DEFAULT_PARAMS
+ */
 export interface MasterPreset {
   id: number;
   name: string;
@@ -21,19 +27,23 @@ export interface MasterPreset {
   style: string;
   color: string;
   icon: string;
-  params: {
-    exposure: number;
-    contrast: number;
-    saturation: number;
-    highlights: number;
-    shadows: number;
-    temperature: number;
-    tint: number;
-    grain: number;
-    vignette: number;
-    sharpness: number;
-  };
+  params: Partial<Core22Params>; // 使用 Partial<Core22Params> 兼容 22 维参数
   description: string;
+}
+
+/**
+ * 根据预设名称获取完整的 Core22Params
+ * @param name 预设名称
+ * @returns 完整的 Core22Params 对象
+ */
+export function getPresetParams(name: string): Core22Params {
+  const preset = MASTER_PRESETS.find(p => p.name === name);
+  if (!preset) {
+    return DEFAULT_PARAMS;
+  }
+
+  // 使用 Object.assign 合并默认参数和预设参数，确保所有 22 维都有值
+  return Object.assign({}, DEFAULT_PARAMS, preset.params) as Core22Params;
 }
 
 export const MASTER_PRESETS: MasterPreset[] = [
@@ -45,17 +55,22 @@ export const MASTER_PRESETS: MasterPreset[] = [
     color: "#E879F9",
     icon: "📸",
     params: {
-      exposure: 0.3,
-      contrast: 115,
-      saturation: 85,
-      highlights: -15,
+      // 影调参数 (肖全：经典黑白，高对比，高颗粒)
+      exposure: -0.2,
+      contrast: 135, // 135% 对比度
+      saturation: 0, // 饱和度归零 (黑白)
+      vibrance: 0,
+      highlights: 80,
       shadows: 20,
-      temperature: 5800,
-      tint: -5,
-      grain: 25,
-      vignette: 15,
-      sharpness: 110,
-    },
+      temperature: 6500,
+      tint: 0,
+      sharpness: 50,
+      grain: 80, // 强烈颗粒感
+      // 美颜参数 (肖全风格追求真实，美颜参数保持中性或微调)
+      faceSlim: 0,
+      eyeEnlarge: 0,
+      noseLength: 0,
+    } as Partial<Core22Params>,
     description: "中国当代人文摄影大师，擅长捕捉人物内心世界",
   },
   {
@@ -669,24 +684,34 @@ export const MASTER_PRESETS: MasterPreset[] = [
   },
   {
     id: 31,
-    name: "Yanbao AI",
-    nameEn: "Yanbao",
+    name: "YanBao AI Custom",
+    nameEn: "Yanbao Custom",
     style: "专属审美",
     color: "#EC4899",
     icon: "🐰",
     params: {
-      exposure: 0.5,
-      contrast: 115,
-      saturation: 110,
-      highlights: -5,
-      shadows: 20,
-      temperature: 6200,
-      tint: 8,
-      grain: 18,
-      vignette: 22,
-      sharpness: 115,
-    },
-    description: "雁宝专属审美模型，融合库洛米甜美与摄影艺术",
+      // 影调参数 (雁宝定制：清冷高级感)
+      exposure: 0.1,
+      contrast: 110,
+      saturation: 90, // 略微降低饱和度
+      vibrance: 100,
+      highlights: 110, // 提亮高光
+      shadows: 10, // 压暗阴影
+      temperature: 5800, // 偏冷色调
+      tint: -10, // 偏洋红
+      sharpness: 10,
+      grain: 0,
+      // 美颜参数 (核心骨相优化)
+      faceSlim: 30, // 轻微瘦脸
+      jawline: 20, // 轻微收紧下颌线
+      eyeEnlarge: 15, // 轻微放大眼睛
+      noseNarrow: 10, // 轻微瘦鼻
+      noseLength: -20, // 关键：人中缩短 20%
+      forehead: 10,
+      mouthSize: -10, // 略微收紧嘴型
+      eyeDistance: -5, // 略微拉近眼距
+    } as Partial<Core22Params>,
+    description: "雁宝专属审美模型，融合亚洲审美优化与清冷高级感。",
   },
 ];
 
@@ -694,12 +719,15 @@ export const MASTER_PRESETS: MasterPreset[] = [
  * 根据大师参数生成雷达图数据
  */
 export function getMasterRadarData(preset: MasterPreset) {
+  // 兼容旧的雷达图数据结构，只取影调参数
+  const params = getPresetParams(preset.name);
   return [
-    { label: "曝光", value: ((preset.params.exposure + 2) / 4) * 100 },
-    { label: "对比度", value: (preset.params.contrast / 200) * 100 },
-    { label: "饱和度", value: (preset.params.saturation / 200) * 100 },
-    { label: "颗粒", value: preset.params.grain },
-    { label: "暗角", value: preset.params.vignette },
-    { label: "锐度", value: (preset.params.sharpness / 200) * 100 },
+    { label: "曝光", value: ((params.exposure + 2) / 4) * 100 },
+    { label: "对比度", value: (params.contrast / 200) * 100 },
+    { label: "饱和度", value: (params.saturation / 200) * 100 },
+    { label: "颗粒", value: params.grain },
+    { label: "高光", value: params.highlights },
+    { label: "阴影", value: params.shadows },
+    { label: "锐度", value: (params.sharpness / 200) * 100 },
   ];
 }
