@@ -1,80 +1,126 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Camera, Sparkles, Split, Sliders } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Camera, Sparkles, Split, Sliders, Aperture, Sun, Contrast, Droplets, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
-// 样片数据 - 包含大师参数
+// 样片数据 - 包含七位大师参数
 const galleryItems = [
   {
     id: 1,
     image: "/images/samples/sample-1.webp",
     original: "/images/samples/sample-1.webp",
-    master: "Tone by 肖全",
+    master: "Tone by 肖全 (Xiao Quan)",
     title: "时代的肖像",
     desc: "极致黑白影调，模拟胶片质感，保留人像的岁月刻痕",
-    filter: "grayscale(100%) contrast(140%) brightness(90%)", // 肖全模式
-    params: { exposure: -0.1, contrast: +0.4, saturation: -1.0, grain: +0.2 }
+    filter: "grayscale(100%) contrast(140%) brightness(90%)",
+    params: [
+      { name: "曝光 (Exposure)", value: -0.1, display: "-0.1", icon: <Sun className="w-4 h-4" />, color: "bg-yellow-500" },
+      { name: "对比度 (Contrast)", value: 0.4, display: "+0.4", icon: <Contrast className="w-4 h-4" />, color: "bg-purple-500" },
+      { name: "饱和度 (Saturation)", value: -1.0, display: "-1.0", icon: <Droplets className="w-4 h-4" />, color: "bg-blue-500" },
+      { name: "颗粒度 (Grain)", value: 0.2, display: "+0.2", icon: <Layers className="w-4 h-4" />, color: "bg-gray-400" }
+    ]
   },
   {
     id: 2,
     image: "/images/samples/sample-2.webp",
     original: "/images/samples/sample-2.webp",
-    master: "Aesthetic by 孙郡",
+    master: "Aesthetic by 孙郡 (Sun Jun)",
     title: "新文人画摄影",
     desc: "仿工笔画风格，采用低反差暖色调，营造古典、静谧的意境",
-    filter: "brightness(120%) contrast(80%) saturate(70%) sepia(20%)", // 孙郡模式
-    params: { exposure: +0.2, contrast: -0.2, saturation: -0.3, grain: 0 }
+    filter: "brightness(120%) contrast(80%) saturate(70%) sepia(20%)",
+    params: [
+      { name: "曝光 (Exposure)", value: 0.2, display: "+0.2", icon: <Sun className="w-4 h-4" />, color: "bg-yellow-500" },
+      { name: "对比度 (Contrast)", value: -0.2, display: "-0.2", icon: <Contrast className="w-4 h-4" />, color: "bg-purple-500" },
+      { name: "饱和度 (Saturation)", value: -0.3, display: "-0.3", icon: <Droplets className="w-4 h-4" />, color: "bg-blue-500" },
+      { name: "色温 (Warmth)", value: 0.2, display: "+0.2", icon: <Sun className="w-4 h-4" />, color: "bg-orange-500" }
+    ]
   },
   {
     id: 3,
     image: "/images/samples/sample-3.webp",
     original: "/images/samples/sample-3.webp",
-    master: "Color by 陈漫",
+    master: "Color by 陈漫 (Chen Man)",
     title: "视觉艺术",
     desc: "商业高保真风格，色彩浓郁且具有高锐度",
-    filter: "brightness(110%) contrast(130%) saturate(120%)", // 陈漫模式
-    params: { exposure: +0.1, contrast: +0.3, saturation: +0.2, grain: 0 }
+    filter: "brightness(110%) contrast(130%) saturate(120%)",
+    params: [
+      { name: "曝光 (Exposure)", value: 0.1, display: "+0.1", icon: <Sun className="w-4 h-4" />, color: "bg-yellow-500" },
+      { name: "对比度 (Contrast)", value: 0.3, display: "+0.3", icon: <Contrast className="w-4 h-4" />, color: "bg-purple-500" },
+      { name: "饱和度 (Saturation)", value: 0.2, display: "+0.2", icon: <Droplets className="w-4 h-4" />, color: "bg-blue-500" },
+      { name: "锐度 (Sharpness)", value: 0.3, display: "+0.3", icon: <Aperture className="w-4 h-4" />, color: "bg-red-500" }
+    ]
   },
-  // 复用其他样片，循环应用三种风格
   {
     id: 4,
     image: "/images/samples/sample-4.webp",
     original: "/images/samples/sample-4.webp",
-    master: "Tone by 肖全",
-    title: "街头纪实",
-    desc: "黑白之间的张力，记录最真实的瞬间",
-    filter: "grayscale(100%) contrast(140%) brightness(90%)",
-    params: { exposure: -0.1, contrast: +0.4, saturation: -1.0, grain: +0.2 }
+    master: "Zone System by Ansel Adams",
+    title: "区域曝光法",
+    desc: "极致黑白细节，精准控制高光与阴影的层次",
+    filter: "grayscale(100%) contrast(120%) brightness(110%)",
+    params: [
+      { name: "灰度 (Grayscale)", value: 1.0, display: "100%", icon: <Droplets className="w-4 h-4" />, color: "bg-gray-500" },
+      { name: "高光 (Highlights)", value: 0.3, display: "+0.3", icon: <Sun className="w-4 h-4" />, color: "bg-white" },
+      { name: "阴影 (Shadows)", value: -0.4, display: "-0.4", icon: <Contrast className="w-4 h-4" />, color: "bg-black" },
+      { name: "清晰度 (Clarity)", value: 0.5, display: "+0.5", icon: <Aperture className="w-4 h-4" />, color: "bg-blue-400" }
+    ]
   },
   {
     id: 5,
     image: "/images/samples/sample-5.webp",
     original: "/images/samples/sample-5.webp",
-    master: "Aesthetic by 孙郡",
-    title: "东方美学",
-    desc: "如画般的柔和光影，重现古典韵味",
-    filter: "brightness(120%) contrast(80%) saturate(70%) sepia(20%)",
-    params: { exposure: +0.2, contrast: -0.2, saturation: -0.3, grain: 0 }
+    master: "Pure by 林海音 (Lin Haiyin)",
+    title: "原生质感",
+    desc: "台湾式纯净原生，柔和肤色与自然光的完美融合",
+    filter: "brightness(115%) saturate(105%) sepia(10%)",
+    params: [
+      { name: "亮度 (Brightness)", value: 0.15, display: "+0.15", icon: <Sun className="w-4 h-4" />, color: "bg-yellow-400" },
+      { name: "红润 (Rosy)", value: 0.2, display: "+0.2", icon: <Heart className="w-4 h-4" />, color: "bg-pink-400" },
+      { name: "美白 (Whitening)", value: 0.3, display: "+0.3", icon: <Sparkles className="w-4 h-4" />, color: "bg-white" },
+      { name: "纹理 (Texture)", value: 0.4, display: "+0.4", icon: <Layers className="w-4 h-4" />, color: "bg-orange-300" }
+    ]
   },
   {
     id: 6,
     image: "/images/samples/sample-6.webp",
     original: "/images/samples/sample-6.webp",
-    master: "Color by 陈漫",
-    title: "时尚先锋",
-    desc: "强烈的色彩冲击，打造封面级质感",
-    filter: "brightness(110%) contrast(130%) saturate(120%)",
-    params: { exposure: +0.1, contrast: +0.3, saturation: +0.2, grain: 0 }
+    master: "Dramatic by 范毅舜 (Nicholas Fan)",
+    title: "光影戏剧",
+    desc: "浓郁光影与戏剧化色彩，赋予画面强烈的故事感",
+    filter: "contrast(130%) saturate(125%) sepia(15%)",
+    params: [
+      { name: "饱和度 (Saturation)", value: 0.25, display: "+0.25", icon: <Droplets className="w-4 h-4" />, color: "bg-red-500" },
+      { name: "对比度 (Contrast)", value: 0.3, display: "+0.3", icon: <Contrast className="w-4 h-4" />, color: "bg-purple-600" },
+      { name: "暖调 (Warmth)", value: 0.1, display: "+0.1", icon: <Sun className="w-4 h-4" />, color: "bg-orange-500" },
+      { name: "暗角 (Vignette)", value: 0.2, display: "+0.2", icon: <Layers className="w-4 h-4" />, color: "bg-black" }
+    ]
+  },
+  {
+    id: 7,
+    image: "/images/samples/sample-7.webp",
+    original: "/images/samples/sample-7.webp",
+    master: "Documentary by 阮义忠 (Juan I-Jong)",
+    title: "人文纪实",
+    desc: "高反差黑白，记录最真实的人文瞬间",
+    filter: "grayscale(100%) contrast(140%)",
+    params: [
+      { name: "灰度 (Grayscale)", value: 1.0, display: "100%", icon: <Droplets className="w-4 h-4" />, color: "bg-gray-600" },
+      { name: "对比度 (Contrast)", value: 0.4, display: "+0.4", icon: <Contrast className="w-4 h-4" />, color: "bg-white" },
+      { name: "颗粒 (Grain)", value: 0.2, display: "+0.2", icon: <Layers className="w-4 h-4" />, color: "bg-gray-400" },
+      { name: "锐度 (Sharpness)", value: 0.1, display: "+0.1", icon: <Aperture className="w-4 h-4" />, color: "bg-blue-500" }
+    ]
   }
 ];
 
+import { Heart } from 'lucide-react'; // 补充导入 Heart 图标
+
 export default function MasterGallery() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 5000, stopOnInteraction: true })]);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 6000, stopOnInteraction: true })]);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [isComparing, setIsComparing] = useState(true); // 默认开启对比
+  const [isComparing, setIsComparing] = useState(true);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -149,8 +195,8 @@ export default function MasterGallery() {
                             className="w-full h-full object-cover"
                             style={{ filter: item.filter }}
                           />
-                          {/* 颗粒感叠加层 (仅肖全模式) */}
-                          {item.master.includes("肖全") && (
+                          {/* 颗粒感叠加层 (仅肖全/阮义忠模式) */}
+                          {(item.master.includes("肖全") || item.master.includes("阮义忠")) && (
                             <div className="absolute inset-0 pointer-events-none opacity-20 mix-blend-overlay" 
                                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} 
                             />
@@ -169,7 +215,7 @@ export default function MasterGallery() {
                         className="w-full h-full object-cover"
                         style={{ filter: item.filter }}
                       />
-                       {item.master.includes("肖全") && (
+                       {(item.master.includes("肖全") || item.master.includes("阮义忠")) && (
                             <div className="absolute inset-0 pointer-events-none opacity-20 mix-blend-overlay" 
                                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} 
                             />
@@ -224,7 +270,7 @@ export default function MasterGallery() {
           </Button>
         </div>
 
-        {/* 参数仪表盘 */}
+        {/* 参数仪表盘 - 动态渲染 */}
         <div className="max-w-4xl mx-auto bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8">
           <div className="flex items-center gap-3 mb-6 border-b border-white/10 pb-4">
             <Sliders className="w-5 h-5 text-pink-500" />
@@ -233,74 +279,37 @@ export default function MasterGallery() {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {/* 曝光 */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">曝光 (Exposure)</span>
-                <span className="text-pink-400 font-mono">{currentItem.params.exposure > 0 ? '+' : ''}{currentItem.params.exposure}</span>
+            {currentItem.params.map((param, idx) => (
+              <div key={idx} className="space-y-2">
+                <div className="flex justify-between text-sm items-center">
+                  <div className="flex items-center gap-1.5 text-gray-400">
+                    {param.icon}
+                    <span className="text-xs">{param.name.split(' ')[0]}</span>
+                  </div>
+                  <span className={`font-mono text-xs ${param.value > 0 ? 'text-green-400' : param.value < 0 ? 'text-red-400' : 'text-gray-400'}`}>
+                    {param.display}
+                  </span>
+                </div>
+                <div className="h-2 bg-white/10 rounded-full overflow-hidden relative">
+                  {/* 中心基准线 */}
+                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/20 z-10" />
+                  <motion.div 
+                    className={`h-full ${param.color} absolute top-0 bottom-0`}
+                    initial={{ width: "0%", left: "50%" }}
+                    animate={{ 
+                      width: `${Math.abs(param.value) * 50}%`,
+                      left: param.value >= 0 ? "50%" : `${50 - Math.abs(param.value) * 50}%`
+                    }}
+                    transition={{ duration: 0.5 }}
+                  />
+                </div>
               </div>
-              <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                <motion.div 
-                  className="h-full bg-pink-500"
-                  initial={{ width: "50%" }}
-                  animate={{ width: `${(currentItem.params.exposure + 1) * 50}%` }}
-                  transition={{ duration: 0.5 }}
-                />
-              </div>
-            </div>
-
-            {/* 对比度 */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">对比度 (Contrast)</span>
-                <span className="text-purple-400 font-mono">{currentItem.params.contrast > 0 ? '+' : ''}{currentItem.params.contrast}</span>
-              </div>
-              <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                <motion.div 
-                  className="h-full bg-purple-500"
-                  initial={{ width: "50%" }}
-                  animate={{ width: `${(currentItem.params.contrast + 1) * 50}%` }}
-                  transition={{ duration: 0.5 }}
-                />
-              </div>
-            </div>
-
-            {/* 饱和度 */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">饱和度 (Saturation)</span>
-                <span className="text-blue-400 font-mono">{currentItem.params.saturation > 0 ? '+' : ''}{currentItem.params.saturation}</span>
-              </div>
-              <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                <motion.div 
-                  className="h-full bg-blue-500"
-                  initial={{ width: "50%" }}
-                  animate={{ width: `${(currentItem.params.saturation + 1) * 50}%` }}
-                  transition={{ duration: 0.5 }}
-                />
-              </div>
-            </div>
-
-            {/* 颗粒度 */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">颗粒度 (Grain)</span>
-                <span className="text-yellow-400 font-mono">{currentItem.params.grain > 0 ? '+' : ''}{currentItem.params.grain}</span>
-              </div>
-              <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                <motion.div 
-                  className="h-full bg-yellow-500"
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${currentItem.params.grain * 100}%` }}
-                  transition={{ duration: 0.5 }}
-                />
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
         {/* 指示器 */}
-        <div className="flex justify-center gap-2 mt-8">
+        <div className="flex justify-center gap-2 mt-8 flex-wrap px-4">
           {galleryItems.map((_, index) => (
             <button
               key={index}
