@@ -105,11 +105,11 @@ export default function CompetitorAnalysis() {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-              不惧对比，实力碾压
+              Yanbao AI 综合分析
             </h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              在拥挤的修图赛道，我们选择了一条少有人走的路：<br/>
-              <span className="text-white font-semibold">极致纯净，大师审美，情感温度。</span>
+              基于深度学习的情感计算引擎，重新定义影像处理范式。<br/>
+              <span className="text-white font-semibold">以数据隐私为基石，融合大师级审美与情感温度。</span>
             </p>
           </motion.div>
         </div>

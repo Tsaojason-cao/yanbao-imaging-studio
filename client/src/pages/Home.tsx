@@ -5,7 +5,7 @@ import LoveStory from "@/components/LoveStory";
 import Footer from "@/components/Footer";
 import Testimonials from "@/components/Testimonials";
 import CompetitorAnalysis from "@/components/CompetitorAnalysis";
-import InteractiveDemo from "@/components/InteractiveDemo";
+import MasterGallery from "@/components/MasterGallery";
 import WhitePaper from "@/components/WhitePaper";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -48,7 +48,7 @@ export default function Home() {
           <Button 
             variant="default" 
             className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 rounded-full px-6 shadow-lg shadow-primary/25"
-            onClick={() => window.open('#download', '_blank')}
+            onClick={() => window.open('https://manus-user-upload-bucket-public.s3.us-east-1.amazonaws.com/application-02840785-076f-4447-9806-381488204680.apk', '_blank')}
           >
             <Download className="w-4 h-4 mr-2" />
             下载 App
@@ -153,6 +153,20 @@ export default function Home() {
       </section>
 
       {/* Revealed Content */}
+      {/* Floating Contact Button */}
+      <motion.a
+        href="tel:15201260173"
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        className="fixed bottom-8 right-8 z-50 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/30 hover:bg-green-600 transition-colors cursor-pointer"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+        </svg>
+      </motion.a>
+
       <AnimatePresence>
         {isRevealed && (
           <motion.div
@@ -177,7 +191,7 @@ export default function Home() {
             <CompetitorAnalysis />
 
             {/* Interactive Demo */}
-            <InteractiveDemo />
+            <MasterGallery />
 
             {/* Testimonials */}
             <Testimonials />
