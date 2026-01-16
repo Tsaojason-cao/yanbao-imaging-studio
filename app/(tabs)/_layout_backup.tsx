@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Platform } from "react-native";
@@ -14,16 +15,16 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#EC4899", // 库洛米粉色
+        tabBarActiveTintColor: colors.tint,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
           paddingTop: 8,
           paddingBottom: bottomPadding,
           height: tabBarHeight,
-          backgroundColor: "#1a101f", // 深色背景
-          borderTopColor: "rgba(139, 92, 246, 0.3)", // 紫色边框
-          borderTopWidth: 1,
+          backgroundColor: colors.background,
+          borderTopColor: colors.border,
+          borderTopWidth: 0.5,
         },
       }}
     >
@@ -37,15 +38,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="builds"
         options={{
-          title: "相册",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="photo.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="stats_new"
-        options={{
-          title: "统计",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="chart.bar.fill" color={color} />,
+          title: "构建",
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="hammer.fill" color={color} />,
         }}
       />
       <Tabs.Screen

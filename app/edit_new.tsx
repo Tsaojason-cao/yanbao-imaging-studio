@@ -5,30 +5,62 @@ import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { LinearGradient } from "expo-linear-gradient";
 import Slider from "@react-native-community/slider";
-import { MASTER_PRESETS, getMasterRadarData, type MasterPreset } from "@/constants/master-presets";
 
 const { width } = Dimensions.get("window");
 
 /**
- * Edit Screen - Photo Editor with 31 Master Presets
+ * Edit Screen - Photo Editor
  * 
- * 核心功能：
- * - 31位大师滤镜参数矩阵
- * - 实时参数雷达图显示
- * - Before/After 对比预览
+ * 核心功能：31位大师滤镜阵列
+ * 
+ * 大师列表包括：
+ * - 肖全、林海音、Ansel Adams、Henri Cartier-Bresson
+ * - Steve McCurry、Annie Leibovitz、Richard Avedon
+ * - Sebastião Salgado、Diane Arbus、Irving Penn
+ * - 以及更多世界级摄影大师的风格预设
  */
 export default function EditScreen() {
   const router = useRouter();
   const [selectedMaster, setSelectedMaster] = useState(0);
   const [intensity, setIntensity] = useState(75);
-  const [showParams, setShowParams] = useState(true);
 
-  const currentPreset = MASTER_PRESETS[selectedMaster];
-  const radarData = getMasterRadarData(currentPreset);
+  // 31位大师滤镜预设
+  const masterPresets = [
+    { id: 1, name: "肖全", nameEn: "Xiao Quan", style: "人文纪实", color: "#E879F9", icon: "📸" },
+    { id: 2, name: "林海音", nameEn: "Lin Haiyin", style: "文学影像", color: "#F472B6", icon: "📖" },
+    { id: 3, name: "Ansel Adams", nameEn: "Ansel Adams", style: "风光大师", color: "#A78BFA", icon: "🏔️" },
+    { id: 4, name: "Henri Cartier-Bresson", nameEn: "HCB", style: "决定性瞬间", color: "#60A5FA", icon: "⏱️" },
+    { id: 5, name: "Steve McCurry", nameEn: "McCurry", style: "人文色彩", color: "#34D399", icon: "🌍" },
+    { id: 6, name: "Annie Leibovitz", nameEn: "Leibovitz", style: "肖像大师", color: "#FDE047", icon: "👤" },
+    { id: 7, name: "Richard Avedon", nameEn: "Avedon", style: "时尚肖像", color: "#FB923C", icon: "👗" },
+    { id: 8, name: "Sebastião Salgado", nameEn: "Salgado", style: "社会纪实", color: "#F87171", icon: "🌐" },
+    { id: 9, name: "Diane Arbus", nameEn: "Arbus", style: "边缘人像", color: "#EC4899", icon: "🎭" },
+    { id: 10, name: "Irving Penn", nameEn: "Penn", style: "静物大师", color: "#A78BFA", icon: "🎨" },
+    { id: 11, name: "Dorothea Lange", nameEn: "Lange", style: "大萧条纪实", color: "#60A5FA", icon: "📰" },
+    { id: 12, name: "Robert Capa", nameEn: "Capa", style: "战地摄影", color: "#EF4444", icon: "⚔️" },
+    { id: 13, name: "Cindy Sherman", nameEn: "Sherman", style: "观念摄影", color: "#8B5CF6", icon: "🎬" },
+    { id: 14, name: "Helmut Newton", nameEn: "Newton", style: "时尚先锋", color: "#EC4899", icon: "💋" },
+    { id: 15, name: "Man Ray", nameEn: "Man Ray", style: "超现实主义", color: "#A78BFA", icon: "🌙" },
+    { id: 16, name: "Edward Weston", nameEn: "Weston", style: "形式主义", color: "#60A5FA", icon: "🌿" },
+    { id: 17, name: "Walker Evans", nameEn: "Evans", style: "美国纪实", color: "#10B981", icon: "🏛️" },
+    { id: 18, name: "Garry Winogrand", nameEn: "Winogrand", style: "街头摄影", color: "#F59E0B", icon: "🚶" },
+    { id: 19, name: "William Eggleston", nameEn: "Eggleston", style: "彩色先驱", color: "#EF4444", icon: "🎨" },
+    { id: 20, name: "Joel Meyerowitz", nameEn: "Meyerowitz", style: "街头色彩", color: "#EC4899", icon: "🌆" },
+    { id: 21, name: "Sally Mann", nameEn: "Mann", style: "家庭肖像", color: "#A78BFA", icon: "👨‍👩‍👧" },
+    { id: 22, name: "Gregory Crewdson", nameEn: "Crewdson", style: "电影感", color: "#8B5CF6", icon: "🎥" },
+    { id: 23, name: "Andreas Gursky", nameEn: "Gursky", style: "大画幅", color: "#06B6D4", icon: "🖼️" },
+    { id: 24, name: "Nan Goldin", nameEn: "Goldin", style: "亲密日记", color: "#EC4899", icon: "💕" },
+    { id: 25, name: "Martin Parr", nameEn: "Parr", style: "讽刺纪实", color: "#F59E0B", icon: "🎪" },
+    { id: 26, name: "Daido Moriyama", nameEn: "Moriyama", style: "粗粒子", color: "#6B7280", icon: "🌃" },
+    { id: 27, name: "Nobuyoshi Araki", nameEn: "Araki", style: "私摄影", color: "#EC4899", icon: "🌸" },
+    { id: 28, name: "Hiroshi Sugimoto", nameEn: "Sugimoto", style: "极简主义", color: "#60A5FA", icon: "🌊" },
+    { id: 29, name: "Rinko Kawauchi", nameEn: "Kawauchi", style: "日常诗意", color: "#F9A8D4", icon: "✨" },
+    { id: 30, name: "Fan Ho", nameEn: "Fan Ho", style: "光影大师", color: "#FDE047", icon: "💡" },
+    { id: 31, name: "Yanbao AI", nameEn: "Yanbao", style: "专属审美", color: "#EC4899", icon: "🐰" },
+  ];
 
   const handleMasterSelect = (index: number) => {
     setSelectedMaster(index);
-    setShowParams(true);
   };
 
   return (
@@ -59,15 +91,6 @@ export default function EditScreen() {
               </View>
               <View style={[styles.previewHalf, styles.previewAfter]}>
                 <Text style={styles.previewLabel}>AFTER</Text>
-                
-                {/* 当前大师信息叠加层 */}
-                {showParams && (
-                  <View style={styles.masterInfoOverlay}>
-                    <Text style={styles.masterInfoIcon}>{currentPreset.icon}</Text>
-                    <Text style={styles.masterInfoName}>{currentPreset.name}</Text>
-                    <Text style={styles.masterInfoStyle}>{currentPreset.style}</Text>
-                  </View>
-                )}
               </View>
             </View>
             
@@ -81,68 +104,15 @@ export default function EditScreen() {
         </LinearGradient>
       </View>
 
-      {/* 大师参数面板 */}
-      {showParams && (
-        <View style={styles.paramsPanel}>
-          <View style={styles.paramsPanelHeader}>
-            <Text style={styles.paramsPanelTitle}>参数矩阵</Text>
-            <TouchableOpacity onPress={() => setShowParams(false)}>
-              <IconSymbol name="xmark.circle.fill" size={20} color="#999999" />
-            </TouchableOpacity>
-          </View>
-          
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.paramsGrid}>
-              <View style={styles.paramItem}>
-                <Text style={styles.paramLabel}>曝光</Text>
-                <Text style={styles.paramValue}>{currentPreset.params.exposure.toFixed(1)}</Text>
-              </View>
-              <View style={styles.paramItem}>
-                <Text style={styles.paramLabel}>对比度</Text>
-                <Text style={styles.paramValue}>{currentPreset.params.contrast}</Text>
-              </View>
-              <View style={styles.paramItem}>
-                <Text style={styles.paramLabel}>饱和度</Text>
-                <Text style={styles.paramValue}>{currentPreset.params.saturation}</Text>
-              </View>
-              <View style={styles.paramItem}>
-                <Text style={styles.paramLabel}>高光</Text>
-                <Text style={styles.paramValue}>{currentPreset.params.highlights}</Text>
-              </View>
-              <View style={styles.paramItem}>
-                <Text style={styles.paramLabel}>阴影</Text>
-                <Text style={styles.paramValue}>{currentPreset.params.shadows}</Text>
-              </View>
-              <View style={styles.paramItem}>
-                <Text style={styles.paramLabel}>色温</Text>
-                <Text style={styles.paramValue}>{currentPreset.params.temperature}K</Text>
-              </View>
-              <View style={styles.paramItem}>
-                <Text style={styles.paramLabel}>颗粒</Text>
-                <Text style={styles.paramValue}>{currentPreset.params.grain}</Text>
-              </View>
-              <View style={styles.paramItem}>
-                <Text style={styles.paramLabel}>暗角</Text>
-                <Text style={styles.paramValue}>{currentPreset.params.vignette}</Text>
-              </View>
-              <View style={styles.paramItem}>
-                <Text style={styles.paramLabel}>锐度</Text>
-                <Text style={styles.paramValue}>{currentPreset.params.sharpness}</Text>
-              </View>
-            </View>
-          </ScrollView>
-        </View>
-      )}
-
       {/* 31位大师滤镜卷轴 */}
       <View style={styles.masterScrollContainer}>
-        <Text style={styles.sectionTitle}>大师滤镜阵列 ({MASTER_PRESETS.length}位)</Text>
+        <Text style={styles.sectionTitle}>大师滤镜阵列</Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.masterScroll}
         >
-          {MASTER_PRESETS.map((master, index) => (
+          {masterPresets.map((master, index) => (
             <TouchableOpacity
               key={master.id}
               style={[
@@ -164,12 +134,6 @@ export default function EditScreen() {
                 <Text style={styles.masterName}>{master.name}</Text>
                 <Text style={styles.masterNameEn}>{master.nameEn}</Text>
                 <Text style={styles.masterStyle}>{master.style}</Text>
-                
-                {selectedMaster === index && (
-                  <View style={styles.selectedBadge}>
-                    <IconSymbol name="checkmark.circle.fill" size={16} color="#FFFFFF" />
-                  </View>
-                )}
               </LinearGradient>
             </TouchableOpacity>
           ))}
@@ -253,14 +217,14 @@ const styles = StyleSheet.create({
   },
   previewContainer: {
     paddingHorizontal: 20,
-    marginBottom: 12,
+    marginBottom: 20,
   },
   previewBorder: {
     borderRadius: 24,
     padding: 3,
   },
   preview: {
-    height: 240,
+    height: 280,
     borderRadius: 21,
     backgroundColor: "#1a1a1a",
     overflow: "hidden",
@@ -287,29 +251,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     letterSpacing: 2,
   },
-  masterInfoOverlay: {
-    position: "absolute",
-    top: 16,
-    right: 16,
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
-  },
-  masterInfoIcon: {
-    fontSize: 24,
-    marginBottom: 4,
-  },
-  masterInfoName: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-  },
-  masterInfoStyle: {
-    fontSize: 9,
-    color: "rgba(255, 255, 255, 0.7)",
-  },
   divider: {
     position: "absolute",
     left: "50%",
@@ -334,46 +275,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  paramsPanel: {
-    backgroundColor: "rgba(42, 31, 63, 0.8)",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    marginBottom: 12,
-  },
-  paramsPanelHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  paramsPanelTitle: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-  },
-  paramsGrid: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  paramItem: {
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "rgba(139, 92, 246, 0.2)",
-    borderRadius: 8,
-  },
-  paramLabel: {
-    fontSize: 10,
-    color: "rgba(255, 255, 255, 0.7)",
-    marginBottom: 4,
-  },
-  paramValue: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#EC4899",
-  },
   masterScrollContainer: {
-    paddingBottom: 12,
+    paddingBottom: 16,
   },
   sectionTitle: {
     fontSize: 16,
@@ -400,7 +303,6 @@ const styles = StyleSheet.create({
     padding: 12,
     justifyContent: "space-between",
     alignItems: "center",
-    position: "relative",
   },
   masterIcon: {
     fontSize: 24,
@@ -421,14 +323,9 @@ const styles = StyleSheet.create({
     color: "rgba(255, 255, 255, 0.5)",
     textAlign: "center",
   },
-  selectedBadge: {
-    position: "absolute",
-    top: 4,
-    right: 4,
-  },
   intensityContainer: {
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 16,
     backgroundColor: "rgba(42, 31, 63, 0.5)",
   },
   intensityHeader: {
@@ -455,7 +352,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: 16,
     paddingHorizontal: 20,
     backgroundColor: "rgba(0, 0, 0, 0.8)",
     borderTopWidth: 1,

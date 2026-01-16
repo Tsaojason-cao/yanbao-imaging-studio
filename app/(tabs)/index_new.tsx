@@ -42,11 +42,11 @@ export default function HomeScreen() {
       route: "/edit",
     },
     {
-      id: "memories",
-      title: "雁宝记忆",
-      icon: "heart.fill",
-      gradient: ["#EC4899", "#F472B6"],
-      route: "/memories",
+      id: "spots",
+      title: "地区推荐",
+      icon: "location.fill",
+      gradient: ["#10B981", "#34D399"],
+      route: "/settings",
     },
   ];
 
