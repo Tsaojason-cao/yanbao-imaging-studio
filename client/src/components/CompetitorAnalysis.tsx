@@ -4,32 +4,32 @@ import { Check, X, Crown, Zap, Heart, Shield, Sparkles } from "lucide-react";
 const comparisonData = [
   {
     feature: "核心算法",
-    yanbao: { text: "情感计算引擎 (基于「雁宝记忆」)", highlight: true },
+    sanmu: { text: "情感计算引擎 (基于「三木记忆」)", highlight: true },
     others: { text: "通用商业算法 (冷冰冰的数据堆砌)", highlight: false }
   },
   {
     feature: "大师参数",
-    yanbao: { text: "内置 31 位全球顶尖摄影大师参数矩阵", highlight: true },
+    sanmu: { text: "内置 31 位全球顶尖摄影大师参数矩阵", highlight: true },
     others: { text: "普通网红滤镜 (千篇一律)", highlight: false }
   },
   {
     feature: "交互体验",
-    yanbao: { text: "专属库洛米 UI + 头像快门仪式感", highlight: true },
+    sanmu: { text: "专属库洛米 UI + 头像快门仪式感", highlight: true },
     others: { text: "复杂参数面板 (工具属性强)", highlight: false }
   },
   {
     feature: "技术守护",
-    yanbao: { text: "Jason Tsao 跨越 22 年的技术守护", highlight: true },
+    sanmu: { text: "Jason Tsao 跨越 22 年的技术守护", highlight: true },
     others: { text: "标准商业客服 (按流程办事)", highlight: false }
   },
   {
     feature: "隐私安全",
-    yanbao: { text: "100% 本地运行 (无云端上传)", highlight: true },
+    sanmu: { text: "100% 本地运行 (无云端上传)", highlight: true },
     others: { text: "云端处理 (存在隐私风险)", highlight: false }
   },
   {
     feature: "广告干扰",
-    yanbao: { text: "纯净无广 (只为摄影而生)", highlight: true },
+    sanmu: { text: "纯净无广 (只为摄影而生)", highlight: true },
     others: { text: "广告弹窗多 (臃肿冗余)", highlight: false }
   }
 ];
@@ -51,7 +51,7 @@ export default function CompetitorAnalysis() {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
-              Yanbao AI 综合PK：
+              Sanmu AI 综合PK：
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500">
                 私人定制的极致巅峰
               </span>
@@ -70,7 +70,7 @@ export default function CompetitorAnalysis() {
             <div className="col-span-4 text-gray-500 flex items-center justify-center opacity-50">普通修图 App</div>
             <div className="col-span-5 text-white flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-xl border border-pink-500/30 py-4">
               <Crown className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-400">Yanbao AI</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-400">Sanmu AI</span>
             </div>
           </div>
 
@@ -96,14 +96,14 @@ export default function CompetitorAnalysis() {
                   <span className="text-sm">{row.others.text}</span>
                 </div>
 
-                {/* Yanbao AI */}
+                {/* Sanmu AI */}
                 <div className="col-span-5 flex items-center gap-3 pl-8 relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-pink-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center shrink-0 border border-green-500/50">
                     <Check className="w-4 h-4 text-green-400" />
                   </div>
                   <span className="text-white font-medium text-base relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300 group-hover:from-pink-200 group-hover:to-purple-200 transition-all">
-                    {row.yanbao.text}
+                    {row.sanmu.text}
                   </span>
                 </div>
               </motion.div>

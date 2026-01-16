@@ -36,9 +36,9 @@ export default function Home() {
             className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
             onClick={scrollToTop}
           >
-            <img src="/logo.png" alt="Yanbao AI Logo" className="w-10 h-10 rounded-xl shadow-lg shadow-pink-500/20" />
+            <img src="/logo.png" alt="Sanmu AI Logo" className="w-10 h-10 rounded-xl shadow-lg shadow-pink-500/20" />
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500">
-              YanBao AI
+              Sanmu AI
             </span>
           </div>
           
@@ -57,8 +57,8 @@ export default function Home() {
             className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 rounded-full px-6 shadow-lg shadow-primary/25"
             onClick={() => {
               const link = document.createElement('a');
-              link.href = '/yanbao-ai-release.apk';
-              link.download = 'yanbao-ai-release.apk';
+              link.href = '/sanmu-ai-release.apk';
+              link.download = 'sanmu-ai-release.apk';
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
@@ -148,7 +148,7 @@ export default function Home() {
             
             {/* Overlay Content */}
             <div className="absolute bottom-0 left-0 right-0 p-8 z-20 text-left pointer-events-none">
-              <h3 className="text-2xl font-bold text-white mb-2">雁宝 AI 私人影像工作室</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">三木 AI 私人影像工作室</h3>
               <p className="text-white/80">记录每一个心动瞬间</p>
             </div>
           </motion.div>

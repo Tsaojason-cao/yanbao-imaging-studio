@@ -74,7 +74,7 @@ export default function InteractiveDemo() {
             亲眼见证 <span className="text-primary">大师影调</span> 的魔力
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            无需下载，即刻体验。上传您的照片，或使用我们提供的样片，感受 Yanbao AI 带来的视觉蜕变。
+            无需下载，即刻体验。上传您的照片，或使用我们提供的样片，感受 Sanmu AI 带来的视觉蜕变。
           </p>
         </div>
 

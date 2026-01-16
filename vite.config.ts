@@ -19,8 +19,8 @@ const plugins = [
       maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4MB
     },
     manifest: {
-      name: 'Yanbao AI - 私人影像工作室',
-      short_name: 'Yanbao AI',
+      name: 'Sanmu AI - 私人影像工作室',
+      short_name: 'Sanmu AI',
       description: '你眼中的美，从此有了最温柔的注脚。31位大师影调，一键复刻经典。',
       theme_color: '#000000',
       background_color: '#000000',

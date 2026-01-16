@@ -1,4 +1,4 @@
-# Yanbao AI 官网 - Vercel 部署指南
+# Sanmu AI 官网 - Vercel 部署指南
 
 ## ✅ 已完成配置
 
@@ -29,11 +29,11 @@
 
 2. **导入仓库**
    - 在 "Import Git Repository" 部分
-   - 找到 `yanbao-imaging-studio` 仓库
+   - 找到 `sanmu-imaging-studio` 仓库
    - 点击 **Import** 按钮
 
 3. **配置项目**
-   - **Project Name**: `yanbao-imaging-studio`（或自定义）
+   - **Project Name**: `sanmu-imaging-studio`（或自定义）
    - **Framework Preset**: Vite（会自动检测）
    - **Root Directory**: `./`（保持默认）
    - **Build Command**: `pnpm build`（已在 vercel.json 配置）
@@ -46,7 +46,7 @@
 
 5. **获取网址**
    - 部署成功后，您会获得一个永久网址，格式如：
-     - `https://yanbao-imaging-studio.vercel.app`
+     - `https://sanmu-imaging-studio.vercel.app`
      - 或自定义域名
 
 ---
@@ -61,7 +61,7 @@ npm i -g vercel
 vercel login
 
 # 部署
-cd /home/ubuntu/yanbao-imaging-studio
+cd /home/ubuntu/sanmu-imaging-studio
 vercel --prod
 ```
 
@@ -112,7 +112,7 @@ vercel --prod
 
 ## 🔗 相关链接
 
-- **GitHub 仓库**: https://github.com/Tsaojason-cao/yanbao-imaging-studio
+- **GitHub 仓库**: https://github.com/Tsaojason-cao/sanmu-imaging-studio
 - **Vercel 控制台**: https://vercel.com/dashboard
 - **Vercel 文档**: https://vercel.com/docs
 

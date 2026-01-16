@@ -25,7 +25,7 @@ const testimonials = [
     role: "早期测试者"
   },
   {
-    content: "不仅仅是拍照，更是在记录生活。Yanbao AI 让我的每一张照片都充满了故事感。",
+    content: "不仅仅是拍照，更是在记录生活。Sanmu AI 让我的每一张照片都充满了故事感。",
     author: "Instagram @DailyLife",
     role: "生活记录者"
   }

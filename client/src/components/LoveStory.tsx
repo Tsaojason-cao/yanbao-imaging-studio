@@ -114,46 +114,42 @@ export default function LoveStory() {
             </motion.div>
             
             <h2 className="text-3xl md:text-5xl font-bold mb-8 leading-tight">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">
-                因为一个不爱葱姜蒜的小女孩，
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
+                深藏功名，极简外露
               </span>
               <br />
               <span className="text-white mt-2 block">
-                有了 yanbao AI
+                Sanmu AI 品牌故事
               </span>
             </h2>
-            <p className="text-sm text-pink-400/60 animate-pulse mb-8">
-              ( 点击屏幕任意位置，触发浪漫特效 )
+            <p className="text-sm text-emerald-400/60 animate-pulse mb-8">
+              ( 点击 Logo 10 次解锁专业开发者模式 )
             </p>
           </div>
 
           <div className="prose prose-invert prose-lg mx-auto text-left space-y-8 bg-black/40 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl select-none">
             <p className="text-xl text-white/90 leading-relaxed font-medium">
-              2025年8月24日，一个原本打算“玩玩”的开场，却成了我余生失控的伏笔。
+              Sanmu AI 诞生于对卓越的追求，成长于对细节的执着。
             </p>
             
             <p className="text-muted-foreground leading-relaxed">
-              那时的我，是1977年的“老登”，她是1999年的雁宝；我在北京，她在杭州；我是台湾人，她来自广东。身份、年龄、地域，每一条鸿沟都在催我离开。我甚至决绝地拉黑、删除过，试图逃回理智的阵地。
+              我们相信，真正的专业工具不需要繁复的界面，也不需要给人留下深刻印象。它应该像一把精工打磨的工艺刀，静静躺在那里，等待懂它的人拿起。
             </p>
 
             <p className="text-muted-foreground leading-relaxed">
-              但命运的引力终究胜过理智。我忍不住偷看她的直播，从朋友圈、粉丝团的缝隙里，拼凑出一个私底下真实的、鲜活的她。于是，我有了那个记录她点滴的小本本。我发现，吸引我的不再是那个虚拟的ID，而是那个叫“雁宝”的灵魂。
+              从 31 位大师的影调指纹，到 29 维精密参数的隐藏调整，每一个功能都经过了数百次打磨。我们不追求“看起来很厉害”，只在乎“用起来很顺手”。
             </p>
 
             <p className="text-muted-foreground leading-relaxed">
-              在她面前，我找回了消失已久的自由。那些曾被嫌弃的“动手能力”，在她眼里竟是闪闪发光的才华。我亲手缝制包包，没日没夜地为她钩织披肩。她笑那是“笨拙的礼物”，却珍藏至今。
+              极简的界面下，隐藏着复杂的算法。森林深绿的配色，传递着沉稳与专业。每一次快门，都是对光影的致敬；每一次调整，都是对美学的探索。
+            </p>
+
+            <p className="text-xl text-white/90 leading-relaxed font-medium border-l-4 border-emerald-500 pl-6 my-8 bg-emerald-500/5 py-4 rounded-r-lg">
+              深藏功名，极简外露。这不仅是设计哲学，更是 Sanmu AI 的品牌精神。
             </p>
 
             <p className="text-muted-foreground leading-relaxed">
-              我从未想过，这个20几岁的女孩，能送我一箱完全戳中心思的生日礼物，其中包括连家人都不知道的“笔记本”情结。12月24日的蛋糕，跨年夜飞越千里的相拥，太庙的红墙、环球影城的欢笑、甚至选美瞳时的手足无措……她带一个70后的男人，重新过了一次少年生活。
-            </p>
-
-            <p className="text-xl text-white/90 leading-relaxed font-medium border-l-4 border-pink-500 pl-6 my-8 bg-pink-500/5 py-4 rounded-r-lg">
-              在颐和园，看到她对摄影黑科技的向往，再看看自己笨拙的拍照技术，我萌生了一个念头。我要做一个能一直陪伴她的东西。
-            </p>
-
-            <p className="text-muted-foreground leading-relaxed">
-              yanbao AI 诞生了。这是我人生中又一个“第一次”，送给我那个不爱葱姜蒜的小公主。它不只是一个工具，是我跨越2200公里、跨越22年岁月，想给她的最长情的守护。
+              我们不制造噪音，只交付价值。当你打开 Sanmu AI，你会发现，最好的工具，就是让你忘记它的存在。
             </p>
           </div>
 
@@ -170,8 +166,8 @@ export default function LoveStory() {
                 onClick={(e) => {
                   e.stopPropagation(); // 防止触发背景特效
                   const link = document.createElement('a');
-                  link.href = '/yanbao-ai-release.apk';
-                  link.download = 'yanbao-ai-release.apk';
+                  link.href = '/sanmu-ai-release.apk';
+                  link.download = 'sanmu-ai-release.apk';
                   document.body.appendChild(link);
                   link.click();
                   document.body.removeChild(link);

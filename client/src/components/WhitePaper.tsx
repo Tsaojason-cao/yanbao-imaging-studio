@@ -30,7 +30,7 @@ export default function WhitePaper() {
               </h2>
               
               <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-                Yanbao AI 的核心不仅仅在于图像处理，而在于对“美”的个性化理解。我们构建了一套独特的双层架构，将客观的光影参数与主观的情感偏好完美融合。
+                Sanmu AI 的核心不仅仅在于图像处理，而在于对“美”的个性化理解。我们构建了一套独特的双层架构，将客观的光影参数与主观的情感偏好完美融合。
               </p>
               
               <Button variant="outline" className="group border-white/20 hover:bg-white/5 text-white">
@@ -56,7 +56,7 @@ export default function WhitePaper() {
               {
                 icon: <Cpu className="w-8 h-8 text-purple-500" />,
                 title: "本地化隐私计算 (On-Device AI)",
-                desc: "所有的面部特征分析与美颜计算均在本地完成，无需上传云端。我们深知每一张照片都是私密的记忆，Yanbao AI 承诺永远守护这份安全感。"
+                desc: "所有的面部特征分析与美颜计算均在本地完成，无需上传云端。我们深知每一张照片都是私密的记忆，Sanmu AI 承诺永远守护这份安全感。"
               }
             ].map((item, index) => (
               <motion.div

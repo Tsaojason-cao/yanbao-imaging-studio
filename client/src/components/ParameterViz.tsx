@@ -34,7 +34,7 @@ export default function ParameterViz() {
                 <span className="text-white">参数可视化</span>
               </h2>
               <p className="text-muted-foreground mb-8 text-lg">
-                从“肖全”的深邃纪实到“陈漫”的时尚光影，Yanbao AI 精确捕捉每一位大师的参数指纹。
+                从“肖全”的深邃纪实到“陈漫”的时尚光影，Sanmu AI 精确捕捉每一位大师的参数指纹。
                 12维美颜参数动态映射，让每一次快门都充满艺术灵魂。
               </p>
               
