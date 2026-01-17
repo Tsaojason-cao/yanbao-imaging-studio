@@ -5,193 +5,283 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Modal,
   StatusBar,
-  Image,
-  Alert,
 } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { Camera } from 'expo-camera';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-// Home Screen Component
-function HomeScreen({ navigation }: any) {
-  const [stats, setStats] = useState({
-    totalEdits: 247,
-    storageUsed: 8,
-    storageTotal: 50,
-    recipes: 12,
-    favorites: 38,
-  });
+// Import screens
+import CameraScreen from './CameraScreen';
+import EditorScreen from './EditorScreen';
+import GalleryScreen from './GalleryScreen';
+import MapScreen from './MapScreen';
 
-  const features = [
-    { id: 1, title: '📷 相机', subtitle: 'ProCam Beauty', color: '#A33BFF', screen: 'Camera' },
-    { id: 2, title: '🖼️ 相册', subtitle: 'Gallery', color: '#FF69B4', screen: 'Gallery' },
-    { id: 3, title: '✨ 编辑', subtitle: 'Photo Editor', color: '#A33BFF', screen: 'Editor' },
-    { id: 4, title: '📍 推荐', subtitle: 'Spots Map', color: '#FF69B4', screen: 'Map' },
-  ];
+const Tab = createBottomTabNavigator();
 
-  const openFeature = async (feature: any) => {
-    if (feature.screen === 'Camera') {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      if (status === 'granted') {
-        Alert.alert('相机功能', '相机权限已授予，正在打开相机...');
-      } else {
-        Alert.alert('权限被拒绝', '需要相机权限才能使用此功能');
-      }
-    } else if (feature.screen === 'Gallery') {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status === 'granted') {
-        const result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          aspect: [4, 3],
-          quality: 1,
-        });
-        if (!result.canceled) {
-          Alert.alert('已选择照片', '准备进入编辑模式');
-        }
-      }
-    } else {
-      Alert.alert(feature.title, `${feature.subtitle} 功能开发中...`);
-    }
-  };
+// Home Screen
+function HomeScreen() {
+  const [showCamera, setShowCamera] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
+  const [showGallery, setShowGallery] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   return (
-    <ScrollView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#0a0a1e" />
       
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <Text style={styles.logo}>🦇</Text>
-          <View>
-            <Text style={styles.title}>yanbao AI</Text>
-            <Text style={styles.subtitle}>私人影像工作室</Text>
-          </View>
+        <View>
+          <Text style={styles.greeting}>Hello, Yanbao 👋</Text>
+          <Text style={styles.subtitle}>让每一刻都闪耀</Text>
         </View>
-        <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.iconButton}>
-            <Text style={styles.icon}>🔔</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
-            <Text style={styles.icon}>⚙️</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.settingsButton}>
+          <Text style={styles.settingsIcon}>⚙️</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Feature Grid */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>🎨 核心功能</Text>
-        <View style={styles.grid}>
-          {features.map((feature) => (
-            <TouchableOpacity
-              key={feature.id}
-              style={[styles.card, { borderColor: feature.color }]}
-              onPress={() => openFeature(feature)}
-              activeOpacity={0.7}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Main Features */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>✨ 主要功能</Text>
+          <View style={styles.featuresGrid}>
+            <TouchableOpacity 
+              style={[styles.featureCard, styles.featureCardPrimary]}
+              onPress={() => setShowCamera(true)}
             >
-              <Text style={styles.featureIcon}>{feature.title}</Text>
-              <Text style={styles.featureSubtitle}>{feature.subtitle}</Text>
-              <View style={[styles.glowEffect, { backgroundColor: feature.color + '20' }]} />
+              <Text style={styles.featureIcon}>📷</Text>
+              <Text style={styles.featureTitle}>相机</Text>
+              <Text style={styles.featureSubtitle}>ProCam Beauty</Text>
             </TouchableOpacity>
-          ))}
-        </View>
-      </View>
 
-      {/* Stats Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>📊 数据统计</Text>
-        
-        <View style={styles.statsGrid}>
-          <View style={[styles.statCard, { backgroundColor: '#A33BFF15' }]}>
-            <Text style={styles.statIcon}>📸</Text>
-            <Text style={styles.statLabel}>总编辑数</Text>
-            <Text style={styles.statValue}>{stats.totalEdits}</Text>
-            <Text style={styles.statUnit}>Edits</Text>
-          </View>
-          
-          <View style={[styles.statCard, { backgroundColor: '#FF69B415' }]}>
-            <Text style={styles.statIcon}>💾</Text>
-            <Text style={styles.statLabel}>已用存储</Text>
-            <Text style={styles.statValue}>{stats.storageUsed}/{stats.storageTotal} GB</Text>
-            <Text style={styles.statUnit}>{Math.round((stats.storageUsed / stats.storageTotal) * 100)}%</Text>
-          </View>
-          
-          <View style={[styles.statCard, { backgroundColor: '#A33BFF15' }]}>
-            <Text style={styles.statIcon}>🧠</Text>
-            <Text style={styles.statLabel}>配方数量</Text>
-            <Text style={styles.statValue}>{stats.recipes}</Text>
-            <Text style={styles.statUnit}>Recipes</Text>
-          </View>
-          
-          <View style={[styles.statCard, { backgroundColor: '#FF69B415' }]}>
-            <Text style={styles.statIcon}>⭐</Text>
-            <Text style={styles.statLabel}>收藏照片</Text>
-            <Text style={styles.statValue}>{stats.favorites}</Text>
-            <Text style={styles.statUnit}>Photos</Text>
+            <TouchableOpacity 
+              style={[styles.featureCard, styles.featureCardSecondary]}
+              onPress={() => setShowGallery(true)}
+            >
+              <Text style={styles.featureIcon}>🖼️</Text>
+              <Text style={styles.featureTitle}>相册</Text>
+              <Text style={styles.featureSubtitle}>照片管理</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[styles.featureCard, styles.featureCardTertiary]}
+              onPress={() => setShowEditor(true)}
+            >
+              <Text style={styles.featureIcon}>✨</Text>
+              <Text style={styles.featureTitle}>编辑</Text>
+              <Text style={styles.featureSubtitle}>滤镜调色</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[styles.featureCard, styles.featureCardQuaternary]}
+              onPress={() => setShowMap(true)}
+            >
+              <Text style={styles.featureIcon}>📍</Text>
+              <Text style={styles.featureTitle}>推荐</Text>
+              <Text style={styles.featureSubtitle}>拍摄地点</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </View>
 
-      {/* Features List */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>✨ 特色功能</Text>
-        
-        <TouchableOpacity style={styles.featureItem}>
-          <Text style={styles.featureItemIcon}>🎭</Text>
-          <View style={styles.featureItemContent}>
-            <Text style={styles.featureItemTitle}>AI 美颜</Text>
-            <Text style={styles.featureItemDesc}>智能识别面部特征，自然美颜</Text>
+        {/* Stats */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>📊 数据统计</Text>
+          <View style={styles.statsContainer}>
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>156</Text>
+              <Text style={styles.statLabel}>总编辑数</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>2.3GB</Text>
+              <Text style={styles.statLabel}>已用空间</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>23</Text>
+              <Text style={styles.statLabel}>配方数</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>45</Text>
+              <Text style={styles.statLabel}>收藏照片</Text>
+            </View>
           </View>
-          <Text style={styles.arrow}>›</Text>
-        </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity style={styles.featureItem}>
-          <Text style={styles.featureItemIcon}>🎨</Text>
-          <View style={styles.featureItemContent}>
-            <Text style={styles.featureItemTitle}>滤镜预设</Text>
-            <Text style={styles.featureItemDesc}>12种专业调色方案</Text>
+        {/* Quick Actions */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>⚡ 快速操作</Text>
+          <View style={styles.quickActions}>
+            <TouchableOpacity style={styles.quickActionButton}>
+              <Text style={styles.quickActionIcon}>🎨</Text>
+              <Text style={styles.quickActionText}>最近编辑</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.quickActionButton}>
+              <Text style={styles.quickActionIcon}>❤️</Text>
+              <Text style={styles.quickActionText}>我的收藏</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.quickActionButton}>
+              <Text style={styles.quickActionIcon}>💾</Text>
+              <Text style={styles.quickActionText}>我的配方</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={styles.arrow}>›</Text>
-        </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity style={styles.featureItem}>
-          <Text style={styles.featureItemIcon}>🗺️</Text>
-          <View style={styles.featureItemContent}>
-            <Text style={styles.featureItemTitle}>地区推荐</Text>
-            <Text style={styles.featureItemDesc}>上海热门拍摄地点</Text>
-          </View>
-          <Text style={styles.arrow}>›</Text>
-        </TouchableOpacity>
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Made with ❤️ by Jason Tsao</Text>
+          <Text style={styles.footerSubtext}>for Yanbao</Text>
+        </View>
+      </ScrollView>
 
-        <TouchableOpacity style={styles.featureItem}>
-          <Text style={styles.featureItemIcon}>💾</Text>
-          <View style={styles.featureItemContent}>
-            <Text style={styles.featureItemTitle}>参数记忆</Text>
-            <Text style={styles.featureItemDesc}>保存你的编辑配方</Text>
-          </View>
-          <Text style={styles.arrow}>›</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Modals */}
+      <Modal visible={showCamera} animationType="slide" presentationStyle="fullScreen">
+        <CameraScreen 
+          onClose={() => setShowCamera(false)}
+          onPhotoTaken={(photo: any) => {
+            setSelectedImage(photo.path);
+            setShowCamera(false);
+            setShowEditor(true);
+          }}
+        />
+      </Modal>
 
-      {/* Footer */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          Made with ❤️ by Jason Tsao
-        </Text>
-        <Text style={styles.footerSubtext}>
-          for Yanbao, who deserves the best
-        </Text>
-      </View>
-    </ScrollView>
+      <Modal visible={showEditor} animationType="slide" presentationStyle="fullScreen">
+        <EditorScreen 
+          imageUri={selectedImage}
+          onClose={() => setShowEditor(false)}
+          onSave={() => {
+            setShowEditor(false);
+            setSelectedImage(null);
+          }}
+        />
+      </Modal>
+
+      <Modal visible={showGallery} animationType="slide" presentationStyle="fullScreen">
+        <GalleryScreen 
+          onClose={() => setShowGallery(false)}
+          onPhotoSelect={(photo: any) => {
+            setSelectedImage(photo.uri);
+            setShowGallery(false);
+            setShowEditor(true);
+          }}
+        />
+      </Modal>
+
+      <Modal visible={showMap} animationType="slide" presentationStyle="fullScreen">
+        <MapScreen onClose={() => setShowMap(false)} />
+      </Modal>
+    </View>
   );
 }
 
-// Main App Component
+// Stats Screen
+function StatsScreen() {
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>数据统计</Text>
+      </View>
+      <ScrollView style={styles.content}>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>📈 本月趋势</Text>
+          <View style={styles.trendCard}>
+            <Text style={styles.trendValue}>+32%</Text>
+            <Text style={styles.trendLabel}>编辑次数增长</Text>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>🎯 使用习惯</Text>
+          <View style={styles.habitCard}>
+            <Text style={styles.habitText}>• 最常用滤镜: 霓虹 💜</Text>
+            <Text style={styles.habitText}>• 最常拍摄时间: 傍晚 🌅</Text>
+            <Text style={styles.habitText}>• 最爱拍摄地点: 外滩 🌃</Text>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+// Settings Screen
+function SettingsScreen() {
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>设置</Text>
+      </View>
+      <ScrollView style={styles.content}>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>👤 账号</Text>
+          <TouchableOpacity style={styles.settingItem}>
+            <Text style={styles.settingText}>个人信息</Text>
+            <Text style={styles.settingArrow}>›</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>🎨 主题</Text>
+          <TouchableOpacity style={styles.settingItem}>
+            <Text style={styles.settingText}>Kuromi Queen 💜</Text>
+            <Text style={styles.settingArrow}>›</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>📱 关于</Text>
+          <View style={styles.settingItem}>
+            <Text style={styles.settingText}>版本</Text>
+            <Text style={styles.settingValue}>1.0.0</Text>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+// Main App
 export default function App() {
   return (
-    <View style={{ flex: 1 }}>
-      <HomeScreen navigation={null} />
-    </View>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={{
+            headerShown: false,
+            tabBarStyle: styles.tabBar,
+            tabBarActiveTintColor: '#A33BFF',
+            tabBarInactiveTintColor: '#666',
+            tabBarLabelStyle: styles.tabBarLabel,
+          }}
+        >
+          <Tab.Screen 
+            name="Home" 
+            component={HomeScreen}
+            options={{
+              tabBarLabel: '首页',
+              tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🏠</Text>,
+            }}
+          />
+          <Tab.Screen 
+            name="Stats" 
+            component={StatsScreen}
+            options={{
+              tabBarLabel: '统计',
+              tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>📊</Text>,
+            }}
+          />
+          <Tab.Screen 
+            name="Settings" 
+            component={SettingsScreen}
+            options={{
+              tabBarLabel: '设置',
+              tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>⚙️</Text>,
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 
@@ -202,162 +292,218 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 20,
-    paddingTop: 50,
-    backgroundColor: '#1a1a2e',
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
-  },
-  headerLeft: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    paddingTop: 50,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    backgroundColor: '#1a1a2e',
   },
-  logo: {
-    fontSize: 36,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
+  greeting: {
     color: '#fff',
+    fontSize: 24,
+    fontWeight: '700',
   },
   subtitle: {
-    fontSize: 12,
-    color: '#888',
+    color: '#A33BFF',
+    fontSize: 14,
+    marginTop: 4,
   },
-  headerIcons: {
-    flexDirection: 'row',
-    gap: 10,
+  title: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: '700',
   },
-  iconButton: {
+  settingsButton: {
     width: 40,
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  icon: {
+  settingsIcon: {
     fontSize: 24,
+  },
+  content: {
+    flex: 1,
   },
   section: {
     padding: 20,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
     color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
     marginBottom: 15,
   },
-  grid: {
+  featuresGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 15,
   },
-  card: {
-    width: '48%',
+  featureCard: {
+    width: '47%',
     aspectRatio: 1,
-    backgroundColor: '#1a1a2e',
     borderRadius: 20,
-    borderWidth: 2,
-    alignItems: 'center',
+    padding: 20,
     justifyContent: 'center',
-    padding: 15,
-    position: 'relative',
-    overflow: 'hidden',
+    alignItems: 'center',
   },
-  glowEffect: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: -1,
+  featureCardPrimary: {
+    backgroundColor: 'rgba(163, 59, 255, 0.2)',
+    borderWidth: 2,
+    borderColor: '#A33BFF',
+  },
+  featureCardSecondary: {
+    backgroundColor: 'rgba(255, 105, 180, 0.2)',
+    borderWidth: 2,
+    borderColor: '#FF69B4',
+  },
+  featureCardTertiary: {
+    backgroundColor: 'rgba(163, 59, 255, 0.15)',
+    borderWidth: 1,
+    borderColor: '#A33BFF',
+  },
+  featureCardQuaternary: {
+    backgroundColor: 'rgba(255, 105, 180, 0.15)',
+    borderWidth: 1,
+    borderColor: '#FF69B4',
   },
   featureIcon: {
-    fontSize: 40,
-    marginBottom: 8,
-  },
-  featureSubtitle: {
-    fontSize: 14,
-    color: '#aaa',
-    textAlign: 'center',
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  statCard: {
-    width: '48%',
-    padding: 15,
-    borderRadius: 15,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#333',
-  },
-  statIcon: {
-    fontSize: 32,
-    marginBottom: 5,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#888',
-    marginBottom: 5,
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 2,
-  },
-  statUnit: {
-    fontSize: 11,
-    color: '#666',
-  },
-  featureItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1a1a2e',
-    padding: 15,
-    borderRadius: 12,
+    fontSize: 48,
     marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#333',
   },
-  featureItemIcon: {
-    fontSize: 32,
-    marginRight: 15,
-  },
-  featureItemContent: {
-    flex: 1,
-  },
-  featureItemTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+  featureTitle: {
     color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
     marginBottom: 4,
   },
-  featureItemDesc: {
-    fontSize: 13,
-    color: '#888',
+  featureSubtitle: {
+    color: '#aaa',
+    fontSize: 12,
   },
-  arrow: {
-    fontSize: 24,
-    color: '#666',
+  statsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 15,
+  },
+  statCard: {
+    width: '47%',
+    backgroundColor: '#1a1a2e',
+    borderRadius: 15,
+    padding: 20,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  statValue: {
+    color: '#A33BFF',
+    fontSize: 32,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  statLabel: {
+    color: '#aaa',
+    fontSize: 14,
+  },
+  quickActions: {
+    flexDirection: 'row',
+    gap: 15,
+  },
+  quickActionButton: {
+    flex: 1,
+    backgroundColor: '#1a1a2e',
+    borderRadius: 15,
+    padding: 15,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  quickActionIcon: {
+    fontSize: 32,
+    marginBottom: 8,
+  },
+  quickActionText: {
+    color: '#fff',
+    fontSize: 12,
   },
   footer: {
     padding: 30,
     alignItems: 'center',
   },
   footerText: {
-    fontSize: 14,
     color: '#888',
+    fontSize: 14,
     fontStyle: 'italic',
   },
   footerSubtext: {
-    fontSize: 12,
     color: '#666',
+    fontSize: 12,
     marginTop: 5,
+  },
+  trendCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 15,
+    padding: 20,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  trendValue: {
+    color: '#A33BFF',
+    fontSize: 48,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  trendLabel: {
+    color: '#aaa',
+    fontSize: 16,
+  },
+  habitCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 15,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  habitText: {
+    color: '#fff',
+    fontSize: 16,
+    marginBottom: 10,
+    lineHeight: 24,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#1a1a2e',
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  settingText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  settingValue: {
+    color: '#666',
+    fontSize: 16,
+  },
+  settingArrow: {
+    color: '#666',
+    fontSize: 24,
+  },
+  tabBar: {
+    backgroundColor: '#1a1a2e',
+    borderTopWidth: 1,
+    borderTopColor: '#333',
+    height: 70,
+    paddingBottom: 10,
+  },
+  tabBarLabel: {
+    fontSize: 12,
+    fontWeight: '600',
   },
 });
