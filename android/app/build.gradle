@@ -9,12 +9,12 @@ apply plugin: "com.facebook.react"
 
 android {
     namespace "com.yanbaoai"
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.yanbaoai"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdk 24
+        targetSdk 34
         versionCode 1
         versionName "1.0.0"
         
