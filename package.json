@@ -9,6 +9,7 @@
     "ios": "expo run:ios"
   },
   "dependencies": {
+    "@react-native-community/slider": "^5.1.2",
     "@react-navigation/bottom-tabs": "^7.10.0",
     "@react-navigation/native": "^7.1.28",
     "expo": "~50.0.0",
