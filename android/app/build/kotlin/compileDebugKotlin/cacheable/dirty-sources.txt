@@ -1,6 +1,4 @@
 /home/ubuntu/yanbao-imaging-studio/android/app/src/main/java/com/yanbaoai/MainApplication.kt
 /home/ubuntu/yanbao-imaging-studio/android/app/src/main/java/com/yanbaoai/modules/CameraModule.kt
-/home/ubuntu/yanbao-imaging-studio/android/app/src/main/java/com/yanbaoai/modules/MemoryModule.kt
 /home/ubuntu/yanbao-imaging-studio/android/app/src/main/java/com/yanbaoai/modules/YanbaoNativePackage.kt
-/home/ubuntu/yanbao-imaging-studio/android/app/src/main/java/com/yanbaoai/modules/MasterModule.kt
 /home/ubuntu/yanbao-imaging-studio/android/app/src/main/java/com/yanbaoai/MainActivity.kt

@@ -1,10 +1,7 @@
 /**
  * yanbao AI - 相机屏幕
  * 
- * 集成 MasterControlPanel，包含 29 个大师参数滑块
- * - 基础光影阵列（10 个）
- * - 色彩美学阵列（9 个）
- * - 大师/抖音/黄油强化阵列（10 个）
+ * 集成 MasterSliderBar，底部横向滚动的 29 个大师参数滑块
  */
 
 import React, { useState, useEffect } from 'react';
@@ -17,8 +14,9 @@ import {
   NativeModules,
   ActivityIndicator,
   Alert,
+  useCameraPermission,
 } from 'react-native';
-import MasterControlPanel from '../components/MasterControlPanel';
+import MasterSliderBar from '../components/MasterSliderBar';
 
 interface CameraScreenProps {
   navigation?: any;
@@ -26,25 +24,15 @@ interface CameraScreenProps {
 
 export const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [pressureTestMode, setPressureTestMode] = useState(false);
-  const [pressureTestResults, setPressureTestResults] = useState<{
-    totalOperations: number;
-    crashes: number;
-    oomErrors: number;
-    avgMemory: number;
-    avgFps: number;
-  } | null>(null);
+  const [cameraActive, setCameraActive] = useState(false);
 
   // 处理参数变化
   const handleParamChange = (paramId: string, value: number) => {
     console.log(`✅ 参数更新: ${paramId} = ${value}`);
     
     // 调用原生模块
-    if (NativeModules.CameraModule?.applyFilter) {
-      NativeModules.CameraModule.applyFilter({
-        paramId,
-        value,
-      }).catch((error: any) => {
+    if (NativeModules.MasterModule?.updateParam) {
+      NativeModules.MasterModule.updateParam(paramId, value).catch((error: any) => {
         console.error(`❌ 参数应用失败:`, error);
       });
     }
@@ -57,6 +45,7 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
       // 调用原生相机模块
       if (NativeModules.CameraModule?.openCamera) {
         await NativeModules.CameraModule.openCamera();
+        setCameraActive(true);
       } else {
         Alert.alert('提示', '相机模块正在开发中');
       }
@@ -84,139 +73,50 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
     }
   };
 
-  // 启动压力测试
-  const handleStartPressureTest = () => {
-    setPressureTestMode(true);
-    setPressureTestResults(null);
-    console.log('🚀 压力测试已启动');
-    Alert.alert('压力测试', '已启动！请快速滑动所有参数条进行测试');
-  };
-
-  // 停止压力测试
-  const handleStopPressureTest = async () => {
-    setPressureTestMode(false);
-    
-    try {
-      // 模拟压力测试结果
-      setPressureTestResults({
-        totalOperations: 120,
-        crashes: 0,
-        oomErrors: 0,
-        avgMemory: 185.5,
-        avgFps: 58.3,
-      });
-      console.log('📊 压力测试完成');
-      Alert.alert('压力测试完成', '应用稳定性良好，无崩溃');
-    } catch (error) {
-      console.error('❌ 获取压力测试结果失败:', error);
-    }
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       {/* 顶部标题栏 */}
       <View style={styles.header}>
         <Text style={styles.title}>yanbao AI</Text>
-        <Text style={styles.subtitle}>大师摄影参数调整</Text>
+        <Text style={styles.subtitle}>大师级摄影相机</Text>
       </View>
 
-      {/* 主要内容 */}
-      <View style={styles.content}>
-        {/* 相机预览区域（占位符） */}
-        <View style={styles.cameraPreview}>
-          <Text style={styles.cameraPlaceholder}>📷 相机预览区域</Text>
-          <Text style={styles.cameraHint}>
-            原生 Camera2 API + AI 推理
-          </Text>
-        </View>
-
-        {/* 大师参数控制面板 */}
-        <View style={styles.controlPanelContainer}>
-          <MasterControlPanel
-            onParamChange={handleParamChange}
-            pressureTestMode={pressureTestMode}
-          />
-        </View>
-      </View>
-
-      {/* 底部操作按钮 */}
-      <View style={styles.footer}>
-        {/* 相机操作按钮 */}
-        <View style={styles.buttonGroup}>
-          <TouchableOpacity
-            style={[styles.button, styles.primaryButton]}
-            onPress={handleOpenCamera}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#FFFFFF" />
-            ) : (
-              <Text style={styles.buttonText}>打开相机</Text>
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.secondaryButton]}
-            onPress={handleTakePhoto}
-          >
-            <Text style={styles.buttonText}>拍照</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* 压力测试按钮 */}
-        <View style={styles.buttonGroup}>
-          {!pressureTestMode ? (
-            <TouchableOpacity
-              style={[styles.button, styles.testButton]}
-              onPress={handleStartPressureTest}
-            >
-              <Text style={styles.buttonText}>启动压力测试</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={[styles.button, styles.stopButton]}
-              onPress={handleStopPressureTest}
-            >
-              <Text style={styles.buttonText}>停止压力测试</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* 压力测试结果 */}
-        {pressureTestResults && (
-          <View style={styles.resultContainer}>
-            <Text style={styles.resultTitle}>📊 压力测试结果</Text>
-            <View style={styles.resultRow}>
-              <Text style={styles.resultLabel}>总操作次数:</Text>
-              <Text style={styles.resultValue}>{pressureTestResults.totalOperations}</Text>
-            </View>
-            <View style={styles.resultRow}>
-              <Text style={styles.resultLabel}>崩溃次数:</Text>
-              <Text style={[styles.resultValue, { color: '#4CAF50' }]}>
-                {pressureTestResults.crashes}
-              </Text>
-            </View>
-            <View style={styles.resultRow}>
-              <Text style={styles.resultLabel}>OOM 错误:</Text>
-              <Text style={[styles.resultValue, { color: '#4CAF50' }]}>
-                {pressureTestResults.oomErrors}
-              </Text>
-            </View>
-            <View style={styles.resultRow}>
-              <Text style={styles.resultLabel}>平均内存:</Text>
-              <Text style={styles.resultValue}>
-                {pressureTestResults.avgMemory.toFixed(1)} MB
-              </Text>
-            </View>
-            <View style={styles.resultRow}>
-              <Text style={styles.resultLabel}>平均帧率:</Text>
-              <Text style={styles.resultValue}>
-                {pressureTestResults.avgFps.toFixed(1)} FPS
-              </Text>
-            </View>
-          </View>
+      {/* 相机预览区域 */}
+      <View style={styles.cameraPreview}>
+        {cameraActive ? (
+          <Text style={styles.cameraPlaceholder}>📷 相机预览</Text>
+        ) : (
+          <>
+            <Text style={styles.cameraPlaceholder}>📷 相机预览区域</Text>
+            <Text style={styles.cameraHint}>点击下方"打开相机"按钮启动</Text>
+          </>
         )}
       </View>
+
+      {/* 操作按钮 */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[styles.button, styles.primaryButton]}
+          onPress={handleOpenCamera}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text style={styles.buttonText}>打开相机</Text>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.button, styles.secondaryButton]}
+          onPress={handleTakePhoto}
+        >
+          <Text style={styles.buttonText}>拍照</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* 底部大师滑块条 */}
+      <MasterSliderBar onParamChange={handleParamChange} />
     </SafeAreaView>
   );
 };
@@ -244,11 +144,8 @@ const styles = StyleSheet.create({
     color: '#666666',
     fontFamily: 'PingFang SC',
   },
-  content: {
-    flex: 1,
-  },
   cameraPreview: {
-    height: 180,
+    flex: 1,
     backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     alignItems: 'center',
@@ -266,21 +163,14 @@ const styles = StyleSheet.create({
     color: '#CCCCCC',
     fontFamily: 'PingFang SC',
   },
-  controlPanelContainer: {
-    flex: 1,
-  },
-  footer: {
+  buttonContainer: {
+    flexDirection: 'row',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    backgroundColor: '#FAFAFA',
-    maxHeight: 300,
-  },
-  buttonGroup: {
-    flexDirection: 'row',
     gap: 8,
-    marginBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    backgroundColor: '#FAFAFA',
   },
   button: {
     flex: 1,
@@ -296,45 +186,10 @@ const styles = StyleSheet.create({
   secondaryButton: {
     backgroundColor: '#4ECDC4',
   },
-  testButton: {
-    backgroundColor: '#FFD93D',
-  },
-  stopButton: {
-    backgroundColor: '#FF6B6B',
-  },
   buttonText: {
     fontSize: 14,
     fontWeight: '600',
     color: '#FFFFFF',
-    fontFamily: 'PingFang SC',
-  },
-  resultContainer: {
-    backgroundColor: '#E8F5E9',
-    borderRadius: 6,
-    padding: 12,
-    marginTop: 8,
-  },
-  resultTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#2E7D32',
-    fontFamily: 'PingFang SC',
-    marginBottom: 8,
-  },
-  resultRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  resultLabel: {
-    fontSize: 12,
-    color: '#1B5E20',
-    fontFamily: 'PingFang SC',
-  },
-  resultValue: {
-    fontSize: 12,
-    color: '#FF6B6B',
-    fontWeight: '600',
     fontFamily: 'PingFang SC',
   },
 });
