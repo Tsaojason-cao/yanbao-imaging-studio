@@ -23,9 +23,5 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven {
-            // Android JSC is installed from npm
-            url("$rootDir/../node_modules/jsc-android/dist")
-        }
     }
 }
