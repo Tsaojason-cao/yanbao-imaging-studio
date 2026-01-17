@@ -63,6 +63,10 @@ android {
 }
 
 dependencies {
+    // React Native
+    implementation("com.facebook.react:react-android:0.73.0")
+    implementation("com.facebook.react:hermes-android:0.73.0")
+    
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     
