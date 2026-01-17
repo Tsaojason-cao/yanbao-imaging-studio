@@ -1,6 +1,5 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
-apply plugin: "com.facebook.react"
 
 /**
  * yanbao AI - Android 应用配置
@@ -98,11 +97,4 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }
 
-// React Native 配置
-react {
-    // React Native 源码路径
-    root = file("../../")
-    
-    // JS 入口文件
-    entryFile = file("../../index.js")
-}
+
