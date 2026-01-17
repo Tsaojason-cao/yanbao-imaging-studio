@@ -19,8 +19,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "new-project-id"
+        "projectId": "9ce48039-3e1b-4e88-aa30-a4c46a3f8796"
       }
-    }
+    },
+    "owner": "yanbao"
   }
 }
