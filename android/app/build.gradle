@@ -63,9 +63,6 @@ android {
 }
 
 dependencies {
-    // React Native
-    implementation("com.facebook.react:react-android")
-
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     
