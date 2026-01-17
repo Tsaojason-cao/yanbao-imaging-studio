@@ -21,6 +21,7 @@ import CameraScreen from './screens/CameraScreen';
 import EditorScreen from './screens/EditorScreen';
 import GalleryScreen from './screens/GalleryScreen';
 import MapScreen from './screens/MapScreen';
+import MasterScreen from './screens/MasterScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -99,6 +100,13 @@ function App(): React.JSX.Element {
             component={MapScreen}
             options={{
               tabBarLabel: '地图',
+            }}
+          />
+          <Tab.Screen
+            name="大师"
+            component={MasterScreen}
+            options={{
+              tabBarLabel: '大师',
             }}
           />
         </Tab.Navigator>

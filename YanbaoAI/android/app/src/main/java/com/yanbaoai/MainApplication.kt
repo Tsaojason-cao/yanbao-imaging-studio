@@ -10,6 +10,7 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
+import com.yanbaoai.modules.YanbaoNativePackage
 
 /**
  * yanbao AI - 主应用类
@@ -23,8 +24,8 @@ class MainApplication : Application(), ReactApplication {
                 // 自动链接的包
                 val packages = PackageList(this).packages.toMutableList()
                 
-                // 添加自定义原生模块包（Day 2-5 实现）
-                // packages.add(YanbaoNativePackage())
+                // 添加自定义原生模块包
+                packages.add(YanbaoNativePackage())
                 
                 return packages
             }
