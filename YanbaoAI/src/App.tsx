@@ -22,6 +22,7 @@ import EditorScreen from './screens/EditorScreen';
 import GalleryScreen from './screens/GalleryScreen';
 import MapScreen from './screens/MapScreen';
 import MasterScreen from './screens/MasterScreen';
+import MemoryScreen from './screens/MemoryScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -107,6 +108,13 @@ function App(): React.JSX.Element {
             component={MasterScreen}
             options={{
               tabBarLabel: '大师',
+            }}
+          />
+          <Tab.Screen
+            name="记忆"
+            component={MemoryScreen}
+            options={{
+              tabBarLabel: '记忆',
             }}
           />
         </Tab.Navigator>

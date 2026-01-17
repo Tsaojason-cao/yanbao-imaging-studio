@@ -24,14 +24,14 @@ class YanbaoNativePackage : ReactPackage {
         // Day 2: 大师模块
         modules.add(MasterModule(reactContext))
         
+        // Day 3: 记忆模块
+        modules.add(MemoryModule(reactContext))
+        
         // Day 4-5: 相机模块（待实现）
         // modules.add(CameraModule(reactContext))
         
         // Day 4-5: 美颜模块（待实现）
         // modules.add(BeautyModule(reactContext))
-        
-        // Day 3: 记忆模块（待实现）
-        // modules.add(MemoryModule(reactContext))
         
         // Day 4-5: 图片模块（待实现）
         // modules.add(ImageModule(reactContext))
