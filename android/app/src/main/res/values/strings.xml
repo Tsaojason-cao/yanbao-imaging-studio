@@ -25,21 +25,64 @@
     <string name="cancel">取消</string>
     <string name="apply">应用</string>
     
-    <!-- 7 维参数 -->
+    <!-- 29 维大师参数 - 肤质参数 (5 维) -->
+    <string name="param_soft_skin">奶油肌</string>
+    <string name="param_transparency">通透感</string>
+    <string name="param_glow">光泽度</string>
+    <string name="param_smoothness">平滑度</string>
+    <string name="param_pore_refine">毛孔细致</string>
+    
+    <!-- 29 维大师参数 - 光影参数 (7 维) -->
     <string name="param_exposure">感光度</string>
     <string name="param_contrast">对比度</string>
     <string name="param_highlights">高光</string>
     <string name="param_shadows">阴影</string>
-    <string name="param_saturation">饱和度</string>
+    <string name="param_black_point">黑点</string>
+    <string name="param_white_point">白点</string>
     <string name="param_clarity">清晰度</string>
+    
+    <!-- 29 维大师参数 - 色彩参数 (7 维) -->
+    <string name="param_saturation">饱和度</string>
     <string name="param_temperature">色温</string>
+    <string name="param_tone">色调</string>
+    <string name="param_red">红色</string>
+    <string name="param_green">绿色</string>
+    <string name="param_blue">蓝色</string>
+    <string name="param_cyan">青色</string>
+    
+    <!-- 29 维大师参数 - 清晰度参数 (5 维) -->
+    <string name="param_sharpness">锐化</string>
+    <string name="param_denoise">去噪</string>
+    <string name="param_detail_enhance">细节增强</string>
+    <string name="param_texture">纹理</string>
+    <string name="param_sparkle">星光效果</string>
+    
+    <!-- 29 维大师参数 - 特效参数 (5 维) -->
+    <string name="param_soft_focus">柔焦</string>
+    <string name="param_vignette">晕影</string>
+    <string name="param_chromatic">色差</string>
+    <string name="param_film">胶片感</string>
+    <string name="param_magenta">品红</string>
     
     <!-- 滤镜模块 -->
     <string name="filter_preview">滤镜预览</string>
+    <string name="filter_kuromi_pink">库洛米粉</string>
+    <string name="filter_starlight">星光梦幻</string>
+    <string name="filter_purple_moon">紫月夜</string>
+    <string name="filter_cream_skin">奶油肌</string>
+    <string name="filter_film">胶片感</string>
+    <string name="filter_morning_mist">清晨雾</string>
+    <string name="filter_deep_blue">深夜蓝</string>
+    <string name="filter_cherry_pink">樱花粉</string>
+    <string name="filter_custom">自定义</string>
     <string name="search">搜索</string>
     
     <!-- AI 脑模块 -->
     <string name="bone_analysis">骨相分析</string>
+    <string name="face_shape">脸型</string>
+    <string name="forehead">额头</string>
+    <string name="cheekbone">颧骨</string>
+    <string name="jawline">下颌</string>
     <string name="temperament_score">气质评分</string>
     <string name="beauty_suggestions">个性化建议</string>
     <string name="save_results">保存结果</string>
@@ -50,10 +93,13 @@
     <!-- 相机模块 -->
     <string name="flash">闪光灯</string>
     <string name="flip_camera">切换摄像头</string>
+    <string name="iso">ISO</string>
+    <string name="focus_mode">对焦</string>
+    <string name="focus_auto">自动</string>
     
     <!-- 作品集模块 -->
     <string name="photo_thumbnail">照片缩略图</string>
-    <string name="watermark">水印</string>
+    <string name="watermark">库洛米水印</string>
     <string name="sort">排序</string>
     <string name="delete">删除</string>
     <string name="edit">编辑</string>
@@ -61,19 +107,27 @@
     <!-- 设置模块 -->
     <string name="display_settings">显示设置</string>
     <string name="theme_color">主题颜色</string>
+    <string name="theme_kuromi_pink">库洛米粉</string>
     <string name="font_size">字体大小</string>
+    <string name="font_medium">中等</string>
     <string name="dark_mode">深色模式</string>
+    <string name="dark_mode_off">关</string>
     <string name="export_settings">导出设置</string>
     <string name="export_format">导出格式</string>
+    <string name="export_format_jpg">JPG</string>
     <string name="export_quality">导出质量</string>
+    <string name="export_quality_high">高</string>
     <string name="add_watermark">添加库洛米水印</string>
+    <string name="add_watermark_on">开</string>
     <string name="export_location">导出位置</string>
     <string name="storage_management">存储管理</string>
     <string name="used_space">已用空间</string>
+    <string name="used_space_value">2.5 GB</string>
     <string name="clear_cache">清除缓存</string>
     <string name="clear">清除</string>
     <string name="about_app">关于应用</string>
     <string name="app_version">应用版本</string>
+    <string name="app_version_value">1.0.0</string>
     <string name="check_update">检查更新</string>
     <string name="check">检查</string>
     <string name="user_agreement">用户协议</string>
