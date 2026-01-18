@@ -1,23 +1,296 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center">
-    
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="yanbao AI"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:gravity="center" />
-    
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="智能相机 · 图像编辑 · AI 推理"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        android:gravity="center" />
-</LinearLayout>
+    android:background="@drawable/gradient_background">
+
+    <!-- 中心圆形轮盘背景 -->
+    <FrameLayout
+        android:id="@+id/wheelContainer"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
+        android:layout_gravity="center"
+        android:background="@drawable/wheel_background">
+
+        <!-- 中心库洛米头像 -->
+        <ImageView
+            android:id="@+id/centerKuromiAvatar"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:src="@drawable/kuromi_avatar"
+            android:contentDescription="@string/kuromi_avatar_desc" />
+
+        <!-- 8 个选项按钮 - 使用 FrameLayout 实现圆形排列 -->
+        
+        <!-- 选项 1: 原生相机 (顶部) -->
+        <FrameLayout
+            android:id="@+id/option1_camera"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginTop="12dp">
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_camera"
+                android:background="@drawable/button_circle_camera"
+                android:contentDescription="@string/camera_module"
+                android:scaleType="centerInside" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/camera_module"
+                android:textSize="10sp"
+                android:textColor="@color/text_dark"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_marginBottom="-20dp" />
+        </FrameLayout>
+
+        <!-- 选项 2: 大师脑 AI (右上45度) -->
+        <FrameLayout
+            android:id="@+id/option2_ai_brain"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="right|top"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="30dp">
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_ai_brain"
+                android:background="@drawable/button_circle_ai"
+                android:contentDescription="@string/ai_brain_module"
+                android:scaleType="centerInside" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ai_brain_module"
+                android:textSize="9sp"
+                android:textColor="@color/text_dark"
+                android:layout_gravity="center"
+                android:layout_marginTop="35dp" />
+        </FrameLayout>
+
+        <!-- 选项 3: 参数调整 (右侧) -->
+        <FrameLayout
+            android:id="@+id/option3_parameters"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="12dp">
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_sliders"
+                android:background="@drawable/button_circle_params"
+                android:contentDescription="@string/parameters_module"
+                android:scaleType="centerInside" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/parameters_module"
+                android:textSize="9sp"
+                android:textColor="@color/text_dark"
+                android:layout_gravity="center"
+                android:layout_marginStart="55dp" />
+        </FrameLayout>
+
+        <!-- 选项 4: 美颜模块 (右下45度) -->
+        <FrameLayout
+            android:id="@+id/option4_beauty"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="30dp"
+            android:layout_marginRight="30dp">
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_beauty"
+                android:background="@drawable/button_circle_beauty"
+                android:contentDescription="@string/beauty_module"
+                android:scaleType="centerInside" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/beauty_module"
+                android:textSize="9sp"
+                android:textColor="@color/text_dark"
+                android:layout_gravity="center"
+                android:layout_marginTop="35dp" />
+        </FrameLayout>
+
+        <!-- 选项 5: 图像处理 (底部) -->
+        <FrameLayout
+            android:id="@+id/option5_filters"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="12dp">
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_filters"
+                android:background="@drawable/button_circle_filters"
+                android:contentDescription="@string/filters_module"
+                android:scaleType="centerInside" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filters_module"
+                android:textSize="10sp"
+                android:textColor="@color/text_dark"
+                android:layout_gravity="center_horizontal|top"
+                android:layout_marginTop="-20dp" />
+        </FrameLayout>
+
+        <!-- 选项 6: 雁宝记忆 (左下45度) -->
+        <FrameLayout
+            android:id="@+id/option6_memory"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="left|bottom"
+            android:layout_marginBottom="30dp"
+            android:layout_marginLeft="30dp">
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_memory"
+                android:background="@drawable/button_circle_memory"
+                android:contentDescription="@string/memory_module"
+                android:scaleType="centerInside" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/memory_module"
+                android:textSize="9sp"
+                android:textColor="@color/text_dark"
+                android:layout_gravity="center"
+                android:layout_marginTop="35dp" />
+        </FrameLayout>
+
+        <!-- 选项 7: 云端同步 (左侧) -->
+        <FrameLayout
+            android:id="@+id/option7_cloud"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="12dp">
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_cloud"
+                android:background="@drawable/button_circle_cloud"
+                android:contentDescription="@string/cloud_module"
+                android:scaleType="centerInside" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cloud_module"
+                android:textSize="9sp"
+                android:textColor="@color/text_dark"
+                android:layout_gravity="center"
+                android:layout_marginEnd="55dp" />
+        </FrameLayout>
+
+        <!-- 选项 8: 图像处理高级 (左上45度) -->
+        <FrameLayout
+            android:id="@+id/option8_advanced"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="left|top"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="30dp">
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_advanced"
+                android:background="@drawable/button_circle_advanced"
+                android:contentDescription="@string/advanced_module"
+                android:scaleType="centerInside" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/advanced_module"
+                android:textSize="9sp"
+                android:textColor="@color/text_dark"
+                android:layout_gravity="center"
+                android:layout_marginTop="-35dp" />
+        </FrameLayout>
+
+    </FrameLayout>
+
+    <!-- 顶部状态栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="top"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:background="@color/header_background">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/app_name"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/kuromi_pink" />
+
+        <ImageButton
+            android:id="@+id/settingsButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_settings"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/settings"
+            android:scaleType="centerInside" />
+
+    </LinearLayout>
+
+    <!-- 底部功能栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/footer_background"
+        android:paddingHorizontal="16dp">
+
+        <ImageButton
+            android:id="@+id/galleryButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_gallery"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/gallery"
+            android:scaleType="centerInside" />
+
+        <ImageButton
+            android:id="@+id/historyButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_history"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/history"
+            android:scaleType="centerInside" />
+
+        <ImageButton
+            android:id="@+id/shareButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_share"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/share"
+            android:scaleType="centerInside" />
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,3 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">yanbao AI</string>
+    
+    <!-- 8 个功能模块 -->
+    <string name="camera_module">原生相机</string>
+    <string name="ai_brain_module">大师脑 AI</string>
+    <string name="parameters_module">参数调整</string>
+    <string name="beauty_module">美颜模块</string>
+    <string name="filters_module">图像处理</string>
+    <string name="memory_module">雁宝记忆</string>
+    <string name="cloud_module">云端同步</string>
+    <string name="advanced_module">高级功能</string>
+    
+    <!-- 其他 UI 文本 -->
+    <string name="kuromi_avatar_desc">库洛米头像</string>
+    <string name="settings">设置</string>
+    <string name="gallery">相册</string>
+    <string name="history">历史</string>
+    <string name="share">分享</string>
+    
+    <!-- 参数调整页面 -->
+    <string name="back">返回</string>
+    <string name="reset">重置</string>
+    <string name="cancel">取消</string>
+    <string name="apply">应用</string>
+    
+    <!-- 7 维参数 -->
+    <string name="param_exposure">感光度</string>
+    <string name="param_contrast">对比度</string>
+    <string name="param_highlights">高光</string>
+    <string name="param_shadows">阴影</string>
+    <string name="param_saturation">饱和度</string>
+    <string name="param_clarity">清晰度</string>
+    <string name="param_temperature">色温</string>
 </resources>

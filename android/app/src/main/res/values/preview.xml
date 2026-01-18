@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Layout Editor 预览配置 -->
+    <attr name="previewLayout" format="reference" />
+    
+    <!-- 预览尺寸 -->
+    <dimen name="preview_width">411dp</dimen>
+    <dimen name="preview_height">823dp</dimen>
+</resources>

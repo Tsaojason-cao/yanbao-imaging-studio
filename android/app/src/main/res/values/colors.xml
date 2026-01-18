@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <!-- 库洛米主题色 -->
+    <color name="kuromi_pink">#FF1493</color>
+    <color name="kuromi_purple">#9D4EDD</color>
+    <color name="kuromi_white">#FFFFFF</color>
+    <color name="kuromi_black">#1A1A1A</color>
+    
+    <!-- 背景色 -->
+    <color name="gradient_start">#F8F0FF</color>
+    <color name="gradient_end">#FFE8F5</color>
+    <color name="header_background">#FFFBFE</color>
+    <color name="footer_background">#FFFBFE</color>
+    
+    <!-- 文字色 -->
+    <color name="text_dark">#333333</color>
+    <color name="text_light">#666666</color>
+    <color name="text_white">#FFFFFF</color>
+    
+    <!-- 按钮背景色 -->
+    <color name="button_camera">#FFB6D9</color>
+    <color name="button_ai">#E0B0FF</color>
+    <color name="button_params">#C8B6FF</color>
+    <color name="button_beauty">#FFD1DC</color>
+    <color name="button_filters">#FFE0B2</color>
+    <color name="button_memory">#B3E5FC</color>
+    <color name="button_cloud">#C8E6C9</color>
+    <color name="button_advanced">#F0F4C3</color>
+    
+    <!-- 原始颜色 -->
+    <color name="colorPrimary">#FF1493</color>
+    <color name="colorPrimaryDark">#9D4EDD</color>
+    <color name="colorAccent">#FF1493</color>
 </resources>

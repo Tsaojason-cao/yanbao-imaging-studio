@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/gradient_start">
+
+    <!-- 顶部标题栏 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/header_background">
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back"
+            android:scaleType="centerInside" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/parameters_module"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/kuromi_pink" />
+
+        <ImageButton
+            android:id="@+id/resetButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_reset"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/reset"
+            android:scaleType="centerInside" />
+
+    </FrameLayout>
+
+    <!-- 参数滑块列表 (RecyclerView) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/parametersRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:clipToPadding="false" />
+
+    <!-- 底部操作栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/footer_background"
+        android:paddingHorizontal="16dp">
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="@string/cancel"
+            android:textColor="@color/text_dark"
+            android:background="@drawable/button_outline"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/applyButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="@string/apply"
+            android:textColor="@color/text_white"
+            android:background="@drawable/button_filled"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+</LinearLayout>
