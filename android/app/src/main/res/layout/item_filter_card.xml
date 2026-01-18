@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@drawable/card_background">
+
+    <!-- 滤镜预览图片 -->
+    <ImageView
+        android:id="@+id/filterPreviewImage"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:background="@color/gradient_start"
+        android:contentDescription="@string/filter_preview" />
+
+    <!-- 滤镜名称 -->
+    <TextView
+        android:id="@+id/filterName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="滤镜名称"
+        android:textSize="12sp"
+        android:textColor="@color/text_dark"
+        android:gravity="center"
+        android:layout_marginTop="8dp" />
+
+    <!-- 滤镜描述 -->
+    <TextView
+        android:id="@+id/filterDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="滤镜描述"
+        android:textSize="10sp"
+        android:textColor="@color/text_light"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
+
+</LinearLayout>

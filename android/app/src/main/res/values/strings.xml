@@ -7,7 +7,7 @@
     <string name="ai_brain_module">大师脑 AI</string>
     <string name="parameters_module">参数调整</string>
     <string name="beauty_module">美颜模块</string>
-    <string name="filters_module">图像处理</string>
+    <string name="filters_module">滤镜库</string>
     <string name="memory_module">雁宝记忆</string>
     <string name="cloud_module">云端同步</string>
     <string name="advanced_module">高级功能</string>
@@ -15,7 +15,7 @@
     <!-- 其他 UI 文本 -->
     <string name="kuromi_avatar_desc">库洛米头像</string>
     <string name="settings">设置</string>
-    <string name="gallery">相册</string>
+    <string name="gallery">作品集</string>
     <string name="history">历史</string>
     <string name="share">分享</string>
     
@@ -33,4 +33,52 @@
     <string name="param_saturation">饱和度</string>
     <string name="param_clarity">清晰度</string>
     <string name="param_temperature">色温</string>
+    
+    <!-- 滤镜模块 -->
+    <string name="filter_preview">滤镜预览</string>
+    <string name="search">搜索</string>
+    
+    <!-- AI 脑模块 -->
+    <string name="bone_analysis">骨相分析</string>
+    <string name="temperament_score">气质评分</string>
+    <string name="beauty_suggestions">个性化建议</string>
+    <string name="save_results">保存结果</string>
+    <string name="apply_suggestions">应用建议</string>
+    <string name="face_preview">面部预览</string>
+    <string name="help">帮助</string>
+    
+    <!-- 相机模块 -->
+    <string name="flash">闪光灯</string>
+    <string name="flip_camera">切换摄像头</string>
+    
+    <!-- 作品集模块 -->
+    <string name="photo_thumbnail">照片缩略图</string>
+    <string name="watermark">水印</string>
+    <string name="sort">排序</string>
+    <string name="delete">删除</string>
+    <string name="edit">编辑</string>
+    
+    <!-- 设置模块 -->
+    <string name="display_settings">显示设置</string>
+    <string name="theme_color">主题颜色</string>
+    <string name="font_size">字体大小</string>
+    <string name="dark_mode">深色模式</string>
+    <string name="export_settings">导出设置</string>
+    <string name="export_format">导出格式</string>
+    <string name="export_quality">导出质量</string>
+    <string name="add_watermark">添加库洛米水印</string>
+    <string name="export_location">导出位置</string>
+    <string name="storage_management">存储管理</string>
+    <string name="used_space">已用空间</string>
+    <string name="clear_cache">清除缓存</string>
+    <string name="clear">清除</string>
+    <string name="about_app">关于应用</string>
+    <string name="app_version">应用版本</string>
+    <string name="check_update">检查更新</string>
+    <string name="check">检查</string>
+    <string name="user_agreement">用户协议</string>
+    <string name="privacy_policy">隐私政策</string>
+    <string name="about_us">关于我们</string>
+    <string name="arrow">箭头</string>
+    <string name="save">保存</string>
 </resources>
