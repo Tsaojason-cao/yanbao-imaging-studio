@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="80"
+    android:viewportHeight="80">
+    <!-- 外圆（紫色） -->
+    <path
+        android:fillColor="#9D4EDD"
+        android:pathData="M40,5 C60.71,5 75,19.29 75,40 C75,60.71 60.71,75 40,75 C19.29,75 5,60.71 5,40 C5,19.29 19.29,5 40,5Z" />
+    <!-- 内圆（白色） -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,15 C55.46,15 65,24.54 65,40 C65,55.46 55.46,65 40,65 C24.54,65 15,55.46 15,40 C15,24.54 24.54,15 40,15Z" />
+</vector>

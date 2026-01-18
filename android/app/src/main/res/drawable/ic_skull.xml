@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- 头骨 -->
+    <path
+        android:fillColor="none"
+        android:strokeColor="#FF1493"
+        android:strokeWidth="1.5"
+        android:pathData="M12,2 C16.42,2 20,5.58 20,10 L20,14 C20,15.1 19.1,16 18,16 L6,16 C4.9,16 4,15.1 4,14 L4,10 C4,5.58 7.58,2 12,2Z" />
+    <!-- 左眼 -->
+    <path
+        android:fillColor="#FF1493"
+        android:pathData="M9,8 C8.45,8 8,8.45 8,9 C8,9.55 8.45,10 9,10 C9.55,10 10,9.55 10,9 C10,8.45 9.55,8 9,8Z" />
+    <!-- 右眼 -->
+    <path
+        android:fillColor="#FF1493"
+        android:pathData="M15,8 C14.45,8 14,8.45 14,9 C14,9.55 14.45,10 15,10 C15.55,10 16,9.55 16,9 C16,8.45 15.55,8 15,8Z" />
+    <!-- 鼻子 -->
+    <path
+        android:fillColor="none"
+        android:strokeColor="#FF1493"
+        android:strokeWidth="1"
+        android:pathData="M12,11 L11,13 L13,13 Z" />
+    <!-- 下颌 -->
+    <path
+        android:fillColor="none"
+        android:strokeColor="#FF1493"
+        android:strokeWidth="1.5"
+        android:pathData="M6,16 L6,20 C6,21.1 6.9,22 8,22 L16,22 C17.1,22 18,21.1 18,20 L18,16" />
+</vector>

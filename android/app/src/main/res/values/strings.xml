@@ -1,38 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">yanbao AI</string>
-    
-    <!-- 8 个功能模块 -->
-    <string name="camera_module">原生相机</string>
-    <string name="ai_brain_module">大师脑 AI</string>
-    <string name="parameters_module">参数调整</string>
-    <string name="beauty_module">美颜模块</string>
-    <string name="filters_module">滤镜库</string>
-    <string name="memory_module">雁宝记忆</string>
-    <string name="cloud_module">云端同步</string>
-    <string name="advanced_module">高级功能</string>
-    
-    <!-- 其他 UI 文本 -->
-    <string name="kuromi_avatar_desc">库洛米头像</string>
-    <string name="settings">设置</string>
-    <string name="gallery">作品集</string>
-    <string name="history">历史</string>
-    <string name="share">分享</string>
-    
-    <!-- 参数调整页面 -->
-    <string name="back">返回</string>
-    <string name="reset">重置</string>
+    <string name="theme_name">库洛米星光魔法</string>
+
+    <!-- 模块标题 -->
+    <string name="module_title_main">星光轮盘</string>
+    <string name="module_title_parameters">29 维大师参数</string>
+    <string name="module_title_ai_brain">大师脑 AI 分析</string>
+    <string name="module_title_filters">魔法滤镜</string>
+    <string name="module_title_camera">原生沉浸相机</string>
+    <string name="module_title_gallery">雁宝记忆</string>
+    <string name="module_title_settings">高级设置</string>
+
+    <!-- 通用 UI -->
+    <string name="take_photo">拍照</string>
+    <string name="gallery">相册</string>
     <string name="cancel">取消</string>
     <string name="apply">应用</string>
-    
-    <!-- 29 维大师参数 - 肤质参数 (5 维) -->
+    <string name="back">返回</string>
+    <string name="reset">重置</string>
+
+    <!-- 29 维大师参数 - 3 层架构 -->
+
+    <!-- 分组 1：皮相 (10 维) -->
+    <string name="param_group_skin">皮相</string>
     <string name="param_soft_skin">奶油肌</string>
     <string name="param_transparency">通透感</string>
     <string name="param_glow">光泽度</string>
     <string name="param_smoothness">平滑度</string>
     <string name="param_pore_refine">毛孔细致</string>
-    
-    <!-- 29 维大师参数 - 光影参数 (7 维) -->
+    <string name="param_denoise">去噪</string>
+    <string name="param_texture">纹理</string>
+    <string name="param_saturation">饱和度</string>
+    <string name="param_temperature">色温</string>
+    <string name="param_tone">色调</string>
+
+    <!-- 分组 2：光影 (9 维) -->
+    <string name="param_group_lighting">光影</string>
     <string name="param_exposure">感光度</string>
     <string name="param_contrast">对比度</string>
     <string name="param_highlights">高光</string>
@@ -40,43 +44,22 @@
     <string name="param_black_point">黑点</string>
     <string name="param_white_point">白点</string>
     <string name="param_clarity">清晰度</string>
-    
-    <!-- 29 维大师参数 - 色彩参数 (7 维) -->
-    <string name="param_saturation">饱和度</string>
-    <string name="param_temperature">色温</string>
-    <string name="param_tone">色调</string>
-    <string name="param_red">红色</string>
-    <string name="param_green">绿色</string>
-    <string name="param_blue">蓝色</string>
-    <string name="param_cyan">青色</string>
-    
-    <!-- 29 维大师参数 - 清晰度参数 (5 维) -->
-    <string name="param_sharpness">锐化</string>
-    <string name="param_denoise">去噪</string>
-    <string name="param_detail_enhance">细节增强</string>
-    <string name="param_texture">纹理</string>
-    <string name="param_sparkle">星光效果</string>
-    
-    <!-- 29 维大师参数 - 特效参数 (5 维) -->
-    <string name="param_soft_focus">柔焦</string>
     <string name="param_vignette">晕影</string>
-    <string name="param_chromatic">色差</string>
-    <string name="param_film">胶片感</string>
-    <string name="param_magenta">品红</string>
-    
-    <!-- 滤镜模块 -->
-    <string name="filter_preview">滤镜预览</string>
-    <string name="filter_kuromi_pink">库洛米粉</string>
-    <string name="filter_starlight">星光梦幻</string>
-    <string name="filter_purple_moon">紫月夜</string>
-    <string name="filter_cream_skin">奶油肌</string>
-    <string name="filter_film">胶片感</string>
-    <string name="filter_morning_mist">清晨雾</string>
-    <string name="filter_deep_blue">深夜蓝</string>
-    <string name="filter_cherry_pink">樱花粉</string>
-    <string name="filter_custom">自定义</string>
-    <string name="search">搜索</string>
-    
+    <string name="param_soft_focus">柔焦</string>
+
+    <!-- 分组 3：骨相 (10 维) -->
+    <string name="param_group_bone">骨相</string>
+    <string name="param_face_shape">脸型调整</string>
+    <string name="param_cheekbone">颧骨高度</string>
+    <string name="param_jawline">下颌线</string>
+    <string name="param_forehead">额头宽度</string>
+    <string name="param_nose_shape">鼻型</string>
+    <string name="param_eye_size">眼睛大小</string>
+    <string name="param_lip_fullness">唇部丰满</string>
+    <string name="param_chin_length">下巴长度</string>
+    <string name="param_face_width">脸部宽度</string>
+    <string name="param_sharpness">锐化</string> <!-- 归入骨相，强调轮廓 -->
+
     <!-- AI 脑模块 -->
     <string name="bone_analysis">骨相分析</string>
     <string name="face_shape">脸型</string>
@@ -84,55 +67,17 @@
     <string name="cheekbone">颧骨</string>
     <string name="jawline">下颌</string>
     <string name="temperament_score">气质评分</string>
-    <string name="beauty_suggestions">个性化建议</string>
-    <string name="save_results">保存结果</string>
-    <string name="apply_suggestions">应用建议</string>
-    <string name="face_preview">面部预览</string>
-    <string name="help">帮助</string>
-    
+
     <!-- 相机模块 -->
-    <string name="flash">闪光灯</string>
-    <string name="flip_camera">切换摄像头</string>
     <string name="iso">ISO</string>
     <string name="focus_mode">对焦</string>
-    <string name="focus_auto">自动</string>
-    
-    <!-- 作品集模块 -->
-    <string name="photo_thumbnail">照片缩略图</string>
-    <string name="watermark">库洛米水印</string>
-    <string name="sort">排序</string>
-    <string name="delete">删除</string>
-    <string name="edit">编辑</string>
-    
+
     <!-- 设置模块 -->
     <string name="display_settings">显示设置</string>
-    <string name="theme_color">主题颜色</string>
-    <string name="theme_kuromi_pink">库洛米粉</string>
-    <string name="font_size">字体大小</string>
-    <string name="font_medium">中等</string>
-    <string name="dark_mode">深色模式</string>
-    <string name="dark_mode_off">关</string>
     <string name="export_settings">导出设置</string>
-    <string name="export_format">导出格式</string>
-    <string name="export_format_jpg">JPG</string>
-    <string name="export_quality">导出质量</string>
-    <string name="export_quality_high">高</string>
-    <string name="add_watermark">添加库洛米水印</string>
-    <string name="add_watermark_on">开</string>
-    <string name="export_location">导出位置</string>
     <string name="storage_management">存储管理</string>
-    <string name="used_space">已用空间</string>
-    <string name="used_space_value">2.5 GB</string>
-    <string name="clear_cache">清除缓存</string>
-    <string name="clear">清除</string>
     <string name="about_app">关于应用</string>
-    <string name="app_version">应用版本</string>
-    <string name="app_version_value">1.0.0</string>
-    <string name="check_update">检查更新</string>
-    <string name="check">检查</string>
-    <string name="user_agreement">用户协议</string>
-    <string name="privacy_policy">隐私政策</string>
-    <string name="about_us">关于我们</string>
-    <string name="arrow">箭头</string>
-    <string name="save">保存</string>
+    <string name="dark_mode">深色模式</string>
+    <string name="add_watermark">添加水印</string>
+
 </resources>

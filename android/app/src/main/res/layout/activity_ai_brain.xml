@@ -1,188 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/gradient_start">
+    android:background="@color/bg_deep_purple">
 
-    <!-- 顶部标题栏 -->
-    <FrameLayout
+    <!-- 相机预览 -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/camera_preview_ai"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/header_background">
+        android:layout_height="match_parent" />
 
-        <ImageButton
-            android:id="@+id/backButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical|start"
-            android:layout_marginStart="16dp"
-            android:src="@drawable/ic_back"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/back"
-            android:scaleType="centerInside" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/ai_brain_module"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/kuromi_pink" />
-
-        <ImageButton
-            android:id="@+id/helpButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_settings"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/help"
-            android:scaleType="centerInside" />
-
-    </FrameLayout>
-
-    <!-- 面部扫描区域 -->
-    <FrameLayout
+    <!-- 扫描线动画 -->
+    <View
+        android:id="@+id/scan_line"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/text_dark">
+        android:layout_height="3dp"
+        android:background="@color/kuromi_pink" />
 
-        <!-- 面部预览圆形框 -->
-        <ImageView
-            android:id="@+id/facePreviewImage"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:background="@drawable/face_preview_frame"
-            android:contentDescription="@string/face_preview" />
-
-    </FrameLayout>
-
-    <!-- AI 分析结果区域 -->
-    <LinearLayout
+    <!-- 玻璃拟态面板 -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@color/header_background">
+        android:layout_gravity="bottom"
+        android:layout_margin="@dimen/margin_global"
+        style="@style/KuromiCardView">
 
-        <!-- 骨相分析 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="12dp">
+            android:padding="@dimen/margin_card">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/bone_analysis"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/kuromi_pink"
-                android:layout_marginBottom="8dp" />
+                style="@style/KuromiGroupTitle"
+                android:text="@string/bone_analysis" />
 
             <TextView
-                android:id="@+id/boneAnalysisText"
-                android:layout_width="match_parent"
+                android:id="@+id/tv_face_shape"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="正在分析..."
-                android:textSize="12sp"
-                android:textColor="@color/text_dark"
-                android:lineSpacingExtra="4dp" />
-
-        </LinearLayout>
-
-        <!-- 气质评分 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="12dp">
+                android:text="脸型: 菱形脸"
+                android:textColor="@color/text_white" />
 
             <TextView
-                android:layout_width="match_parent"
+                android:id="@+id/tv_cheekbone"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/temperament_score"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/kuromi_pink"
-                android:layout_marginBottom="8dp" />
+                android:text="颧骨: 高颧骨"
+                android:textColor="@color/text_white" />
+
+            <TextView
+                android:id="@+id/tv_jawline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="下颌: 尖下颌"
+                android:textColor="@color/text_white" />
+
+            <TextView
+                style="@style/KuromiGroupTitle"
+                android:layout_marginTop="@dimen/margin_group"
+                android:text="@string/temperament_score" />
 
             <RatingBar
-                android:id="@+id/temperamentRating"
+                android:id="@+id/rating_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:numStars="5"
-                android:rating="4"
-                android:isIndicator="true"
-                android:progressTint="@color/kuromi_pink" />
+                android:rating="4.5"
+                android:stepSize="0.5"
+                android:theme="@style/Widget.AppCompat.RatingBar.Indicator" />
 
         </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-        <!-- 美颜建议 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/beauty_suggestions"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/kuromi_pink"
-                android:layout_marginBottom="8dp" />
-
-            <TextView
-                android:id="@+id/suggestionsText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="正在生成建议..."
-                android:textSize="12sp"
-                android:textColor="@color/text_dark"
-                android:lineSpacingExtra="4dp" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <!-- 底部按钮栏 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="@color/footer_background"
-        android:paddingHorizontal="16dp">
-
-        <Button
-            android:id="@+id/saveResultsButton"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:text="@string/save_results"
-            android:textColor="@color/text_dark"
-            android:background="@drawable/button_outline"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/applyButton"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:text="@string/apply_suggestions"
-            android:textColor="@color/text_white"
-            android:background="@drawable/button_filled"
-            android:textSize="14sp" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>

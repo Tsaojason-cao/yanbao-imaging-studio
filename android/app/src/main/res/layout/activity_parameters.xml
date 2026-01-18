@@ -1,89 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bg_deep_purple"
     android:orientation="vertical"
-    android:background="@color/gradient_start">
+    tools:context=".ParametersActivity">
 
     <!-- 顶部标题栏 -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/header_background">
+        android:layout_height="?attr/actionBarSize">
 
-        <ImageButton
-            android:id="@+id/backButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical|start"
-            android:layout_marginStart="16dp"
-            android:src="@drawable/ic_back"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/back"
-            android:scaleType="centerInside" />
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="16dp"
+            android:src="@drawable/ic_back" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/parameters_module"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/kuromi_pink" />
-
-        <ImageButton
-            android:id="@+id/resetButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_reset"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/reset"
-            android:scaleType="centerInside" />
+            android:text="@string/module_title_parameters"
+            android:textColor="@color/kuromi_pink"
+            android:textSize="@dimen/font_size_subtitle"
+            android:textStyle="bold" />
 
     </FrameLayout>
 
-    <!-- 参数滑块列表 (RecyclerView) -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/parametersRecyclerView"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp"
-        android:clipToPadding="false" />
+        android:layout_weight="1">
 
-    <!-- 底部操作栏 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/margin_global">
+
+            <!-- 分组 1: 皮相 -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_skin"
+                style="@style/KuromiCardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/title_skin"
+                        style="@style/KuromiGroupTitle"
+                        android:text="@string/param_group_skin" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view_skin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        tools:listitem="@layout/item_parameter_slider" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 分组 2: 光影 -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_lighting"
+                style="@style/KuromiCardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_group">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/title_lighting"
+                        style="@style/KuromiGroupTitle"
+                        android:text="@string/param_group_lighting" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view_lighting"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        tools:listitem="@layout/item_parameter_slider" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 分组 3: 骨相 -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_bone"
+                style="@style/KuromiCardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_group">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/title_bone"
+                        style="@style/KuromiGroupTitle"
+                        android:text="@string/param_group_bone" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view_bone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        tools:listitem="@layout/item_parameter_slider" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- 底部按钮 -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="@color/footer_background"
-        android:paddingHorizontal="16dp">
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin_global"
+        android:orientation="horizontal">
 
         <Button
-            android:id="@+id/cancelButton"
+            android:id="@+id/btn_cancel"
+            style="@style/KuromiButton.Purple"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:text="@string/cancel"
-            android:textColor="@color/text_dark"
-            android:background="@drawable/button_outline"
-            android:textSize="14sp" />
+            android:text="@string/cancel" />
+
+        <Space
+            android:layout_width="@dimen/margin_element"
+            android:layout_height="wrap_content" />
 
         <Button
-            android:id="@+id/applyButton"
+            android:id="@+id/btn_apply"
+            style="@style/KuromiButton.Pink"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:text="@string/apply"
-            android:textColor="@color/text_white"
-            android:background="@drawable/button_filled"
-            android:textSize="14sp" />
+            android:text="@string/apply" />
 
     </LinearLayout>
 

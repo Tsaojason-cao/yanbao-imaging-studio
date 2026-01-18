@@ -1,8 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <!-- 库洛米按钮样式 -->
+    <style name="KuromiButton" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textSize">@dimen/font_size_body</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">@dimen/margin_element</item>
+        <item name="android:height">@dimen/bottom_button_height</item>
+    </style>
+
+    <style name="KuromiButton.Purple">
+        <item name="android:background">@drawable/button_purple_capsule</item>
+    </style>
+
+    <style name="KuromiButton.Pink">
+        <item name="android:background">@drawable/button_pink_capsule</item>
+    </style>
+
+    <!-- 库洛米卡片样式 -->
+    <style name="KuromiCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/bg_gradient_start</item>
+        <item name="cardCornerRadius">@dimen/corner_radius_card</item>
+        <item name="cardElevation">4dp</item>
+        <item name="strokeColor">@color/kuromi_purple</item>
+        <item name="strokeWidth">2dp</item>
+    </style>
+
+    <!-- 库洛米分组标题样式 -->
+    <style name="KuromiGroupTitle" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/kuromi_pink</item>
+        <item name="android:textSize">@dimen/font_size_subtitle</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">@dimen/margin_card</item>
+    </style>
+
 </resources>
